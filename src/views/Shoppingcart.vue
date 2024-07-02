@@ -13,6 +13,7 @@
                             <li>單價</li>
                             <li>數量</li>
                         </ul>
+                        {{ this.cartItem.p_no }}
                     </div>
                     <div class="card" v-for="(item, index) in cartItem" :key="item.id">
                         <div class="product-into">
@@ -43,7 +44,7 @@
                     </div>
                     <div class="alltotal">
                         <span>總計:</span>
-                        <span>NT.{{ totalprice + 60 }}</span>
+                        <span>NT.{{ finalprice }}</span>
                     </div>
                 </div>
             </div>
@@ -74,7 +75,7 @@
                 <div>
                     <span>*</span>
                     <label for="m_add">通訊地址 : </label>
-                    <input type="text" id="m_add" name="m_add">
+                    <input type="text" id="m_add" name="m_add" v-model="m_add">
                 </div>
             </form>
             <form class="info-pay">
@@ -94,70 +95,35 @@
                     <span>*</span>
                     <label>信用卡號 : </label>
                     <div>
-                        <input 
-                        class="card1" 
-                        type="text" 
-                        required 
-                        maxlength="4" 
-                        pattern="\d{4}"
-                        @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)"
-                        v-model="card1">
+                        <input class="card1" type="text" required maxlength="4" pattern="\d{4}"
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" v-model="card1">
                         <span>-</span>
-                        <input 
-                        class="card2" 
-                        type="text" 
-                        required 
-                        maxlength="4" 
-                        pattern="\d{4}"
-                        @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)"
-                        v-model="card2">
+                        <input class="card2" type="text" required maxlength="4" pattern="\d{4}"
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" v-model="card2">
                         <span>-</span>
-                        <input 
-                        class="card3"
-                        type="text" 
-                        required maxlength="4" 
-                        pattern="\d{4}"
-                        @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)"
-                        v-model="card3">
+                        <input class="card3" type="text" required maxlength="4" pattern="\d{4}"
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" v-model="card3">
                         <span>-</span>
-                        <input 
-                        class="card4" 
-                        type="text" 
-                        required 
-                        maxlength="4" 
-                        pattern="\d{4}"
-                        @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)"
-                        v-model="card4">
+                        <input class="card4" type="text" required maxlength="4" pattern="\d{4}"
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" v-model="card4">
                     </div>
                 </div>
                 <div class="deadline">
                     <span>*</span>
                     <label>有效期限 : </label>
                     <div>
-                        <input 
-                        type="text" 
-                        inputmode="numeric" 
-                        required 
-                        maxlength="2" 
-                        pattern="\d{2}"
-                        @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" placeholder="MM"
-                        v-model="mm">
+                        <input type="text" inputmode="numeric" required maxlength="2" pattern="\d{2}"
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" placeholder="MM" v-model="mm">
                         <span>-</span>
-                        <input 
-                        type="text" 
-                        inputmode="numeric" 
-                        required 
-                        maxlength="2" 
-                        pattern="\d{2}"
-                        @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" placeholder="YY"
-                        v-model="yy">
-                        
+                        <input type="text" inputmode="numeric" required maxlength="2" pattern="\d{2}"
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" placeholder="YY" v-model="yy">
+
                     </div>
                 </div>
                 <div class="code">
                     <span>*</span>
                     <label>CVC : </label>
-                    <input type="text" placeholder="末3碼" required maxlength="3" pattern="\d{3}">
+                    <input type="text" placeholder="末3碼" required maxlength="3" pattern="\d{3}" v-model="cvc">
                 </div>
             </form>
             <hr>
@@ -175,7 +141,7 @@ import { mapActions, mapState } from 'pinia';
 export default {
     data() {
         return {
-            userData:'',
+            userData: '',
             responseData: [],
             ao_count: 1,
             fee: 500,
@@ -183,6 +149,10 @@ export default {
             email: '',
             phone: '',
             count: '',
+            m_add: '',
+            status: 0,
+            coupon: '',
+            couponPrice: '',
             errorMsg: {
                 name: '',
                 email: '',
@@ -209,6 +179,9 @@ export default {
             }
             return total;
         },
+        finalprice() {
+            return this.totalprice + 60
+        },
         // totalFees(){
         //     return this.userInfo[this.$route.params.signupId -1].a_fee * this.ao_count;
         // }
@@ -229,20 +202,19 @@ export default {
     },
     methods: {
         ...mapActions(useAdminStore, ['loadCurrentUser']),
-        // fetchActivityInfo() {
-        //     fetch(`http://localhost/php_G4/activitiesList.php`, {
-        //         method: 'post'
-        //     })
-        //         .then((res) => res.json())
-        //         .then((json) => {
-        //             console.log(json)
-        //             this.activityInfo = json['data']['list']
-        //             console.log(this.activityInfo);
-        //             console.log(this.activityId)
-        //             this.displayData = this.activityInfo.find((item) => item.a_no == this.activityId)
-        //             console.log(this.displayData);
-        //         })
-        // },
+        fetchActivityInfo() {
+            fetch(`http://localhost/php_g4/product_detail.php`, {
+                method: 'post'
+            })
+                .then((res) => res.json())
+                .then((json) => {
+                    console.log(json)
+                    this.product_detail = json['data']['list']
+                    console.log(this.product_detail);
+                    // this.displayData = this.activityInfo.find((item) => item.a_no == this.activityId)
+                    console.log(this.displayData);
+                })
+        },
         checkname() {
             const namelimit = /^[a-zA-Z\u4e00-\u9fa5]{1,15}$/g; //正規表達式：不可輸入數字、空白及特殊符號 最多15字
             if (this.name === "") {
@@ -280,23 +252,23 @@ export default {
 
             }
         },
-        checkCard(){
-            
-                if (
-                this.card1 && 
-                this.card2 && 
-                this.card3 && 
-                this.card4 && 
-                this.mm && 
-                this.yy && 
-                this.cvc
-                ) {
-                    return true;
-                } else {
-                    return false;
-                }
+        checkCard() {
 
-            
+            if (
+                this.card1 &&
+                this.card2 &&
+                this.card3 &&
+                this.card4 &&
+                this.mm &&
+                this.yy &&
+                this.cvc
+            ) {
+                return true;
+            } else {
+                return false;
+            }
+
+
         },
         handleKeyDown(event) {
             const target = event.target;
@@ -336,12 +308,17 @@ export default {
             }
             const url = `http://localhost/php_g4/shoppingcart.php`
             let body = {
-                "a_no": this.displayData.a_no,
                 "m_no": this.userData.m_no,
-                "ao_count": this.ao_count,
-                "ao_status": this.ao_status,
-                "a_date": this.displayData.a_time,
-                "ao_totalfee": this.totalFees,
+                "po_name": this.name,
+                "m_phone": this.phone,
+                "po_address": this.m_add,
+                "po_status": this.status,
+                "po_total": this.totalprice,
+                "po_finalprice": this.finalprice,
+                "c_no": this.coupon,
+                "po_discount": this.couponPrice,
+                "cartItems": this.cartItem,
+
             }
 
             fetch(url, {
@@ -352,6 +329,12 @@ export default {
                 .then(
                     json => {
                         this.data = json
+                        // 清除購物車相關的 local storage
+                        localStorage.removeItem('user1');
+                        // 重置 cartItem
+                        this.responseData.forEach(v => {
+                            v.isaddCart = false
+                        })
                         Swal.fire({
                             title: '<strong>報名成功</strong>',
                             icon: 'success',
@@ -360,14 +343,14 @@ export default {
                             showCloseButton: false,
                             showCancelButton: true,
                             focusConfirm: false,
-                            confirmButtonText: '返回活動',
+                            confirmButtonText: '返回商品',
                             confirmButtonColor: '#144433',
-                            cancelButtonText: '活動紀錄',
+                            cancelButtonText: '訂單紀錄',
                             cancelButtonColor: '#144433',
                             background: '#eeeeee'
                         }).then(async (result) => {
                             if (result.isConfirmed) {
-                                this.$router.push('/activity')
+                                this.$router.push('/product')
                                 await this.$nextTick()
                                 setTimeout(() => {
                                     window.scrollTo({
@@ -377,7 +360,7 @@ export default {
                                     })
                                 }, 280)
                             } else if (result.dismiss === Swal.DismissReason.cancel) {
-                                this.$router.push('/userlayout/useractivity')
+                                this.$router.push('/userlayout/UserOrder')
                                 await this.$nextTick()
                                 setTimeout(() => {
                                     window.scrollTo({
@@ -402,12 +385,14 @@ export default {
     },
     mounted() {
         const user = localStorage.getItem('currentUser');
-        console.log(user);
+        // console.log(user);
         if (user) {
             this.userData = JSON.parse(user);
-            this.m_no = this.userData.m_no;
-            this.name = this.userData.m_name;
+            // console.log(this.userData);
+            this.name = this.userData.m_name
+                ;
             this.email = this.userData.m_account;
+            this.m_add = this.userData.po_address;
             this.phone = this.userData.m_phone;
         }
     },
@@ -418,7 +403,8 @@ export default {
             console.log(this.responseData);
             // console.log(this.displayData );
         } else {
-            this.fetchData();
+            // this.cartItem = [];
+            // this.fetchData();
             console.log("執行");
         }
     }
