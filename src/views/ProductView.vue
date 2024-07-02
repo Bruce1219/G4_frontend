@@ -55,6 +55,7 @@ export default {
       } else {
         localStorage.setItem(`user1`, JSON.stringify(this.responseData))
       }
+      console.log(this.responseData)
     },
     //fetch json檔商品資料
     fetchData() {
@@ -73,7 +74,9 @@ export default {
             ...item,
             id: item.id || index + 1,
             isaddCart: false,
-            isImage1: false
+            isImage1: false,
+            "hartImage": "hart.svg",
+            "hartImage1": "hart2.svg",
           }));
           this.totalPages = json["data"]["total_pages"] || 1;
           console.log("Current page:", this.currentPage);
@@ -132,8 +135,6 @@ export default {
   created() {
 
     this.fetchData(this.currentPage);
-
-    // this.fetchData()
     //若有登入情況下
     // console.log(localStorage.getItem('user1'))
     // if (localStorage.getItem('user1') != null) {
@@ -247,8 +248,8 @@ export default {
                     </div>
                     <div class="hart-pic-card" @click.prevent="toggleImage(cardtItem.id)">
                       <img :src="cardtItem['isImage1']
-                        ? parsePic(cardtItem.hartImage)
-                        : parsePic(cardtItem.hartImage1)
+                        ? parsePic(cardtItem.hartImage1)
+                        : parsePic(cardtItem.hartImage)
                         " alt="" />
                     </div>
                   </div>
