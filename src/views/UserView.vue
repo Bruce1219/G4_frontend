@@ -94,7 +94,31 @@ export default {
         .then(response => response.json())
         .then(
           json => {
-            this.data = json
+            this.returnData = json
+            console.log(this.returnData);
+            if (this.returnData.code != "200") {
+              Swal.fire({
+                icon: "warning",
+                title: this.returnData.msg,
+                showConfirmButton: false,
+                timer: 1500
+              });
+              this.name = '',
+                this.email = '',
+                this.psw = '',
+                this.dbpsw = ''
+            } else {
+              Swal.fire({
+                icon: "success",
+                title: this.returnData.msg,
+                showConfirmButton: false,
+                timer: 1500
+              });
+              this.name = '',
+                this.email = '',
+                this.psw = '',
+                this.dbpsw = ''
+            }
           }
         );
     },
@@ -113,7 +137,7 @@ export default {
             body: JSON.stringify(body)
           })
         const users = await response.json();
-        console.log(users["data"]);
+        console.log(users["data"]);//從後端拉回檔案轉為object
         // console.log(store.currentUser);
         if (users.code != 200) {
           alert(users.msg);
@@ -140,8 +164,7 @@ export default {
     },
     linkto() {
       let history = this.$route.query;
-      console.log(history);
-      // this.$router.push({ path: history.from.path, query: history.from.query })
+      // console.log(history);
       if (!history.page) {
         this.$router.push('/userlayout/userdata')
       } else {
