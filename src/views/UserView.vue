@@ -114,7 +114,7 @@ export default {
           })
         const users = await response.json();
         console.log(users["data"]);
-        console.log(store.currentUser);
+        // console.log(store.currentUser);
         if (users.code != 200) {
           alert(users.msg);
           this.acc = ''
@@ -131,20 +131,23 @@ export default {
             timer: 1500
           });
           //判斷從哪個頁面登入
-          let history = this.$route.query;
-          console.log(history);
-          // this.$router.push({ path: history.from.path, query: history.from.query })
-          if (history == '') {
-            this.$router.push('/userlayout/userdata')
-          } else {
-            this.$router.push(history.page);
-          };
+          this.linkto()
         }
       } catch (error) {
         console.error('登入失敗:', error)
         alert('登入失敗')
       }
     },
+    linkto() {
+      let history = this.$route.query;
+      console.log(history);
+      // this.$router.push({ path: history.from.path, query: history.from.query })
+      if (!history.page) {
+        this.$router.push('/userlayout/userdata')
+      } else {
+        this.$router.push(history.page);
+      };
+    }
 
   },
   mounted() {
