@@ -162,6 +162,11 @@ const router = createRouter({
       name: 'FruitNinja',
       component: () => import('../components/fruitNinja.vue')
     },
+    {
+      path: '/search',
+      name: 'search',
+      component: () => import('../components/search.vue')
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     // return 期望滚动到哪个的位置
