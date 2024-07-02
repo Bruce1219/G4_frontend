@@ -1,31 +1,47 @@
 <template>
-
   <section>
     <div class="container">
+      <!-- 標題容器 -->
       <div class="title-container">
         <h2 class="section-title">熱門商品</h2>
-        <img class="title-bgi" src="../assets/image/titlebg.svg" alt="">
+        <img class="title-bgi" src="../assets/image/titlebg.svg" alt="" />
       </div>
-      <div class="product">
+
+      <!-- 商品列表 -->
+      <div v-if="responseData.length" class="product">
         <div class="product-list">
-          <swiper :loop="true" :navigation="{
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-          }" :modules='modules' :pagination="{
-            type: 'fraction',
-            el: '.pagination',
-          }" :space-between="10" @slideChange="onSlideChange" class="mySwiper" slides-per-view="auto"
-            :centeredSlides="true">
+          <!-- Swiper 輪播 -->
+          <swiper
+            :loop="true"
+            :navigation="{
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev'
+            }"
+            :modules="modules"
+            :pagination="{
+              type: 'fraction',
+              el: '.pagination'
+            }"
+            :space-between="10"
+            @slideChange="onSlideChange"
+            class="mySwiper"
+            slides-per-view="auto"
+            :centeredSlides="true"
+          >
+            <!-- 單個 Swiper 輪播項目 -->
             <swiper-slide v-for="(cartItem, cartIndex) in responseData" :key="cartIndex">
-              <!-- :autoplay="{ delay: 2500, disableOnInteraction: false }" -->
-              <RouterLink :to='`/ProductPage/${cartItem.p_no}`' class="card-product-list">
+              <RouterLink :to="`/ProductPage/${cartItem.p_no}`" class="card-product-list">
+                <!-- 商品圖片 -->
                 <div class="img-product-list">
-                  <img :src="parsePic( cartItem.p_img[0])" alt="" />
+                  <img :src="parsePic(cartItem.p_img[0])" alt="" />
                 </div>
+                <!-- 商品詳細信息 -->
                 <div class="into-product-list">
+                  <!-- 商品名稱 -->
                   <div class="title-product-list">
                     <p>{{ cartItem['f_name'] }}-{{ cartItem['p_name'] }}</p>
                   </div>
+                  <!-- 商品價格和加入購物車按鈕 -->
                   <div class="member-product-list">
                     <span>NT.{{ cartItem['p_fee'] }}</span>
                     <div class="car-member-product-list">
@@ -43,45 +59,41 @@
           </swiper>
         </div>
       </div>
-      <div class="carousel">
-        <div class="slidebutton">
 
+      <!-- 輪播控制按鈕和分頁器 -->
+      <div v-if="responseData.length" class="carousel">
+        <div class="slidebutton">
+          <!-- 上一頁按鈕 -->
           <div class="swiper-button-prev">
             <img src="../assets/image/leftbutton.svg" alt="" />
           </div>
-
+          <!-- 分頁器 -->
           <div class="pagination">
             <span class="swiper-pagination-current">1</span>
             <p>-</p>
             <span class="swiper-pagination-total">5</span>
           </div>
+          <!-- 下一頁按鈕 -->
           <div class="swiper-button-next">
             <img src="../assets/image/rightbutton.svg" alt="" />
           </div>
         </div>
       </div>
 
-
-
+      <!-- 更多商品連結 -->
       <div class="moreBtn">
         <RouterLink to="/Product">更多商品</RouterLink>
-        <!-- 要連結到關於我們頁面 -->
       </div>
-
-
     </div>
   </section>
 </template>
 
 <script>
-
 import { Swiper, SwiperSlide } from 'swiper/vue'
 
 // Import Swiper styles
 import 'swiper/css'
-// import 'swiper/css/navigation'
 import 'swiper/css/pagination'
-// ----
 import 'swiper/css/navigation'
 
 // import required modules
@@ -90,89 +102,62 @@ import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 export default {
   data() {
     return {
-      responseData: [],
-      displayData:[],
-    
-    };
+      responseData: [] // 存儲從 API 獲取的商品數據
+    }
   },
   methods: {
+    // 解析圖片路徑
     parsePic(file) {
       return new URL(`../assets/image/${file}`, import.meta.url).href
     },
+    // 從後端獲取商品數據
     fetchData() {
       fetch(`http://localhost/php_g4/product_popular.php`, {
         method: 'post'
       })
         .then((res) => res.json())
         .then((json) => {
-          console.log(json)
           this.responseData = json['data']['list']
-          console.log(this.responseData)
         })
-    },
-  },
-
-
-  computed: {
-
+    }
   },
   components: {
     Swiper,
     SwiperSlide
   },
   setup() {
-    const onSlideChange = () => {
-      // console.log('slide change')
-    }
+    // 當輪播滑動時的事件處理函數
+    const onSlideChange = () => {}
     return {
       onSlideChange,
-      modules: [Autoplay, Navigation, Pagination],
+      modules: [Autoplay, Navigation, Pagination] // 使用的 Swiper 模組
     }
   },
   mounted() {
-    this.fetchData();
-
-  },
-
+    // 在 Vue 實例掛載後從後端獲取商品數據
+    this.fetchData()
+  }
 }
 </script>
+
 <style lang="scss" scoped>
 .swiper-button-prev:after,
 .swiper-button-next:after {
   display: none;
-
-
 }
-
 
 section {
   font-size: 16px;
-  padding: $pcbtwSec 0;
-  // width: 100%;
-
-
+  padding: 3rem 0;
   .container {
-    max-width: $fixed;
+    max-width: 1200px; 
     box-sizing: border-box;
-    // padding: 0 10px ;
     flex-direction: column;
     margin: 0 auto;
     overflow: hidden;
 
-
-    @include lg() {
-
-      max-width: $lg ;
-    }
-
-    @include md() {
-      max-width: $md ;
-    }
-
-    @include sm() {
-      max-width: $sm ;
-    }
-
+    
+  
     .title-container {
       position: relative;
       display: flex;
@@ -181,19 +166,18 @@ section {
       padding: 5vw 5vh;
       box-sizing: border-box;
 
-      .news-section-title {
-        writing-mode: horizontal-tb;
-        font-family: $titleFont;
-        font-size: map-get($title, h2);
+      .section-title {
+        font-size: 2rem;
         text-align: center;
-        color: $darkGreen;
+        color: #144433; 
       }
 
+   
       .title-bgi {
         position: absolute;
         top: 0;
         width: 100%;
-        height: 100%;
+        height: 100%; 
         max-width: 900px;
       }
     }
@@ -201,105 +185,76 @@ section {
     .product {
       overflow: hidden;
       position: relative;
-      width: 100vw;
-      height: 400px;
-      // transform: translate(-50%);
-      width: 100%;
-
-      @include lg() {
-        width: $lg ;
-      }
-
-      @include md() {
-        width: $md ;
-      }
-
-      @include sm() {
-        width: $sm ;
-      }
-
-
+      width: 100%; 
+      height: auto;
       .product-list {
-        // display: flex;
         text-align: center;
         align-items: center;
         justify-content: center;
-        gap: 1%;
-        overflow: visible;
+        gap: 1%; 
         height: auto;
-        // width: 1200px;
-        // overflow: hidden;
-        box-sizing: border-box;
-
-        // position: absolute;
-        // right: 50%;
-        // transform: translateX(50%);
         .swiper-slide {
-          width: auto;
-
+          display: flex;
+          justify-content: center;
+          width: auto; 
         }
-
         .card-product-list {
           margin: auto;
-          object-fit: cover;
-          width: 380px;
+          width: 100%; 
+          max-width: 380px;
           cursor: pointer;
           text-decoration: none;
-
-
         }
 
         .img-product-list {
-            width: 100%;
-            aspect-ratio: 30/1;
-              object-fit: cover;
-            
-            
-            img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-          
-            // width: 100%;
-            //   @include bp(390px) {
-            //   width: 380px;
-            // }
+          width: 380px; 
+          height: 250px; 
 
+          
+          img {
+            width: 100%; 
+            aspect-ratio: 1/0.67; 
+            object-fit: cover; 
           }
         }
 
+      
         .into-product-list {
           padding: 25px;
 
           .title-product-list {
             padding: 27px;
-            font-family: $pFont;
-            color: $darkGreen;
+            font-size: 1.2rem;
+            color: #144433; 
+          
           }
 
+          
           .member-product-list {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-family: $pFont;
-            color: $darkGreen;
+            font-size: 1rem;
+            color: #144433; 
+      
 
-
+     
             .car-member-product-list {
+           
               .cart-shopping {
                 display: flex;
                 gap: 6px;
                 padding: 7px;
-                font-family: $pFont;
-                color: #fff;
-                background-color: $darkGreen;
-                border-radius: 20px;
-                border: 1px solid #000;
+                color: #fff; 
+                background-color: #144433;
+                border-radius: 20px; 
+                border: 1px solid #000; 
 
+               
                 &:hover {
-                  background-color: $lightGreen;
-                  border: 1px solid $darkGreen;
-                  cursor: pointer;
+                  background-color: #86c232;
+                  border: 1px solid #144433; 
+                  cursor: pointer; 
                 }
               }
             }
@@ -308,95 +263,98 @@ section {
       }
     }
 
-
+ 
     .carousel {
       display: flex;
       align-items: center;
       justify-content: center;
+      margin: 40px 0; 
 
-      margin: 40px 0;
-
+     
       .slidebutton {
         display: flex;
-        width: 50%;
+        width: 50%; 
         justify-content: space-evenly;
-
+        @include md() {
+          width:70%;
+        }
 
 
         .swiper-button-prev,
         .swiper-button-next {
           position: relative;
-          margin: $mbbtwElement;
-
+          margin: 0 1rem; 
         }
 
+   
         .pagination {
-          // position: relative;
-          width: 50%;
+          width: 50%; 
           text-align: center;
           display: flex;
           align-items: center;
           justify-content: center;
         }
 
-
+      
         .number-slidebutton {
           display: flex;
           align-items: center;
           justify-content: space-evenly;
           flex-grow: 1;
 
-
+         
           .number {
-            font-size: $fontBase;
+            font-size: 1rem; 
           }
 
+         
           .border {
-            width: 20px;
-            height: 0;
-            border: 1px solid $darkGreen;
+            width: 20px; 
+            height: 0; 
+            border: 1px solid #144433;
           }
         }
       }
     }
 
+
     .moreBtn {
       max-width: 100px;
-      border: solid 1px #144433;
-      padding: 12px 39px;
-      margin: auto;
+      border: solid 1px #144433; 
+      padding: 12px 39px; 
+      margin: auto; 
       text-align: center;
 
-      @include s2bmd() {
-        width: 100%;
-        max-width: none;
+      
+      @include md() {
+        width: 100%; 
+        max-width: none; 
         margin: 0;
-        border: none;
+        border: none; 
         display: flex;
         justify-content: flex-end;
       }
 
+    
       a {
-        color: #144433;
-        text-decoration: none;
-        font-family: $pFont;
-        font-size: $fontBase;
-        line-height: $lineheight;
-        letter-spacing: $letterSpacing;
+        color: #144433; 
+        text-decoration: none; 
+        font-size: 1rem; 
+        
 
-        @include s2bmd() {
+    
+        @include md() {
           &::after {
-            content: "";
-            background-image: url('../assets/image/arrow.png');
-            width: 25px;
-            height: 25px;
-            transform: translateY(30%);
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            margin-right: 55px;
-            display: inline-block;
-
+            content: ''; 
+            background-image: url('../assets/image/arrow.png'); 
+            width: 25px; 
+            height: 25px; 
+            transform: translateY(30%); 
+            background-size: contain; 
+            background-position: center; 
+            background-repeat: no-repeat; 
+            margin-right: 55px; 
+            display: inline-block; 
           }
         }
       }
@@ -404,3 +362,21 @@ section {
   }
 }
 </style>
+
+
+<!-- centeredSlides 是 Swiper.js 中一個控制輪播項目居中顯示的重要屬性。當設置 centeredSlides: true 時，它會影響輪播容器內每個滑動項目的排列方式，具體解釋如下：
+
+功能說明
+Swiper 是一個流行的輪播（Carousel）庫，允許你創建和自定義可滑動的項目列表。當設置 centeredSlides 屬性為 true 時，Swiper 將會將輪播中的每個項目在容器中居中顯示，而不是像普通輪播那樣從左到右排列。
+
+工作原理
+居中顯示：
+
+當 centeredSlides 設置為 true 時，Swiper 會自動調整滑動項目的位置，使得當前顯示的項目位於容器的中心位置。
+對於偶數個項目：
+
+如果有偶數個項目，Swiper 會選擇兩個項目中心點之間的位置作為居中對齊點。
+對於奇數個項目：
+
+如果有奇數個項目，則容器中的中心點將與其中間的那個項目的中心點對齊。
+ -->
