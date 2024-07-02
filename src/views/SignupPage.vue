@@ -384,27 +384,17 @@ export default {
                 );
             
         },
-        checkLogin() {
-            this.loadCurrentUser();
-            if (!this.currentUser) {
-                alert('尚未登入');
-                this.$router.push('/user');
-            }
-        }
     },
     mounted() {
         this.fetchActivityInfo();
-        this.checkLogin();
-        const store = useAdminStore();
-        const isLogin = store.isLoggedIn();
-        if (!isLogin) {
-        this.$router.push('/user');
-        }
         const user = localStorage.getItem('currentUser');
         console.log(user);
         if (user) {
-        this.userData = JSON.parse(user);
-        this.m_no = this.userData.m_no;
+            this.userData = JSON.parse(user);
+            this.m_no = this.userData.m_no;
+            this.name = this.userData.m_name;
+            this.email = this.userData.m_account;
+            this.phone = this.userData.m_phone;
         }
     }
 }
