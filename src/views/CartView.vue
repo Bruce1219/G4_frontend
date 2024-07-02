@@ -2,66 +2,68 @@
 export default {
   data() {
     return {
-      responseData:[],
+      responseData: [],
     }
   },
-  computed:{
+  computed: {
     totalprice() {
       let total = 0;//加總總和 
-        for(let i = 0;i < this.cartItem .length;i++) {  
-         const price = this.cartItem[i].p_fee * this.cartItem[i].count;
-          total += price
-        }
-        return total;
-      },
-    cartItem () {
-      let  cart = [];
-      for(let i = 0;i< this.responseData.length;i++) {
-        if(this.responseData[i].isaddCart) {
+      for (let i = 0; i < this.cartItem.length; i++) {
+        const price = this.cartItem[i].p_fee * this.cartItem[i].count;
+        total += price
+      }
+      return total;
+    },
+    cartItem() {
+      let cart = [];
+      for (let i = 0; i < this.responseData.length; i++) {
+        if (this.responseData[i].isaddCart) {
           cart.push(this.responseData[i]);
         }
       }
+      console.log(cart);
       return cart;
     }
-   },
+  },
   methods: {
     parsePic(file) {
       return new URL(`../assets/image/${file}`, import.meta.url).href
     },
     add(index) {
-      this.cartItem[index].count  += 1;
+      this.cartItem[index].count += 1;
       localStorage.setItem(`user1`, JSON.stringify(this.responseData))
     },
     subtraction(index) {
       if (this.cartItem[index].count === 1) {
-        this.cartItem[index].count= 0;
+        this.cartItem[index].count = 0;
         this.deleteItem(index);
-    }else {
-      this.cartItem[index].count -= 1; 
-      localStorage.setItem(`user1`, JSON.stringify(this.responseData))
-    }
-  },
-  deleteItem(index) {
-    if (confirm("確定刪除？")) {
+      } else {
+        this.cartItem[index].count -= 1;
+        localStorage.setItem(`user1`, JSON.stringify(this.responseData))
+      }
+    },
+    deleteItem(index) {
+      if (confirm("確定刪除？")) {
         this.cartItem[index].isaddCart = false;
         localStorage.setItem(`user1`, JSON.stringify(this.responseData))
-      }else {
-        return this.cartItem[index].count= 1;
+      } else {
+        return this.cartItem[index].count = 1;
       }
-    }, 
-},
-created() {
-      
-  if (localStorage.getItem('user1') != null) {
-    let userInfo = localStorage.getItem('user1');
-    this.responseData = JSON.parse(userInfo);
-    console.log(this.responseData );
-    // console.log(this.displayData );
-   }else {
-    // this.fetchData();
-    console.log("執行");
+    },
+  },
+  created() {
+
+    if (localStorage.getItem('user1') != null) {
+      let userInfo = localStorage.getItem('user1');
+      this.responseData = JSON.parse(userInfo);
+      console.log(this.responseData);
+      // console.log(this.displayData );
+    } else {
+      // this.fetchData();
+      console.log("執行");
+    }
   }
-}}
+}
 
 </script>
 
@@ -88,19 +90,19 @@ created() {
 
         </nav>
         <div class="card-list">
-          <div class="card"  v-for="(Item ,index) in cartItem" :key="Item.id">
+          <div class="card" v-for="(Item, index) in cartItem" :key="Item.id">
             <picture>
-              <img :src="parsePic(Item.p_img[0])"  alt="">
+              <img :src="parsePic(Item.p_img[0])" alt="">
             </picture>
             <div class="product">
               <div class="product-into">
                 <div class="name">
-                  <span>{{ Item.f_name}}</span>-
+                  <span>{{ Item.f_name }}</span>-
                   <p>{{ Item.p_name }}</p>
                 </div>
                 <div class="unit">
                   <span>單位:</span>
-                  <p>{{ Item.unit}}</p>
+                  <p>{{ Item.unit }}</p>
                 </div>
               </div>
               <div class="price">
@@ -109,7 +111,7 @@ created() {
             </div>
             <div class="quantity">
               <button @click="subtraction(index)">-</button>
-              {{  Item.count }}
+              {{ Item.count }}
               <button @click="add(index)">+</button>
             </div>
           </div>
@@ -119,61 +121,61 @@ created() {
       <!-- 付款表格 -->
       <div class="pay">
         <!-- 優惠券 -->
-         <div class="information">
-        <div class="discount">
-          <p>優惠券</p>
-          <label for="">
-            <input type="text" placeholder="請輸入優惠券碼">
-          </label>
-        </div>
-        <!-- 付款資訊 -->
-        <div class="receive">
-          <p>收件地點</p>
-          <div class="postal">
-            <span>郵遞區號:</span>
+        <div class="information">
+          <div class="discount">
+            <p>優惠券</p>
             <label for="">
-              <input type="text">
+              <input type="text" placeholder="請輸入優惠券碼">
             </label>
           </div>
+          <!-- 付款資訊 -->
+          <div class="receive">
+            <p>收件地點</p>
+            <div class="postal">
+              <span>郵遞區號:</span>
+              <label for="">
+                <input type="text">
+              </label>
+            </div>
 
-          <span>縣市:</span>
-          <select>
-            <option value="">台北市</option>
-            <option value="">新北市</option>
-            <option value="">基隆市</option>
-            <option value="">新竹縣</option>
-            <option value="">臺中市</option>
-            <option value="">苗栗縣</option>
-            <option value="Changhua">彰化縣</option>
-            <option value="Nantou">南投縣</option>
-            <option value="Yunlin">雲林縣</option>
-            <option value="Kaohsiung">高雄市</option>
-            <option value="Tainan">臺南市</option>
-            <option value="Chiayi">嘉義市</option>
-            <option value="Chiayi-County">嘉義縣</option>
-            <option value="Pingtung">屏東縣</option>
-            <option value="Penghu">澎湖縣</option>
-            <option value="Hualien">花蓮縣</option>
-            <option value="Taitung">台東縣</option>
-            <option value="Yilan">宜蘭縣</option>
-            <option value="Taoyuan">桃園市</option>
-          </select>
+            <span>縣市:</span>
+            <select>
+              <option value="">台北市</option>
+              <option value="">新北市</option>
+              <option value="">基隆市</option>
+              <option value="">新竹縣</option>
+              <option value="">臺中市</option>
+              <option value="">苗栗縣</option>
+              <option value="Changhua">彰化縣</option>
+              <option value="Nantou">南投縣</option>
+              <option value="Yunlin">雲林縣</option>
+              <option value="Kaohsiung">高雄市</option>
+              <option value="Tainan">臺南市</option>
+              <option value="Chiayi">嘉義市</option>
+              <option value="Chiayi-County">嘉義縣</option>
+              <option value="Pingtung">屏東縣</option>
+              <option value="Penghu">澎湖縣</option>
+              <option value="Hualien">花蓮縣</option>
+              <option value="Taitung">台東縣</option>
+              <option value="Yilan">宜蘭縣</option>
+              <option value="Taoyuan">桃園市</option>
+            </select>
 
-          <span>地址:</span>
-          <label for="">
-            <input type="text" placeholder="請輸入地址">
-          </label>
+            <span>地址:</span>
+            <label for="">
+              <input type="text" placeholder="請輸入地址">
+            </label>
 
 
+          </div>
         </div>
-      </div>
-         
+
         <!-- 總計 -->
         <div class="total">
           <p>總計:</p>
           <div class="Product-name">
             <span>商品:</span>
-            <span>NT.{{ totalprice}}</span>
+            <span>NT.{{ totalprice }}</span>
           </div>
           <div class="freight">
             <span>運費:</span>
@@ -182,11 +184,15 @@ created() {
           </div>
           <div class="alltotal">
             <span>總計:</span>
-            <span>NT.{{ totalprice + 60}}</span>
+            <span>NT.{{ totalprice + 60 }}</span>
           </div>
           <div class="Checkout">
-            <button class="shopping"><RouterLink to="/product">繼續購物</RouterLink></button>
-            <button class="Checkout-pay"><RouterLink to="/shoppingcart">結帳</RouterLink></button>
+            <button class="shopping">
+              <RouterLink to="/product">繼續購物</RouterLink>
+            </button>
+            <button class="Checkout-pay">
+              <RouterLink to="/shoppingcart">結帳</RouterLink>
+            </button>
           </div>
         </div>
       </div>
@@ -201,6 +207,7 @@ created() {
 
 section {
   .container {
+
     // width: 100vw;
     .title {
       //上端標題
@@ -213,6 +220,7 @@ section {
       width: 9rem;
       text-align: center;
       margin-bottom: 20px;
+
       .under-scord {
         position: relative;
         top: -15px;
@@ -226,15 +234,18 @@ section {
 
     .list-card-shopping {
       margin: auto;
+
       //購物清單
       .list-title {
         display: none;
+
         @include s2bmd() {
           display: block;
           width: 90%;
           margin: auto;
-          margin-bottom:15px; 
+          margin-bottom: 15px;
         }
+
         //清單名稱
         ul {
           @include s2bmd() {
@@ -242,11 +253,13 @@ section {
             justify-content: space-between;
             align-items: center;
           }
+
           li {}
         }
       }
+
       .card-list {
-        
+
         // margin: 15px 0;
         .card {
           display: flex;
@@ -254,18 +267,22 @@ section {
           align-items: center;
           border-bottom: 1px solid $darkGreen;
           padding: 15px 0;
+
           &:nth-child(1) {
             border-top: 1px solid $darkGreen;
           }
+
           @include s2bmd() {
             padding: 15px 30px;
           }
+
           picture {
             width: 25%;
 
             @include s2bmd() {
               width: 20%;
             }
+
             img {
               width: 100%;
 
@@ -289,6 +306,7 @@ section {
 
             //產品名稱資訊
             .product-into {
+
               //產品名稱
               .name {
                 display: flex;
@@ -322,6 +340,7 @@ section {
               cursor: pointer;
               background-color: transparent;
               border: 0px;
+
               @include s2bmd() {
                 margin: 0 10px;
               }
@@ -336,114 +355,125 @@ section {
       width: 100%;
       margin: 15px 0;
       box-sizing: border-box;
-      @include s2bmd() {
-          display: flex;
-          gap:10%;
-          justify-content:space-between;
-        }
-        .information{
-          .discount {
-        //優惠券
-        margin-bottom: 10px;
-        padding: 20px;
-        border: 1px solid $darkGreen;
-        p {
-          font-family: $pFont;
-          $line-height: $fontBase;
-          color: $darkGreen;
-        }
 
-        input {
-          margin-top: 15px;
-          background-color: $bcgw;
-          border: 1px solid $darkGreen;
-          width: 300px;
-          height: 35px;
-          padding: 0 10px;
-        }
+      @include s2bmd() {
+        display: flex;
+        gap: 10%;
+        justify-content: space-between;
       }
 
-      .receive {
-        //付款資訊
-        display: flex;
-        flex-direction: column;
-        padding: 20px;
-        margin: 15px 0;
-        border: 1px solid $darkGreen;
-        p,
-        span {
-          font-family: $pFont;
-          $line-height: $fontBase;
-          color: $darkGreen;
+      .information {
+        .discount {
+          //優惠券
+          margin-bottom: 10px;
+          padding: 20px;
+          border: 1px solid $darkGreen;
+
+          p {
+            font-family: $pFont;
+            $line-height: $fontBase;
+            color: $darkGreen;
+          }
+
+          input {
+            margin-top: 15px;
+            background-color: $bcgw;
+            border: 1px solid $darkGreen;
+            width: 300px;
+            height: 35px;
+            padding: 0 10px;
+          }
         }
 
-        p {
-          padding-bottom: 10px;
-          border-bottom: 1.5px solid $darkGreen ;
-        }
-        .postal {
+        .receive {
+          //付款資訊
           display: flex;
           flex-direction: column;
-          padding: 10px 0;
+          padding: 20px;
+          margin: 15px 0;
+          border: 1px solid $darkGreen;
+
+          p,
+          span {
+            font-family: $pFont;
+            $line-height: $fontBase;
+            color: $darkGreen;
+          }
+
+          p {
+            padding-bottom: 10px;
+            border-bottom: 1.5px solid $darkGreen ;
+          }
+
+          .postal {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+
+            input[type="text"] {
+              margin-top: 15px;
+              background-color: $bcgw;
+              border: 0;
+              border: 1px solid $darkGreen;
+              width: 50px;
+              height: 35px;
+              padding: 0 10px;
+            }
+          }
+
           input[type="text"] {
             margin-top: 15px;
             background-color: $bcgw;
             border: 0;
             border: 1px solid $darkGreen;
-            width: 50px;
+            width: 90%;
             height: 35px;
             padding: 0 10px;
           }
-        }
-        input[type="text"] {
-          margin-top: 15px;
-          background-color: $bcgw;
-          border: 0;
-          border: 1px solid $darkGreen;
-          width: 90%;
-          height: 35px;
-          padding: 0 10px;
-        }
 
-        select {
-          margin: 15px 0;
-          background-color: $bcgw;
-          width: 300px;
-          height: 35px;
-
-          option {
+          select {
+            margin: 15px 0;
             background-color: $bcgw;
+            width: 300px;
+            height: 35px;
+
+            option {
+              background-color: $bcgw;
+            }
           }
         }
       }
-    }
 
-     
+
 
       .total {
         //總計
         padding: 20px;
         margin: 15px 0;
         border: 1px solid $darkGreen;
+
         @include s2bmd() {
           margin: 0;
           width: 50%;
           padding: 35px;
           height: 200px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
         }
+
         p,
         span {
           font-family: $pFont;
           $line-height: $fontBase;
           color: $darkGreen;
         }
+
         p {
           padding-bottom: 10px;
           border-bottom: 1.5px solid $darkGreen ;
         }
+
         .Product-name,
         .freight,
         .alltotal {
@@ -451,6 +481,7 @@ section {
           justify-content: space-between;
           padding: 10px 0;
         }
+
         .Checkout {
           display: flex;
           flex-wrap: nowrap;
@@ -464,7 +495,8 @@ section {
             $line-height: $fontBase;
             color: $darkGreen;
             letter-spacing: $letterSpacing;
-            a{
+
+            a {
               text-decoration: none;
               display: block;
             }
@@ -474,16 +506,18 @@ section {
             background-color: transparent;
             border: 0;
             border: 1px solid $lightGreen;
-            a{
-             color: $darkGreen;
+
+            a {
+              color: $darkGreen;
             }
           }
-          .Checkout-pay{
+
+          .Checkout-pay {
             border: 0;
             border: 1px solid $lightGreen;
             background-color: $darkGreen;
-            
-            a{
+
+            a {
               color: #fff;
               display: block;
             }

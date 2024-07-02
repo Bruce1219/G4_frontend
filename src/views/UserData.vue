@@ -76,7 +76,7 @@ export default {
       this.$router.push('/user');
     }
     const user = localStorage.getItem('currentUser');
-    console.log(user);
+    console.log(user);//抓回localStorage
     if (user) {
       this.userData = JSON.parse(user);
       this.name = this.userData.m_name;

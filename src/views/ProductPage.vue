@@ -3,7 +3,7 @@ export default {
   data() {
     return {
       responseData: [],
-      displayData:[],
+      displayData: [],
       count: 1,
       mainImage: '', // 主圖片
     };
@@ -16,14 +16,14 @@ export default {
     filteredImages() {
       const product = this.displayData;
       // if (this.displayData != null) {
-        console.log(this.displayData)
+      console.log(this.displayData)
       // return this.mainImage = this.parsePic(this.displayData.p_img[0]);
-  // }else 
-  if (product && product.p_img) {
+      // }else 
+      if (product && product.p_img) {
         // 确保只返回三张次要小圖
         return product.p_img.filter(img => this.parsePic(img) !== this.mainImage).slice(0, 3);
       }
-  
+
       return [];
     }
 
@@ -67,12 +67,15 @@ export default {
           body: JSON.stringify(body)
         });
         const json = await response.json();
-        this.responseData = await json["data"]["list"];
+        this.responseData = json["data"]["list"].map((item, index) => ({
+          ...item,
+          isaddCart: false,
+        }))
         // this.displayData = this.responseData.filter((item) => item.p_no == this.userId);
         this.displayData = this.responseData.find((item) => item.p_no == this.userId);
         console.log(this.displayData);
         this.mainImage = this.parsePic(this.displayData.p_img[0])
-      
+
       } catch (error) {
         console.error("Error fetching data:", error);
         return [];
@@ -90,16 +93,16 @@ export default {
 
 
     }
-    , addCart(index) {
-      if (this.responseData[index].isaddCart === false) {
-        this.responseData[index].isaddCart = true;
+    , addCart() {
+      if (this.displayData.isaddCart === false) {
+        this.displayData.isaddCart = true;
         // localStorage.setItem(`shoppingItem${index}`,JSON.stringify(this.responseData[index]));
         // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
       } else {
-        this.responseData[index].isaddCart = false;
+        this.displayData.isaddCart = false;
         // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
       }
-      console.log(this.responseData)
+      console.log(this.displayData)
     },
 
     changeMainImage(imgIndex) {
@@ -110,17 +113,17 @@ export default {
       // this.parsePic(this.mainImage);
     }
   },
-created() {
- 
- 
-  // if (localStorage.getItem('user1') != null) {
-  //   let responseDatas = localStorage.getItem('user1');
-  //   this.responseData = JSON.parse(responseDatas);
-  
-  
-  // }
-  
-},
+  created() {
+
+
+    // if (localStorage.getItem('user1') != null) {
+    //   let responseDatas = localStorage.getItem('user1');
+    //   this.responseData = JSON.parse(responseDatas);
+
+
+    // }
+
+  },
   mounted() {
     this.fetchData();
     // console.log('1')
@@ -198,11 +201,10 @@ created() {
 
 
               <div class="member-card">
-                <button class="cart-shopping" @click="addCart(userId - 1)"
-                  v-if="displayData.isaddCart === false">
+                <button class="cart-shopping" @click="addCart(userId)" v-if="displayData.isaddCart === false">
                   <i class="fa-solid fa-cart-shopping fa-xs"></i>加入購物車
                 </button>
-                <button class="cart-cancel-btn cart-shopping" @click="addCart(userId - 1)"
+                <button class="cart-cancel-btn cart-shopping" @click="addCart(userId)"
                   v-if="displayData.isaddCart === true">
                   <i class="fa-solid fa-xmark"></i>取消
                 </button>
@@ -334,7 +336,7 @@ section {
             box-sizing: border-box;
             width: 100%;
             margin: auto;
-           
+
 
 
             @include s2bmd() {
