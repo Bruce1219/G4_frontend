@@ -1,4 +1,5 @@
 <script>
+import { useAdminStore } from '@/stores/userLogin';
 export default {
   data() {
     return {
@@ -6,6 +7,7 @@ export default {
       displayData: [],
       count: 1,
       mainImage: '', // 主圖片
+      m_no: ''
     };
   },
   computed: {
@@ -60,6 +62,7 @@ export default {
     async fetchData() {
       let body = {
         "p_no": this.$route.params.productId,
+        "userNo": this.m_no,
       }
       try {
         const response = await fetch(`http://localhost/php_g4/product_detail.php`, {
@@ -67,10 +70,11 @@ export default {
           body: JSON.stringify(body)
         });
         const json = await response.json();
-        this.responseData = json["data"]["list"].map((item, index) => ({
-          ...item,
-          isaddCart: false,
-        }))
+        this.responseData = json["data"]["list"]
+        // .map((item, index) => ({
+        //   ...item,
+        //   isaddCart: false,
+        // }))
         // this.displayData = this.responseData.filter((item) => item.p_no == this.userId);
         this.displayData = this.responseData.find((item) => item.p_no == this.userId);
         console.log(this.displayData);
@@ -103,7 +107,24 @@ export default {
         // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
       }
       console.log(this.displayData)
+      this.fetchcart(this.displayData.isaddCart, this.userId, this.displayData.isImage1)
     },
+    fetchcart(isaddCart, id, isImage1) {
+      let body = {
+        "isaddCart": isaddCart,
+        "userNo": this.m_no,
+        "isImage1": isImage1,
+        "p_no": id
+      }
+      fetch('http://localhost/php_G4/addcartandfavorite.php', {
+        method: 'POST',
+        body: JSON.stringify(body)
+      })
+        .then(response => response.json())
+        .then(data => {
+        });
+    },
+
 
     changeMainImage(imgIndex) {
       const product = this.displayData;
@@ -125,8 +146,9 @@ export default {
 
   },
   mounted() {
+    const store = useAdminStore();
+    this.m_no = store.currentUser.m_no;
     this.fetchData();
-    // console.log('1')
   },
 
 };
@@ -201,11 +223,10 @@ export default {
 
 
               <div class="member-card">
-                <button class="cart-shopping" @click="addCart(userId)" v-if="displayData.isaddCart === false">
+                <button class="cart-shopping" @click="addCart()" v-if="displayData.isaddCart === false">
                   <i class="fa-solid fa-cart-shopping fa-xs"></i>加入購物車
                 </button>
-                <button class="cart-cancel-btn cart-shopping" @click="addCart(userId)"
-                  v-if="displayData.isaddCart === true">
+                <button class="cart-cancel-btn cart-shopping" @click="addCart()" v-if="displayData.isaddCart === true">
                   <i class="fa-solid fa-xmark"></i>取消
                 </button>
                 <button class="buy">

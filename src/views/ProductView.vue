@@ -1,7 +1,6 @@
 <script>
 import Swal from 'sweetalert2'; //引用sweetalert2;
 import { useAdminStore } from '@/stores/userLogin';
-import { mapActions, mapState } from 'pinia';
 export default {
   data() {
     return {
@@ -15,22 +14,10 @@ export default {
       totalPages: 1,
       loading: false,
       status: false,
+      m_no: ''
     }
   },
   methods: {
-    //確認會員狀態
-    ...mapActions(useAdminStore, ['loadCurrentUser']),
-    checkLogin() {
-      if (!this.currentUser) {
-        Swal.fire({
-          icon: "warning",
-          title: "尚未登入",
-          showConfirmButton: false,
-          timer: 1500
-        });
-        this.$router.push('/user');
-      }
-    },
     // 確保json檔回傳圖片路徑正確
     parsePic(file) {
       return new URL(`../assets/image/${file}`, import.meta.url).href
@@ -45,24 +32,61 @@ export default {
       targetItem.isaddCart = !targetItem.isaddCart;
       localStorage.setItem(`user1`, JSON.stringify(this.responseData))
       console.log(this.responseData)
+      this.fetchcart(targetItem.isaddCart, targetItem.p_no, targetItem.isImage1);
+    },
+    // 購買商品存入資料庫(boolean)並更新狀態(存到資料庫
+    fetchcart(isaddCart, id, isImage1) {
+      let body = {
+        "isaddCart": isaddCart,
+        "userNo": this.m_no,
+        "isImage1": isImage1,
+        "p_no": id
+      }
+      fetch('http://localhost/php_G4/addcartandfavorite.php', {
+        method: 'POST',
+        body: JSON.stringify(body)
+      })
+        .then(response => response.json())
+        .then(data => {
+        });
     },
     //愛心收藏功能
     toggleImage(id) {
       let targetItem = this.responseData.find(v => v.id === id);
+      console.log(targetItem)
       targetItem.isImage1 = !targetItem.isImage1 //hart2加入收藏
       if (!targetItem.isImage1) {
         localStorage.setItem(`user1`, JSON.stringify(this.responseData))
       } else {
         localStorage.setItem(`user1`, JSON.stringify(this.responseData))
       }
-      console.log(this.responseData)
+      this.fetchFav(targetItem.isImage1, targetItem.p_no, targetItem.isaddCart)
     },
+    // 收藏商品存入資料庫(boolean)並更新狀態(存到資料庫
+    fetchFav(isImage1, p_no, isaddCart) {
+      let body = {
+        "isImage1": isImage1,
+        "userNo": this.m_no,
+        "isaddCart": isaddCart,
+        "p_no": p_no
+      }
+      fetch('http://localhost/php_G4/addcartandfavorite.php', {
+        method: 'POST',
+        body: JSON.stringify(body)
+      })
+        .then(response => response.json())
+        .then(data => {
+        });
+    },
+
+
     //fetch json檔商品資料
     fetchData() {
       this.loading = true;
 
       let body = {
         "page": this.currentPage,
+        "userNo": this.m_no,
       }
       fetch(`http://localhost/php_g4/product.php`, {
         method: "POST",
@@ -73,8 +97,6 @@ export default {
           this.responseData = json["data"]["list"].map((item, index) => ({
             ...item,
             id: item.id || index + 1,
-            isaddCart: false,
-            isImage1: false,
             "hartImage": "hart.svg",
             "hartImage1": "hart2.svg",
           }));
@@ -133,18 +155,10 @@ export default {
     }
   },
   created() {
-
+    const store = useAdminStore();
+    this.m_no = store.currentUser.m_no;
+    console.log(this.m_no);
     this.fetchData(this.currentPage);
-    //若有登入情況下
-    // console.log(localStorage.getItem('user1'))
-    // if (localStorage.getItem('user1') != null) {
-    //   let userInfo = localStorage.getItem('user1')
-    //   this.responseData = JSON.parse(userInfo)
-    //   console.log(this.responseData)
-    //   // console.log(this.displayData );
-    // } else {
-    //   this.fetchData()
-    // }
   },
   computed: {
     filterDataDisplay() {
@@ -175,13 +189,10 @@ export default {
       console.log("Filtered items:", filteredData.length);
       return filteredData;
     },
-    ...mapState(useAdminStore, ['currentUser']),
 
   },
   mounted() {
-    const store = useAdminStore();
-    const isLogin = store.isLoggedIn();
-    this.status = isLogin;
+
   },
 }
 </script>
