@@ -64,6 +64,12 @@
                     <div v-show="item.c_no === '講座'" class="parti-curr">
                       目前報名人數:{{ item.a_curr }}人/{{ item.a_max }}
                     </div>
+                    <div
+                      v-show="item.c_no === '講座' && item.a_attendee == a_max"
+                      class="fully-booked"
+                    >
+                      已額滿
+                    </div>
                   </div>
                 </div>
               </router-link>
@@ -90,13 +96,13 @@
                       >{{ item.a_loc }}
                     </div>
                     <div
-                      v-show="item.c_no === '講座' && item.a_status === 1"
+                      v-show="item.c_no === '講座' && item.a_status === 1 && item.a_attendee != item.a_max"
                       class="parti-curr"
                     >
                       報名人數:{{ item.a_attendee }}/{{ item.a_max }}人
                     </div>
                     <div
-                      v-show="item.c_no === '講座' && item.a_attendee === a_max"
+                      v-show="item.a_attendee == item.a_max"
                       class="fully-booked"
                     >
                       已額滿
