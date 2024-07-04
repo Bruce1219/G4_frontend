@@ -1,10 +1,15 @@
 <script>
+import Swal from 'sweetalert2' //引用sweetalert2
+
 export default {
   data() {
     return {
       activityorders: [],
       userData:'',
-      m_no:''
+      m_no:'',
+      ao_status:'',
+      ao_no:'',
+      ao_noList:[],
     }
   },
   methods: {
@@ -28,7 +33,43 @@ export default {
     },
     formatTime(dateTime) {
       return dateTime.split(' ')[0]; // 提取時間部分
-    }
+    },
+    toggleStatus(order) {
+      const newStatus = order.ao_status == 1 ? 0 : 1;
+      
+      const url = `http://localhost/php_g4/updateUserActivity.php`;
+      const body = {
+        ao_no: order.ao_no,
+        ao_status: newStatus
+      };
+
+      fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(body),
+      })
+      .then((response) => response.json())
+      .then((json) => {
+        if (json.code === 200) {
+          Swal.fire({
+            title: "更新成功",
+            icon: "success",
+          });
+          order.ao_status = newStatus; // 只更新本地狀態
+          this.fetchData() // 新增成功後重新獲取資料
+        } else {
+          alert(json.msg);
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    },
+    setAoNo(ao_no) {
+      // 將 ao_no 存到 localStorage
+      localStorage.setItem('ao_no', ao_no);
+      console.log(ao_no);
+    },
+
   },
   mounted() {
     const user = localStorage.getItem('currentUser');
@@ -49,27 +90,48 @@ export default {
     <table>
       <thead>
         <tr>
-          <th scope="col">報名日期</th>
+          <th scope="col">活動類別</th>
           <!-- <th scope="col">編號</th> -->
           <th scope="col">活動日期</th>
           <th scope="col">狀態</th>
-          <th scope="col">取消報名</th>
+          <!-- <th scope="col">取消報名</th> -->
           <th scope="col">報名詳情</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(order, index) in activityorders" :key="index">
-          <td>{{ formatTime(order.ao_ordertime) }}</td>
+          <td>{{ order.c_no }}</td>
           <!-- <td>{{ order.ao_no }}</td> -->
-          <td>{{ order.a_date }}</td>
+          <td>{{ order.a_start_date }}</td>
           <td>
-            <span v-if="order.ao_status == 1">正常</span>
-            <span v-if="order.ao_status == 0">取消</span>
+            <span class="normal" v-if="order.ao_status == 1">已報名</span>
+            <span class="status-cancel" v-if="order.ao_status == 0">已取消</span>
           </td>
-          <td><button>取消</button></td>
-          <td><router-link :to="{ name: 'ActivityDetail', params: { activityId: order.ao_no } }">
-              <button>查看</button>
-            </router-link></td>
+          <!-- <td>
+            <button 
+              v-if="order.ao_status == 1"
+              @click="toggleStatus(order)"
+              class="cancel-btn"
+              >取消
+            </button>
+            <button 
+              @click="toggleStatus(order)" 
+              v-if="order.ao_status == 0"
+              class="back-btn"
+              >恢復
+            </button>
+          </td> -->
+          <td>
+            <router-link 
+            :to="{ name: 'ActivityDetail', 
+            params: { activityId: order.ao_no } }"
+            >
+              <button class="detail" 
+              @click="setAoNo(order.ao_no)">
+                查看
+              </button>
+            </router-link>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -80,6 +142,7 @@ export default {
 .useractivity {
   width: 95%;
   margin: 0 auto;
+  cursor: default;
   .cancel {
     position: absolute;
     right: 0;
@@ -124,18 +187,18 @@ export default {
       }
     }
     tr {
-      line-height: 2.5;
+      line-height: 3;
       text-align: center;
       display: grid;
-      grid-template-columns: 1fr  1fr .5fr .8fr .8fr;
+      grid-template-columns: 1fr  1fr .5fr .8fr;
       align-items: center;
       @include md(){
-      line-height: 2;
+      line-height: 3;
 
       }
       th {
         color: #144433;
-        font-size: 14px;
+        font-size: 16px;
         padding: 4px 4px;
         @include md() {
           font-size: 12px;
@@ -144,27 +207,39 @@ export default {
       }
 
       td {
-        font-size: 12px;
+        font-size: 16px;
         margin: 0 3px;
         text-align: center;
-        // flex-basis: 16.6%;
+        @include md() {
+          font-size: 12px;
+          line-height: 3;
+        }
+        .normal{
+          color: $darkGreen;
+        }
+        .status-cancel{
+          color: $red;
+        }
+
       }
     }
   }
 }
 
+
 button {
   display: block;
   margin: 0 auto;
   border-radius: 25px;
-  border: 1px solid #eee;
-  background-color: #144433;
-  color: #fff;
-  font-size: 12px;
-  padding: 1px 12px;
+  border: 1px solid $red;
+  background-color: #fff;
+  color: $red;
+  font-size: 16px;
+  padding: 2px 12px;
   letter-spacing: 1px;
   cursor: pointer;
   transition: transform .1s ease-in;
+  transition: .5s;
 
   &:active {
     transform: scale(.9);
@@ -174,9 +249,58 @@ button {
     outline: none;
   }
 
+  &:hover{
+    background-color: $red;
+    color: #fff;
+  }
+
   @include md() {
     font-size: 12px;
     padding: 1px 6px;
   }
+}
+.back-btn{
+  border: 1px solid $darkGreen;
+  background-color: #fff;
+  color: $darkGreen;
+  &:hover{
+    background-color: $darkGreen;
+    color: #fff;
+  }
+}
+.detail{
+  display: block;
+  margin: 0 auto;
+  border-radius: 25px;
+  border: 1px solid $darkGreen;
+  background-color: #fff;
+  color: $darkGreen;
+  font-size: 16px;
+  padding: 2px 12px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: transform .1s ease-in;
+  transition: .5s;
+
+  &:active {
+    transform: scale(.9);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover{
+    background-color: $darkGreen;
+    color: #fff;
+  }
+
+  @include md() {
+    font-size: 12px;
+    padding: 1px 6px;
+  }
+}
+a{
+  text-decoration: none;
 }
 </style>

@@ -2,41 +2,66 @@
     <div>
         <h2>活動訂單詳情</h2>
         <div class="contain">
-            <router-link to="/userlayout/useractivity"><button class="cancel1"><i class="fa-solid fa-xmark"
-                        style="color: #FFF;"></i></button></router-link>
-            <div>
-                <div class="signup_info">
-                    <p>報名日期:</p> <span>{{ this.orders[0].ao_ordertime }}</span>
-                    <p>報名編號:</p> <span>{{ orderId }}</span>
-                    <p>活動日期:</p> <span>{{ this.orders[0].a_date }}</span>
-                    <p>報名狀態:</p> <span>{{ this.orders[0].ao_status }}</span>
+            <router-link to="/userlayout/useractivity">
+                <button class="cancel1">
+                    <i class="fa-solid fa-xmark" style="color: #FFF;"></i>
+                </button>
+            </router-link>
+            <div class="signup_info">
+                <div>
+                    <p>報名日期:</p> 
+                    <span>{{ formatDate(displayData.ao_ordertime) }}</span>
+                    <p>報名編號:</p> 
+                    <span>{{ displayData.ao_no }}</span>
+                    <p>活動日期:</p> 
+                    <span>{{ displayData.a_start_date }}</span>
+                    <p>報名狀態:</p> 
+                    <span v-if="displayData.ao_status == 1">已報名</span>
+                    <span v-if="displayData.ao_status == 0">已取消</span>
                 </div>
+
             </div>
             <div class="order">
                 <div class="order_list">
                     <div class="order_item">
                         <div class="event_pic">
-                            <img src="../assets/image/event-images/event-img.png" alt="product picture">
+                            <img :src="parsePic( displayData.a_img)" alt="act1">
                         </div>
                         <div class="text">
-                            <h3>探險農業!食農教育與小農的組合，創造嶄新的農體驗</h3>
-                            <p>日 期 <span>2024/05/24
-                                </span></p>
-                            <p>時 間 <span> 14:00-16:00
-                                </span></p>
-                            <p>地 點 <span>苗栗縣公館鄉活動中心
-                                </span></p>
-                            <p>講 師 <span>李美華 女士</span></p>
+                            <h3>{{ displayData.a_name }}</h3>
+                            <div>
+                                <span>日 期 : </span>
+                                <span>{{ displayData.a_start_date }}</span>
+                            </div>
+                            <div>
+                                <span>時 間 : </span>
+                                <span>{{ formatTime(displayData.a_time) }}</span>
+                            </div>
+                            <div>
+                                <span>地 點 : </span>
+                                <span>{{ displayData.a_loc }}</span>
+                            </div>
+                            <div v-if="displayData.a_teacher != '無'">
+                                <span>講 師 : </span>
+                                <span>{{ displayData.a_teacher }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <!-- 其他訂單詳情 -->
                 <div class="priceinfo">
                     <div class="priceinfo_item">
-                        <span class="title">費用:</span><span class="int">NT$480</span>
+                        <div>
+                            <span class="title">報名人數:</span>
+                            <span class="int">{{ displayData.ao_count }} 人</span>
+                        </div>
+                        <div>
+                            <span class="title">費用:</span>
+                            <span class="int">NT$ {{ displayData.ao_totalfee }} 元</span>
+                        </div>
                     </div>
                 </div>
-                <div class="contact-person">
+                <!-- <div class="contact-person">
                     <h4>收件人基本資料</h4>
                     <div class="name">
                         <span>姓名:</span>
@@ -54,57 +79,167 @@
                         <span>收件地址:</span>
                         <span>台北市中正區中山北路123號</span>
                     </div>
-                </div>
-                <div class="btn">
-                    <button class="cancel">取消報名</button>
-                </div>
+                </div> -->
             </div>
         </div>
-
+        <div class="btn">
+            <button 
+            class="cancel" 
+            @click="comfirmToggle"
+            v-if="displayData.ao_status == 1">
+                取消報名
+            </button>
+            <button 
+            class="cancelDone" 
+            v-if="displayData.ao_status == 0">
+                已取消
+            </button>
+        </div>
     </div>
 </template>
 
 <script>
+import Swal from 'sweetalert2' //引用sweetalert2
+
 export default {
     data() {
         return {
-            orders: [
-                {
-                    "ao_no": "48", "a_date": "2024/06/12", "ao_status": '已報名', "ao_ordertime": "2024/06/10", "product_img": '../src/assets/image/brocoli.png',
-                }
-            ]
+            orders: [],
+            displayData:[],
+            userData:'',
+            m_no:'',
+            ao_no:'',
+            ao_status:'',
+            a_no:'',
+            ao_count:''
+            
+            
         }
     },
-    props: ['activityId'],
+    methods:{
+        fetchData() {
+            fetch('http://localhost/php_g4/userActivityDetail.php', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    m_no: this.m_no,
+                    ao_no: this.ao_no
+                })
+            })
+            .then((res) => res.json())
+            .then((json) => {
+                this.orders = json['data']['list'];
+                console.log(json);
+                console.log(this.orders);
+                this.displayData = this.orders.find((item) => item.ao_no == this.ao_no )
+                console.log( this.displayData);
+            })
+        },
+        formatDate(dateTime) {
+            if (!dateTime) {
+                return ''; 
+            }
+        return dateTime.split(' ')[0]; 
+        },
+        formatTime(dateTime) {
+            if (!dateTime) {
+                return ''; 
+            }
+        return dateTime.split(' ')[1]; 
+        },
+        parsePic(file) {
+            return new URL(`../assets/image/${file}`, import.meta.url).href
+        },
+        toggleStatus() {
+            const newStatus = this.ao_status === 0;
+            
+            const url = `http://localhost/php_g4/updateUserActivity.php`;
+            const body = {
+                ao_no: this.ao_no,
+                ao_status: newStatus,
+                a_no:this.displayData.a_no,
+                ao_count: this.displayData.ao_count
+                
+            };
+            
+            fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(body),
+            })
+            .then((response) => response.json())
+            .then((json) => {
+                if (json.code === 200) {
+                    this.fetchData();
+                } else {
+                    alert(json.msg);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        },
+        comfirmToggle(){
+            Swal.fire({
+                title: "確定取消報名?",
+                text: "取消後就必須重新報名!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "確認!",
+                cancelButtonText:"取消"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.toggleStatus()
+                    Swal.fire({
+                        title: "已取消!",
+                        icon: "success",
+                    });
+                }
+            });
+        }
+    },
     computed: {
         orderId() {
             return this.$route.params.activityId;
         }
     },
-    created() {
-        // 根據 orderId 獲取訂單詳情
-    }
+    mounted() {
+        const user = localStorage.getItem('currentUser');
+        const ao_no = localStorage.getItem('ao_no');
+        console.log(user);
+        console.log(ao_no);
+        if (user) {
+            this.userData = JSON.parse(user);
+            this.m_no = this.userData.m_no;
+        }
+        if (ao_no) {
+            this.ao_no = ao_no;
+        }
+        if (this.m_no && this.ao_no) {
+            this.fetchData(); // 確保 m_no 和 ao_no 被設置後再調用 fetchData
+        }
+    },
 }
 </script>
 
 <style lang="scss" scoped>
+*{
+    cursor: default;
+}
 h2 {
     text-align: center;
     color: #144433;
     margin: 20px 0;
     font-family: $titleFont;
     font-size: 24px;
-    font-weight: 500;
+    font-weight: bold;
 
     @include md() {
         font-size: 20px;
     }
 }
 
-h3 {
-    padding: 3px;
-    line-height: 1.3;
-}
+
 
 .contain {
     display: flex;
@@ -129,28 +264,44 @@ h3 {
     }
 }
 
-.order {
-    width: 90%;
 
-    @include md() {
-        font-size: 14px;
-    }
-}
 
 .signup_info {
-    max-width: 100px;
+    width: 30%;
+    height: 230px;
+    max-width: 150px;
     display: flex;
     flex-direction: column;
-    border: 1px solid #144433;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $darkGreen;
     padding: 6px 8px;
     box-sizing: border-box;
-
-    span {
-        margin: 2px 6px;
-        font-size: 12px;
-        padding: 10px 0;
+    div{
+        height: 95%;
+        display: flex;
+        flex-direction: column;
+        p{
+            color: $darkGreen;
+            font-weight: bold;
+            font-size: 16px;
+            @include md(){
+                font-size: 14px;
+            }
+        }
+        span {
+            margin: 2px 0px;
+            font-size: 14px;
+            padding: 10px 0;
+            color: grey;
+            @include md(){
+                font-size: 12px;
+            }
+        }
     }
-
+    @include md(){
+        width: 35%;
+    }
     @include sm() {
         max-width: 100px;
     }
@@ -172,11 +323,22 @@ h3 {
     background-color: #144433;
 }
 
+.order {
+    width: 90%;
+    border-top: 1px solid #144433;
+
+    @include md() {
+        font-size: 14px;
+        width: 80%;
+    }
+}
 .order_list {
     width: 100%;
-    border-top: 1px solid #144433;
     height: 267px;
     overflow-y: scroll;
+    color:grey;
+    border-bottom: 1px solid #144433;
+
 
     @include md() {
         height: 225px;
@@ -185,12 +347,11 @@ h3 {
     .order_item {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        // justify-content: space-between;
         margin: 6px 4px;
         // gap: 10px;
         align-items: center;
-        padding: 5px 0;
-        border-bottom: 1px solid #144433;
+        padding: 5px 10px;
 
         &:first-child {
             margin: 0px 4px;
@@ -203,28 +364,8 @@ h3 {
 
     }
 }
-
-.text {
-    font-size: 14px;
-
-    p {
-        font-size: 12px;
-        margin: 4px 0;
-    }
-}
-
-.price {
-    padding-bottom: 5px;
-}
-
-.price,
-.quatity {
-    font-size: 12px;
-    text-align: end;
-}
-
 .event_pic {
-    width: 90px;
+    width: 150px;
     height: 90px;
     margin: 6px 0;
 
@@ -235,34 +376,60 @@ h3 {
         vertical-align: top;
     }
 }
+.text {
+    font-size: 16px;
+    width: 100%;
+    h3 {
+        padding: 0px;
+        line-height: 1.5;
+        color: $darkGreen;
+        font-weight: bold;
+    }
+    div{
+        margin: 8px 0;
+        span {
+            font-size: 14px;
+            margin: 4px 0;
+        }
+    }
+
+}
+
+// .price {
+//     padding-bottom: 5px;
+// }
+
+// .price,
+// .quatity {
+//     font-size: 12px;
+//     text-align: end;
+// }
+
+
 
 .priceinfo {
     // width: 60%;
-    margin-left: 0;
+    // margin-left: 0;
+    padding: 10px 0;
     text-align: end;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #144433;
-
-    .title {
-        width: 45%;
-        text-align: end;
-
-
-    }
-
+    color: grey;
     span {
         display: inline-block;
         // text-align: center;
         margin: 4px 0;
         text-align: end;
-
-
+    }
+    
+    .title {
+        width: 45%;
+        text-align: end;
     }
 
     .int {
         width: 45%;
         text-align: end;
-
     }
 }
 
@@ -311,22 +478,26 @@ h3 {
     // position: relative;
     // top: 2px;
     padding-top: 10px;
+    margin-top: 75px;
 
     button {
         background-color: #144433;
         color: #fff;
         letter-spacing: 5px;
-        padding: 5px 10px;
+        padding: 7px 15px;
         border-radius: 20px;
         border: 1.5px solid #144433;
         transition: 0.5s;
 
         &:hover {
-            background-color: transparent;
-            color: #144433;
+            background-color: $red;
+            color: #fff;
+            border: 1.5px solid transparent;
         }
-
-
+    }
+    .cancelDone{
+        background-color: $red;
+        border: 1.5px solid $red;
     }
 }
 </style>
