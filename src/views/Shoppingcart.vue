@@ -13,12 +13,13 @@
                             <li>單價</li>
                             <li>數量</li>
                         </ul>
+                        {{ this.cartItem.p_no }}
                     </div>
-                    <div class="card" v-for="(item,index) in cartItem" :key="item.id">
+                    <div class="card" v-for="(item, index) in cartItem" :key="item.id">
                         <div class="product-into">
                             <span>{{ cartItem[index].f_name }} -{{ cartItem[index].p_name }}</span>
                             <div class="unit">
-                                <span>單位:{{ cartItem[index].unit }}</span>
+                                <span>單位:{{ cartItem[index].p_unit }}</span>
                             </div>
                         </div>
                         <div class="price-num">
@@ -27,14 +28,14 @@
                             </div>
                         </div>
                         <div class="num">
-                                <span>{{ cartItem[index].count }}</span>
+                            <span>{{ cartItem[index].count }}</span>
                         </div>
                     </div>
                 </div>
                 <div class="total">
                     <div class="Product-name">
                         <span>商品:</span>
-                        <span>NT.{{ totalprice}}</span>
+                        <span>NT.{{ totalprice }}</span>
                     </div>
                     <div class="freight">
                         <span>運費:</span>
@@ -43,7 +44,7 @@
                     </div>
                     <div class="alltotal">
                         <span>總計:</span>
-                        <span>NT.{{ totalprice + 60}}</span>
+                        <span>NT.{{ finalprice }}</span>
                     </div>
                 </div>
             </div>
@@ -61,20 +62,20 @@
                 <div>
                     <span>*</span>
                     <label for="m_account">電子信箱 : </label>
-                    <input type="email" id="m_account" name="m_account" @blur="checkemail()" v-model="errorMsg.email">
+                    <input type="email" id="m_account" name="m_account" @blur="checkemail()" v-model="email">
                     <span v-text="errorMsg.email" class="wrong-msg"></span>
 
                 </div>
                 <div>
                     <span>*</span>
                     <label for="m_phone">連絡電話 : </label>
-                    <input type="tel" id="m_phone" name="m_phone" @blur="checkphone()" v-model="errorMsg.phone">
+                    <input type="tel" id="m_phone" name="m_phone" @blur="checkphone()" v-model="phone">
                     <span v-text="errorMsg.phone" class="wrong-msg"></span>
                 </div>
                 <div>
                     <span>*</span>
                     <label for="m_add">通訊地址 : </label>
-                    <input type="text" id="m_add" name="m_add">
+                    <input type="text" id="m_add" name="m_add" v-model="m_add">
                 </div>
             </form>
             <form class="info-pay">
@@ -84,7 +85,7 @@
                 <div class="money">
                     <label>應付金額 : </label>
                     <span>NT$</span>
-                    <span>{{ totalFees }} </span>
+                    <span>{{ totalprice + 60 }} </span>
                 </div>
                 <div class="pay">
                     <label>付款方式 : </label>
@@ -95,16 +96,16 @@
                     <label>信用卡號 : </label>
                     <div>
                         <input class="card1" type="text" required maxlength="4" pattern="\d{4}"
-                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)">
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" v-model="card1">
                         <span>-</span>
                         <input class="card2" type="text" required maxlength="4" pattern="\d{4}"
-                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)">
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" v-model="card2">
                         <span>-</span>
                         <input class="card3" type="text" required maxlength="4" pattern="\d{4}"
-                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)">
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" v-model="card3">
                         <span>-</span>
-                        <input class="card3" type="text" required maxlength="4" pattern="\d{4}"
-                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)">
+                        <input class="card4" type="text" required maxlength="4" pattern="\d{4}"
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" v-model="card4">
                     </div>
                 </div>
                 <div class="deadline">
@@ -112,16 +113,17 @@
                     <label>有效期限 : </label>
                     <div>
                         <input type="text" inputmode="numeric" required maxlength="2" pattern="\d{2}"
-                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" placeholder="MM">
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" placeholder="MM" v-model="mm">
                         <span>-</span>
                         <input type="text" inputmode="numeric" required maxlength="2" pattern="\d{2}"
-                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" placeholder="YY">
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" placeholder="YY" v-model="yy">
+
                     </div>
                 </div>
                 <div class="code">
                     <span>*</span>
                     <label>CVC : </label>
-                    <input type="text" placeholder="末3碼" required maxlength="3" pattern="\d{3}">
+                    <input type="text" placeholder="末3碼" required maxlength="3" pattern="\d{3}" v-model="cvc">
                 </div>
             </form>
             <hr>
@@ -134,15 +136,23 @@
 
 <script>
 import Swal from 'sweetalert2'//引用sweetalert2
+import { useAdminStore } from '@/stores/userLogin';
+import { mapActions, mapState } from 'pinia';
 export default {
     data() {
         return {
-            responseData:[],
+            userData: '',
+            responseData: [],
             ao_count: 1,
             fee: 500,
             name: '',
+            email: '',
+            phone: '',
             count: '',
-
+            m_add: '',
+            status: 0,
+            coupon: '',
+            couponPrice: '',
             errorMsg: {
                 name: '',
                 email: '',
@@ -152,6 +162,9 @@ export default {
             card2: '',
             card3: '',
             card4: '',
+            mm: '',
+            yy: '',
+            cvc: ''
         }
     },
     computed: {
@@ -159,25 +172,28 @@ export default {
             return this.$route.params.signupId;
         },
         totalprice() {
-        let total = 0;//加總總和 
-        for(let i = 0;i < this.cartItem .length;i++) {  
-          this.cartItem[i].total = this.cartItem[i].p_fee * this.cartItem[i].count;
-          total += this.cartItem[i].total
-        }
-        return total;
-      },
+            let total = 0;//加總總和 
+            for (let i = 0; i < this.cartItem.length; i++) {
+                this.cartItem[i].total = this.cartItem[i].p_fee * this.cartItem[i].count;
+                total += this.cartItem[i].total
+            }
+            return total;
+        },
+        finalprice() {
+            return this.totalprice + 60
+        },
         // totalFees(){
         //     return this.userInfo[this.$route.params.signupId -1].a_fee * this.ao_count;
         // }
-     cartItem () {
-      let  cart = [];
-      for(let i = 0;i< this.responseData.length;i++) {
-        if(this.responseData[i].isaddCart) {
-          cart.push(this.responseData[i]);
+        cartItem() {
+            let cart = [];
+            for (let i = 0; i < this.responseData.length; i++) {
+                if (this.responseData[i].isaddCart) {
+                    cart.push(this.responseData[i]);
+                }
+            }
+            return cart;
         }
-      }
-      return cart;
-    }
     },
     watch: {
         userId: async function (val) {
@@ -185,20 +201,33 @@ export default {
         },
     },
     methods: {
-        async fetchUserInfo() {
-            return await fetch("/productList.json")
-                .then((response) => response.json())
-                .then((json) => json);
+        ...mapActions(useAdminStore, ['loadCurrentUser']),
+        fetchActivityInfo() {
+            fetch(`http://localhost/php_g4/product_detail.php`, {
+                method: 'post'
+            })
+                .then((res) => res.json())
+                .then((json) => {
+                    console.log(json)
+                    this.product_detail = json['data']['list']
+                    console.log(this.product_detail);
+                    // this.displayData = this.activityInfo.find((item) => item.a_no == this.activityId)
+                    console.log(this.displayData);
+                })
         },
         checkname() {
             const namelimit = /^[a-zA-Z\u4e00-\u9fa5]{1,15}$/g; //正規表達式：不可輸入數字、空白及特殊符號 最多15字
             if (this.name === "") {
                 this.errorMsg.name = "*請輸入姓名";
+                return false;
+
             }
             else if (namelimit.test(this.name)) {
                 this.errorMsg.name = "";
+                return true;
             } else {
                 this.errorMsg.name = "*姓名不得輸入數字、空白及特殊符號";
+                return false;
             }
         },
         checkemail() {
@@ -206,17 +235,40 @@ export default {
             const emaillimit = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;//正規表達式：email格式
             if (emaillimit.test(this.email)) {
                 this.errorMsg.email = "";
+                return true;
             } else {
                 this.errorMsg.email = "*請輸入正確的email";
+                return false;
             }
         },
+        // 前端驗證：手機
         checkphone() {
             const phonelimit = /^[0-9]{8,10}$/; //正規表達式:手機
             if (phonelimit.test(this.phone)) {
                 this.errorMsg.phone = "";
+                return true;
             } else {
                 this.errorMsg.phone = "*請輸入正確的電話號碼";
+
             }
+        },
+        checkCard() {
+
+            if (
+                this.card1 &&
+                this.card2 &&
+                this.card3 &&
+                this.card4 &&
+                this.mm &&
+                this.yy &&
+                this.cvc
+            ) {
+                return true;
+            } else {
+                return false;
+            }
+
+
         },
         handleKeyDown(event) {
             const target = event.target;
@@ -246,56 +298,116 @@ export default {
                 }
             }
         },
-        submit () {
+        submit() {
+            if (!this.checkname() || !this.checkemail() || !this.checkphone() || !this.checkCard()) {
                 Swal.fire({
-                    title: "<strong>訂購成功</strong>",
-                    icon: "success",
-                    iconColor:'#144433',
-                    html: ``,
-                    showCloseButton: false,
-                    showCancelButton: true,
-                    focusConfirm: false,
-                    confirmButtonText: `返回商品`,
-                    confirmButtonColor:'#144433',
-                    cancelButtonText:`商品紀錄`,
-                    cancelButtonColor: '#144433',
-                    background:'#eeeeee'
-                }).then(async (result) => {
-            if (result.isConfirmed) {
-                this.$router.push('/product')
-                await this.$nextTick()
-                setTimeout(() => {
-                window.scrollTo({
-                    left: 0,
-                    top: 0,
-                    behavior: 'smooth'
-                })
-                }, 280)
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                this.$router.push('/userlayout/userorder')
-                await this.$nextTick()
-                setTimeout(() => {
-                window.scrollTo({
-                    left: 0,
-                    top: 0,
-                    behavior: 'smooth'
-                })
-                }, 280)
+                    title: "資料未填寫完全",
+                    icon: "error"
+                });
+                return false;
             }
+            const url = `http://localhost/php_g4/shoppingcart.php`
+            let body = {
+                "m_no": this.userData.m_no,
+                "po_name": this.name,
+                "m_phone": this.phone,
+                "po_address": this.m_add,
+                "po_status": this.status,
+                "po_total": this.totalprice,
+                "po_finalprice": this.finalprice,
+                "c_no": this.coupon,
+                "po_discount": this.couponPrice,
+                "cartItems": this.cartItem,
+
+            }
+
+            fetch(url, {
+                method: "POST",
+                body: JSON.stringify(body)
             })
-        }
+                .then(response => response.json())
+                .then(
+                    json => {
+                        this.data = json
+                        // 清除購物車相關的 local storage
+                        localStorage.removeItem('user1');
+                        // 重置 cartItem
+                        this.responseData.forEach(v => {
+                            v.isaddCart = false
+                        })
+                        Swal.fire({
+                            title: '<strong>報名成功</strong>',
+                            icon: 'success',
+                            iconColor: '#144433',
+                            html: ``,
+                            showCloseButton: false,
+                            showCancelButton: true,
+                            focusConfirm: false,
+                            confirmButtonText: '返回商品',
+                            confirmButtonColor: '#144433',
+                            cancelButtonText: '訂單紀錄',
+                            cancelButtonColor: '#144433',
+                            background: '#eeeeee'
+                        }).then(async (result) => {
+                            if (result.isConfirmed) {
+                                this.$router.push('/product')
+                                await this.$nextTick()
+                                setTimeout(() => {
+                                    window.scrollTo({
+                                        left: 0,
+                                        top: 0,
+                                        behavior: 'smooth'
+                                    })
+                                }, 280)
+                            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                this.$router.push('/userlayout/UserOrder')
+                                await this.$nextTick()
+                                setTimeout(() => {
+                                    window.scrollTo({
+                                        left: 0,
+                                        top: 0,
+                                        behavior: 'smooth'
+                                    })
+                                }, 280)
+                            }
+                        })
+                    }
+                );
+
         },
+        // checkLogin() {
+        //     this.loadCurrentUser();
+        //     if (!this.currentUser) {
+        //         alert('尚未登入');
+        //         this.$router.push('/user');
+        //     }
+        // },
+    },
+    mounted() {
+        const user = localStorage.getItem('currentUser');
+        // console.log(user);
+        if (user) {
+            this.userData = JSON.parse(user);
+            // console.log(this.userData);
+            this.name = this.userData.m_name
+                ;
+            this.email = this.userData.m_account;
+            this.m_add = this.userData.po_address;
+            this.phone = this.userData.m_phone;
+        }
+    },
     async created() {
         if (localStorage.getItem('user1') != null) {
-    let userInfo = localStorage.getItem('user1');
-    this.responseData = JSON.parse(userInfo);
-    console.log(this.responseData );
-    // console.log(this.displayData );
-   }else {
-    this.fetchData();
-    console.log("執行");
-  }
-}
+            let userInfo = localStorage.getItem('user1');
+            this.responseData = JSON.parse(userInfo);
+            console.log(this.responseData);
+            // console.log(this.displayData );
+        } else {
+            // this.cartItem = [];
+            // this.fetchData();
+            console.log("執行");
+        }
+    }
 }
 
 </script>
@@ -372,7 +484,7 @@ section {
                     justify-content: space-between;
                     border-bottom: 1px solid #D9D9D9;
                     align-items: center;
-                    gap:10%;
+                    gap: 10%;
                     padding: 10px 0;
                     color: #837972;
 
@@ -383,23 +495,24 @@ section {
                     .price-num {
                         width: 25%;
                         text-align: center;
-                        
-                       
+
+
 
                         .price {
                             // position: relative;
-                           width: 100%;
-                        //    right:85px ;
+                            width: 100%;
+                            //    right:85px ;
                         }
                     }
+
                     .num {
-                            // position: relative;
-                            // left:80px;
-                            width: 25%;
-                            text-align: end;
+                        // position: relative;
+                        // left:80px;
+                        width: 25%;
+                        text-align: end;
 
 
-                        }
+                    }
                 }
             }
 
@@ -409,16 +522,17 @@ section {
                 align-items: end;
                 padding-top: 20px;
                 color: #837972;
+
                 .Product-name,
                 .freight,
-                 .alltotal{
-                    
+                .alltotal {
+
                     width: 30%;
                     display: flex;
                     justify-content: space-between;
-                  
+
                     align-items: center;
-                  
+
                 }
             }
 

@@ -1,4 +1,5 @@
 <script>
+import Swal from 'sweetalert2' //引用sweetalert2;
 import { useAdminStore } from '@/stores/userLogin.js'; // 引入 Pinia store
 import UserLayout from '@/components/UserLayout.vue';
 export default {
@@ -93,7 +94,31 @@ export default {
         .then(response => response.json())
         .then(
           json => {
-            this.data = json
+            this.returnData = json
+            console.log(this.returnData);
+            if (this.returnData.code != "200") {
+              Swal.fire({
+                icon: "warning",
+                title: this.returnData.msg,
+                showConfirmButton: false,
+                timer: 1500
+              });
+              this.name = '',
+                this.email = '',
+                this.psw = '',
+                this.dbpsw = ''
+            } else {
+              Swal.fire({
+                icon: "success",
+                title: this.returnData.msg,
+                showConfirmButton: false,
+                timer: 1500
+              });
+              this.name = '',
+                this.email = '',
+                this.psw = '',
+                this.dbpsw = ''
+            }
           }
         );
     },
@@ -112,8 +137,8 @@ export default {
             body: JSON.stringify(body)
           })
         const users = await response.json();
-        console.log(users["data"]);
-        console.log(store.currentUser);
+        console.log(users["data"]);//從後端拉回檔案轉為object
+        // console.log(store.currentUser);
         if (users.code != 200) {
           alert(users.msg);
           this.acc = ''
@@ -122,15 +147,39 @@ export default {
           store.setCurrentUser(users["data"]) // 設置當前用戶到 Pinia
           // console.log(store.currentUser);
           // console.log(store.currentAccount);
-          alert('登入成功!')
-          this.$router.push('/userlayout/userdata')
+          Swal.fire({
+            // position: "top-end",
+            icon: "success",
+            title: "登入成功",
+            showConfirmButton: false,
+            timer: 1500
+          });
+          //判斷從哪個頁面登入
+          this.linkto()
         }
       } catch (error) {
         console.error('登入失敗:', error)
         alert('登入失敗')
       }
     },
-  }
+    linkto() {
+      let history = this.$route.query;
+      // console.log(history);
+      if (!history.page) {
+        this.$router.push('/userlayout/userdata')
+      } else {
+        this.$router.push(history.page);
+      };
+    }
+
+  },
+  mounted() {
+    const store = useAdminStore();
+    const isLogin = store.isLoggedIn();
+    if (isLogin) {
+      this.$router.push('/userlayout/userdata');
+    }
+  },
 }
 </script>
 <script setup>
@@ -204,16 +253,16 @@ onMounted(() => {
       <img src="@/assets/image/logo_F.svg" alt="logo">
       <div class="account">
         <label for="accout">帳號</label>
-        <input type="text" placeholder="電子信箱">
+        <input type="text" placeholder="電子信箱" v-model="acc">
       </div>
       <div class="mb-psw">
         <label for="psw">密碼</label>
-        <input type="password" placeholder="密碼">
+        <input type="password" placeholder="密碼" v-model="lpsw">
       </div>
       <div class="link">
         <a href="#">忘記密碼?</a><a @click="mbSignup = !mbSignup">立即註冊!</a>
       </div>
-      <RouterLink to="/userlayout/userdata"><button>登入</button></RouterLink>
+      <button @click="memLogin" type="button">登入</button>
     </form>
     <div class="mb_signup" v-show="mbSignup">
       <h2>建立帳號</h2>
