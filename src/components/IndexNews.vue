@@ -6,76 +6,30 @@
     </div>
     <div class="news-feild">
       <div class="news-feild-container">
-        <div class="news-feild-items" v-for="(item, index) in newsData" :key="index">
+        <div class="news-feild-items" v-for="(item ,index) in responeData" :key="item.n_no">
           <button class="news-collapse" type="button" v-on:click=" toggleShow(index)">
-            <p class="news-date">{{ newsData[index].date }}</p>
-            <h2 class="news-title">{{ newsData[index].title }}</h2>
-            <div class="toggle-btn" v-if="newsData[index].isActive === false">更多</div>
+            <p class="news-date">{{ item.n_time}}</p>
+            <h2 class="news-title">{{ item.n_topic }}</h2>
+            <div class="toggle-btn" v-if="item.isActive === false">更多</div>
             <div class="toggle-btn actived" v-else>收起</div>
           </button>
-          <div class="news-content" v-show="newsData[index].isActive === true">
-            <a :href= parsePic(newsData[index].Url) target="_blank"><img :src=parsePic(newsData[index].imgUrl) alt="最新消息圖片"></a>
-            <p class="news-para" v-if="newsData[index].isClick === false">{{ trucate(index) }}<span
-                class='read-more-btn' v-on:click="newsData[index].isClick = !newsData[index].isClick">...閱讀更多</span></p>
-            <p class="news-para" v-else v-on:click="newsData[index].isClick = !newsData[index].isClick">
-              {{ newsData[index].content }}</p>
+          <div class="news-content" v-show="item.isActive === true">
+            <a :href="item.n_link" target="_blank"><img :src=parsePic(item.n_img) alt="最新消息圖片"></a>
+            <p class="news-para" v-if="item.isClick === false">{{ trucate(index) }}<span
+                class='read-more-btn' v-on:click="item.isClick = !item.isClick">...閱讀更多</span></p>
+            <p class="news-para" v-else v-on:click="item.isClick = !item.isClick">
+              {{ item.n_article }}</p>
 
           </div>
         </div>
       </div>
     </div>
   </section>
-  <!-- chat robot -->
-  <!-- <div class="chat-robot">
-    <div class="chat-robot-btn" @click="chatToggle()">
-      <img class='chat-icon' src="../assets/image/news-img/chat-icon.png" alt="對話圖示">
-    </div> -->
-  <!-- <div class="close-chat-btn"></div> -->
-  <!-- chat field -->
-  <!-- <div class="chat-field" v-show="isrobBtn === true">
-      <div class="chat-intro-field">
-        <h2 class="chat-title">客服小助手</h2>
-        <p class="chat-intro">您好!如果有任何問題或要求，請隨時跟我們聯絡。</p>
-      </div>
-      <input type="text" name="" placeholder="請輸入關鍵字" v-model="chatMeg" required>
-      <button class="submit-btn" v-on:click.prevent="userMeg()"><i class="fa-solid fa-paper-plane"
-          style="color: #144433;"></i></button>
-
-      <div class="chat-area">
-        <p class="text" v-for="item in chatData" :key="item"
-          :class="{ user: item.author === 'user', robot: item.author !== 'user' }">
-          {{ item.message }}
-        </p>
-      </div>
-    </div>
-  </div> -->
-
-  <!-- go up btn 
-<div class="go-up-btn">
-  <a href="#">TOP</a>
-</div>-->
 </template>
 <script>
 export default {
   data() {
     return {
-      isrobBtn: false,
-      chatMeg: '',
-      chatData: [{
-        message: '您好!',
-        author: 'robot',
-      },
-      {
-        message: '您好!',
-        author: 'user',
-      },
-      {
-        message: '您好!',
-        author: 'robot',
-      }
-
-
-      ],
       newsData: [{
         title: '永續食農 傳承共榮，第一屆國家食農教育傑出貢獻獎啟動徵選',
         imgUrl: 'news-img/newsimg1.png',
@@ -111,8 +65,8 @@ export default {
         Url: '',
         isActive: false,
         isClick: false,
-      }]
-
+      }],
+      responeData:[],
     }
   },
   methods: {
@@ -120,14 +74,14 @@ export default {
       return new URL(`../assets/image/${file}`, import.meta.url).href
     },
     toggleShow(index) {
-      this.newsData[index].isActive = !this.newsData[index].isActive
+      this.responeData[index].isActive = !this.responeData[index].isActive
     },
     //paragraph limit display text
     trucate(index) {
-      if (this.newsData[index].content.length > 100) {
-        return this.newsData[index].content.substring(0, 90);
+      if (this.responeData[index].n_article.length > 100) {
+        return this.responeData[index].n_article.substring(0, 90);
       } else {
-        return this.newsData[index].content;
+        return this.responeData[index].n_article;
       }
     },
     userMeg() {
@@ -141,20 +95,28 @@ export default {
     },
     chatToggle() {
       this.isrobBtn = !this.isrobBtn;
-    }
-  },
-  computed: {
-    //enven num compute 
-    evenNums() {
-      return this.chatData.filter(number => number % 2 === 0)
     },
-    oddNums() {
-      return this.chatData.filter(number => number % 2 !== 0)
+    //fetch json檔
+    fetchData () {
+      fetch(`http://localhost/php_G4/indexNewsList.php`,{
+        method:'POST'
+      }
+      )
+      .then((res) => res.json())
+      .then((json)=> {
+        console.log(json);
+        this.responeData =json["data"]["list"]
+        for(let i = 0;i<this.responeData.length;i++) {
+          this.responeData[i].isActive = false;
+          this.responeData[i].isClick = false;
+        }
+        console.log(this.responeData)
+      })
     }
-
   },
-
-
+  mounted (){
+    this.fetchData();
+  }
 }
 </script>
 <style lang="scss" scoped>
