@@ -1,11 +1,11 @@
 <script>
-import Swal from 'sweetalert2'; //引用sweetalert2;
 import { useAdminStore } from '@/stores/userLogin';
 export default {
   data() {
     return {
       responseData: [],
       displayData: [],
+      cart: [],
       currentPage: 1,
       keyworlds: '',
       search: '',
@@ -13,7 +13,6 @@ export default {
       itemsPerPage: 12,
       totalPages: 1,
       loading: false,
-      status: false,
       m_no: ''
     }
   },
@@ -22,17 +21,27 @@ export default {
     parsePic(file) {
       return new URL(`../assets/image/${file}`, import.meta.url).href
     },
-    // 判斷商品是否加入購物車(boolean)並更新狀態(存到localStorage)
+    // 判斷商品是否加入購物車(boolean)並更新狀態(1.有登入情況下存入後台 2未登入存到localStorage)
     addCart(id) {
       const targetItem = this.responseData.find(v => v.id === id)
-      if (targetItem.isaddCart === false) {
-        targetItem.count = 1;
-      }
-
       targetItem.isaddCart = !targetItem.isaddCart;
-      localStorage.setItem(`user1`, JSON.stringify(this.responseData))
-      console.log(this.responseData)
-      this.fetchcart(targetItem.isaddCart, targetItem.p_no, targetItem.isImage1);
+      console.log(this.m_no);
+      // targetItem.count = 0;
+      // if (targetItem.isaddCart === true) {
+      //   targetItem.count = 1;
+      //   this.cart.push(targetItem)
+      // }
+      // if (targetItem.isaddCart === false) {
+      //   const finalcart = this.cart.find(v => v.id === id)
+      //   this.cart.splice(this.cart.indexOf(finalcart), 1)
+      // }
+      // localStorage.setItem(`isLogin`, JSON.stringify(this.m_no))
+      // localStorage.setItem(`user1`, JSON.stringify(this.cart))
+      // console.log(this.responseData);
+      if (this.m_no != '') {
+        alert('hihi');
+        this.fetchcart(targetItem.isaddCart, targetItem.p_no, targetItem.isImage1);
+      }
     },
     // 購買商品存入資料庫(boolean)並更新狀態(存到資料庫
     fetchcart(isaddCart, id, isImage1) {
@@ -55,12 +64,9 @@ export default {
       let targetItem = this.responseData.find(v => v.id === id);
       console.log(targetItem)
       targetItem.isImage1 = !targetItem.isImage1 //hart2加入收藏
-      if (!targetItem.isImage1) {
-        localStorage.setItem(`user1`, JSON.stringify(this.responseData))
-      } else {
-        localStorage.setItem(`user1`, JSON.stringify(this.responseData))
+      if (this.m_no != 0) {
+        this.fetchFav(targetItem.isImage1, targetItem.p_no, targetItem.isaddCart)
       }
-      this.fetchFav(targetItem.isImage1, targetItem.p_no, targetItem.isaddCart)
     },
     // 收藏商品存入資料庫(boolean)並更新狀態(存到資料庫
     fetchFav(isImage1, p_no, isaddCart) {
@@ -117,7 +123,8 @@ export default {
 
           //   console.log(json);
           //   console.log(this.responseData);
-        })
+        }
+        )
     },
     changePage(page) {
       if (page >= 1 && page <= this.totalPages) {
@@ -155,9 +162,20 @@ export default {
     }
   },
   created() {
-    const store = useAdminStore();
-    this.m_no = store.currentUser.m_no;
-    console.log(this.m_no);
+
+    let account = localStorage.getItem('currentUser');
+    if (account) { // 檢查 account 是否存在
+      let member = JSON.parse(account);
+      if (member && member['m_no']) {
+        this.m_no = member['m_no'];
+        console.log(this.m_no);
+      } else {
+        console.log('Member information is not available');
+      }
+    } else {
+      console.log('Account information is not available in localStorage');
+    }
+
     this.fetchData(this.currentPage);
   },
   computed: {
