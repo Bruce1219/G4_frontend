@@ -14,7 +14,7 @@
             <div class="toggle-btn actived" v-else>收起</div>
           </button>
           <div class="news-content" v-show="item.isActive === true">
-            <a :href= parsePic(item.n_link) target="_blank"><img :src=parsePic(item.n_img) alt="最新消息圖片"></a>
+            <a :href="item.n_link" target="_blank"><img :src=parsePic(item.n_img) alt="最新消息圖片"></a>
             <p class="news-para" v-if="item.isClick === false">{{ trucate(index) }}<span
                 class='read-more-btn' v-on:click="item.isClick = !item.isClick">...閱讀更多</span></p>
             <p class="news-para" v-else v-on:click="item.isClick = !item.isClick">
