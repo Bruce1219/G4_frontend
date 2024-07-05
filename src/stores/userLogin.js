@@ -19,6 +19,8 @@ export const useAdminStore = defineStore('admin', {
             this.currentUser = null
             this.currentAccount = null // 清空帳號資料
             localStorage.removeItem('currentUser')
+            localStorage.removeItem('isLogin'),
+                localStorage.removeItem('user_member')
         },
         loadCurrentUser() {
             const user = localStorage.getItem('currentUser')

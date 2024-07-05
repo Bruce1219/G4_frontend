@@ -1,4 +1,5 @@
 <script>
+import { useAdminStore } from '@/stores/userLogin';
 export default {
   data() {
     return {
@@ -6,19 +7,17 @@ export default {
       displayData: [],
       count: 1,
       mainImage: '', // 主圖片
+      m_no: '',
+      cart: [],
+      cartcount: {}
     };
   },
   computed: {
     userId() {
       return this.$route.params.productId;
-      // return item.$route.params. pi_id;
     },
     filteredImages() {
       const product = this.displayData;
-      // if (this.displayData != null) {
-      console.log(this.displayData)
-      // return this.mainImage = this.parsePic(this.displayData.p_img[0]);
-      // }else 
       if (product && product.p_img) {
         // 确保只返回三张次要小圖
         return product.p_img.filter(img => this.parsePic(img) !== this.mainImage).slice(0, 3);
@@ -28,38 +27,32 @@ export default {
     }
 
   },
-  // watch: {
-  //   userId: {
-  //     immediate: true,
-  //     handler: async function () {
-  //       this.responseData = await this.fetchData();
-  //       if (this.responseData && this.responseData.length > 0) {
-  //         this.mainImage = this.parsePic(this.responseData[0].p_img[0]);
-  //         // if (this.responseData.length > 0) {
-  //         // this.mainImage = this.responseData[parseInt(val)-1].p_img[0];
-  //         // } 
-  //       }
-  //     },
-
-  //   },
-  // },
   methods: {
     parsePic(file) {//修改照片路徑
       return new URL(`../assets/image/${file}`, import.meta.url).href
     },
     add() {
       this.count += 1;
-      // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
+      this.cartcount[this.displayData.p_no] = this.count;
+      this.cart.push(this.cartcount);
+
+      // localStorage.setItem(this.displayData.p_no, JSON.stringify(this.displayData.Count))
+      // localStorage.setItem('user1', JSON.stringify(this.cart));
     },
     subtraction() {
       if (this.count == 1) return
       this.count -= 1;
+      this.cartcount[this.displayData.p_no] = this.count
+      this.cart.push(this.cartcount);
+      // localStorage.setItem(this.displayData.p_no, JSON.stringify(this.displayData.Count))
+
       // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
 
     },
     async fetchData() {
       let body = {
         "p_no": this.$route.params.productId,
+        "userNo": this.m_no,
       }
       try {
         const response = await fetch(`http://localhost/php_g4/product_detail.php`, {
@@ -67,14 +60,22 @@ export default {
           body: JSON.stringify(body)
         });
         const json = await response.json();
-        this.responseData = json["data"]["list"].map((item, index) => ({
-          ...item,
-          isaddCart: false,
-        }))
-        // this.displayData = this.responseData.filter((item) => item.p_no == this.userId);
+        this.responseData = json["data"]["list"]
+        // if (this.m_no != '') {
         this.displayData = this.responseData.find((item) => item.p_no == this.userId);
         console.log(this.displayData);
         this.mainImage = this.parsePic(this.displayData.p_img[0])
+        // }
+        // else {
+        //   this.displayData = this.responseData.find((item) => item.p_no == this.userId);
+        //   console.log(this.displayData);
+        //   let unlogindata = localStorage.getItem('user1');
+        //   this.cart = JSON.parse(unlogindata);
+        //   this.displayData = this.cart;
+        //   // this.displayData = this.cart[0];
+        //   this.mainImage = this.parsePic(this.displayData.p_img[0])
+
+        // }
 
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -96,14 +97,36 @@ export default {
     , addCart() {
       if (this.displayData.isaddCart === false) {
         this.displayData.isaddCart = true;
+        this.displayData.Count = this.count;
         // localStorage.setItem(`shoppingItem${index}`,JSON.stringify(this.responseData[index]));
-        // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
+        this.cartcount[this.displayData.p_no] = this.displayData.Count
+        console.log(this.cartcount);
+        localStorage.setItem(`cartcount`, JSON.stringify(this.cartcount[this.displayData.p_no] = this.displayData.Count))
       } else {
         this.displayData.isaddCart = false;
-        // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
+        localStorage.setItem(`user1`, JSON.stringify(this.displayData))
       }
       console.log(this.displayData)
+      if (this.m_no != 0) {
+        this.fetchcart(this.displayData.isaddCart, this.userId, this.displayData.isImage1)
+      }
     },
+    fetchcart(isaddCart, id, isImage1) {
+      let body = {
+        "isaddCart": isaddCart,
+        "userNo": this.m_no,
+        "isImage1": isImage1,
+        "p_no": id
+      }
+      fetch('http://localhost/php_G4/addcartandfavorite.php', {
+        method: 'POST',
+        body: JSON.stringify(body)
+      })
+        .then(response => response.json())
+        .then(data => {
+        });
+    },
+
 
     changeMainImage(imgIndex) {
       const product = this.displayData;
@@ -125,8 +148,19 @@ export default {
 
   },
   mounted() {
+    let account = localStorage.getItem('currentUser');
+    if (account) { // 檢查 account 是否存在
+      let member = JSON.parse(account);
+      if (member && member['m_no']) {
+        this.m_no = member['m_no'];
+        console.log(this.m_no);
+      } else {
+        console.log('Member information is not available');
+      }
+    } else {
+      console.log('Account information is not available in localStorage');
+    }
     this.fetchData();
-    // console.log('1')
   },
 
 };
@@ -201,17 +235,15 @@ export default {
 
 
               <div class="member-card">
-                <button class="cart-shopping" @click="addCart(userId)" v-if="displayData.isaddCart === false">
+                <button class="cart-shopping" @click="addCart()" v-if="displayData.isaddCart === false">
                   <i class="fa-solid fa-cart-shopping fa-xs"></i>加入購物車
                 </button>
-                <button class="cart-cancel-btn cart-shopping" @click="addCart(userId)"
-                  v-if="displayData.isaddCart === true">
+                <button class="cart-cancel-btn cart-shopping" @click="addCart()" v-if="displayData.isaddCart === true">
                   <i class="fa-solid fa-xmark"></i>取消
                 </button>
                 <button class="buy">
                   <router-link to="/cart">立即購買</router-link>
                 </button>
-
               </div>
             </div>
           </div>
