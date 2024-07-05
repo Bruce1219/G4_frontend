@@ -133,7 +133,7 @@ export default {
         <router-link to="/userlayout/useractivity"><button class="btn-activity">活動紀錄</button></router-link>
       </div>
       <div class="logout">
-        <button class="btn-logout">登出<i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+        <button class="btn-logout" @click="memsignout">登出<i class="fa-solid fa-arrow-right-from-bracket"></i></button>
       </div>
       <div class="mb-routerContent" :class="{ invisible: hideChild }">
         <router-view></router-view>
