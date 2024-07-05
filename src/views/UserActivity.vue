@@ -142,6 +142,7 @@ export default {
 .useractivity {
   width: 95%;
   margin: 0 auto;
+  position: relative;
   cursor: default;
   .cancel {
     position: absolute;
