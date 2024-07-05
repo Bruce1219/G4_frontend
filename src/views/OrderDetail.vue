@@ -4,114 +4,37 @@
         <div class="contain">
             <router-link to="/userlayout/userorder"><button class="cancel1"><i class="fa-solid fa-xmark"
                         style="color: #FFF;"></i></button></router-link>
-            <div>
-                <div class="order_info">
-                    <p>訂單日期:</p> <span>{{ this.orders[0].po_time }}</span>
-                    <p>訂單編號:</p> <span>{{ orderId }}</span>
-                    <p>出貨日期:</p> <span>{{ this.orders[0].po_deliverdate }}</span>
-                    <p>訂單狀態:</p> <span>{{ this.orders[0].po_status }}</span>
+            <div class="order_info">
+                <div>
+                    <p>訂單日期:</p> 
+                    <span>{{ formatDate(displayData.po_time)  }}</span>
+                    <p>訂單編號:</p> 
+                    <span>{{ displayData.po_no }}</span>
+                    <p>出貨日期:</p> 
+                    <span>{{ formatDate(displayData.po_deliverdate)  }}</span>
+                    <p>訂單狀態:</p> 
+                    <span v-if="displayData.po_status == 0">待配送</span>
+                    <span v-if="displayData.po_status == 1">配送中</span>
+                    <span v-if="displayData.po_status == 2" class="green">配送完成</span>
+                    <span v-if="displayData.po_status == 3" class="orange">待審核</span>
+                    <span v-if="displayData.po_status == 4" class="red">已註銷</span>
                 </div>
             </div>
             <div class="order">
                 <div class="order_list">
-                    <div class="order_item">
+                    <div class="order_item" v-for="item in orders" :key="item">
                         <div class="product_pic">
-                            <img src="../assets/image/brocoli.png" alt="product picture">
+                            <img :src="parsePic(item.pi_img)" alt="product picture">
                         </div>
                         <div class="text">
-                            <h3><span>墻森園</span>-<span>花椰菜</span></h3>
-                            <p>單位:<span>約5台斤*1箱</span></p>
+                            <h3><span>{{ item.f_name }}</span>-<span>{{ item.p_name }}</span></h3>
+                            <p>單位:<span>{{ item.p_unit }}</span></p>
                         </div>
                         <div class="num">
-                            <div class="price"><span>NT</span>100</div>
+                            <div class="price"><span>NT$</span>{{ item.p_fee }}</div>
                             <div class="quatity">
                                 <span>數量:</span>
-                                <span>2</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="order_item">
-                        <div class="product_pic">
-                            <img src="../assets/image/cabbage.png" alt="product picture">
-                        </div>
-                        <div class="text">
-                            <h3>
-                                <span>墻森園</span>-<span>高麗菜</span>
-                            </h3>
-                            <p>單位:
-                                <span>約5台斤*1箱</span>
-                            </p>
-                        </div>
-                        <div class="num">
-                            <div class="price">
-                                <span>NT</span>
-                                <span>80</span>
-                            </div>
-                            <div class="quatity">
-                                <span>數量:</span>
-                                <span>2</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="order_item">
-                        <div class="product_pic">
-                            <img src="../assets/image/brocoli.png" alt="product picture">
-                        </div>
-                        <div class="text">
-                            <h3><span>墻森園</span>-<span>花椰菜</span></h3>
-                            <p>單位:<span>約5台斤*1箱</span></p>
-                        </div>
-                        <div class="num">
-                            <div class="price"><span>NT</span>100</div>
-                            <div class="quatity">
-                                <span>數量:</span>
-                                <span>2</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="order_item">
-                        <div class="product_pic">
-                            <img src="../assets/image/cabbage.png" alt="product picture">
-                        </div>
-                        <div class="text">
-                            <h3>
-                                <span>墻森園</span>-<span>高麗菜</span>
-                            </h3>
-                            <p>單位:
-                                <span>約5台斤*1箱</span>
-                            </p>
-                        </div>
-                        <div class="num">
-                            <div class="price">
-                                <span>NT</span>
-                                <span>80</span>
-                            </div>
-                            <div class="quatity">
-                                <span>數量:</span>
-                                <span>2</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="order_item">
-                        <div class="product_pic">
-                            <img src="../assets/image/cabbage.png" alt="product picture">
-                        </div>
-                        <div class="text">
-                            <h3>
-                                <span>墻森園</span>-<span>高麗菜</span>
-                            </h3>
-                            <p>單位:
-                                <span>約5台斤*1箱</span>
-                            </p>
-                        </div>
-                        <div class="num">
-                            <div class="price">
-                                <span>NT</span>
-                                <span>80</span>
-                            </div>
-                            <div class="quatity">
-                                <span>數量:</span>
-                                <span>2</span>
+                                <span>{{ item.o_quatity }}</span>
                             </div>
                         </div>
                     </div>
@@ -120,77 +43,205 @@
                 <!-- 其他訂單詳情 -->
                 <div class="priceinfo">
                     <div class="priceinfo_item">
-                        <span class="title">商品:</span>
-                        <span class="int">
-                            <span>NT</span>
-                            <span>$720</span>
-                        </span>
+                        <span class="title">金額:</span>
+                        <span class="int">NT${{ displayData.po_total }}</span>
                     </div>
                     <div class="priceinfo_item">
-                        <span class="title">運費:</span><span class="int">NT60</span>
+                        <span class="title">運費:</span>
+                        <span class="int">NT$60</span>
                     </div>
                     <div class="priceinfo_item">
-                        <span class="title">總計:</span><span class="int">NT780</span>
+                        <span class="title">總計:</span>
+                        <span class="int">NT${{ displayData.po_finalprice }}</span>
                     </div>
                 </div>
                 <div class="contact-person">
                     <h4>收件人基本資料</h4>
                     <div class="name">
                         <span>姓名:</span>
-                        <span>方老伯</span>
+                        <span class="info">{{ displayData.po_name }}</span>
                     </div>
                     <div class="email">
                         <span>電子信箱:</span>
-                        <span>oldbobo@gmail.com</span>
+                        <span class="info">{{ displayData.m_account }}</span>
                     </div>
                     <div class="phone">
                         <span>聯絡電話:</span>
-                        <span>0987654321</span>
+                        <span class="info">{{ displayData.m_phone }}</span>
                     </div>
                     <div class="address">
                         <span>收件地址:</span>
-                        <span>台北市中正區中山北路123號</span>
+                        <span class="info">{{ displayData.po_address }}</span>
                     </div>
                 </div>
-                <div class="btn">
-                    <button class="cancel">取消訂單</button>
-                </div>
+                
             </div>
+        </div>
+        <div class="btn">
+            <button class="cancel" @click="comfirmToggle()" v-if="displayData.po_status == 0">取消訂單</button>
+            <button class="cancel finish" @click="comfirmToggle()" v-if="displayData.po_status == 1">完成訂單</button>
         </div>
     </div>
 </template>
 
 <script>
+import Swal from 'sweetalert2' //引用sweetalert2
+
 export default {
     data() {
         return {
-            orders: [
-                {
-                    "po_no": "061201", "po_time": "2024/06/12", "po_status": '待配送', "po_deliverdate": "2024/06/15", "product_img": '../src/assets/image/brocoli.png',
-                }
-            ]
+            orders: [],
+            displayData:[],
+            userData:'',
+            m_no:'',
+            po_no:'',
+            po_status:'',
+            p_no:'',
         }
     },
-    props: ['orderId'],
+    methods: {
+        fetchData() {
+            fetch('http://localhost/php_g4/userProductDetail.php', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    m_no: this.m_no,
+                    po_no: this.po_no
+                })
+            })
+            .then((res) => res.json())
+            .then((json) => {
+                this.orders = json['data']['list'];
+                console.log(json);
+                console.log(this.orders);
+                this.displayData = this.orders.find((item) => item.po_no == this.po_no )
+                console.log( this.displayData);
+            })
+        },
+        parsePic(file) {
+            return new URL(`../assets/image/${file}`, import.meta.url).href
+        },
+        formatDate(dateTime) {
+            if (!dateTime) {
+                return ''; 
+            }
+        return dateTime.split(' ')[0]; 
+        },
+        formatTime(dateTime) {
+            if (!dateTime) {
+                return ''; 
+            }
+        return dateTime.split(' ')[1]; 
+        },
+        toggleStatus() {
+            
+            let newStatus;
+            if (this.displayData.po_status == 1) {
+                newStatus = 2;
+            } else {
+                newStatus = 3;
+            }
+
+            
+            const url = `http://localhost/php_g4/updateUserProduct.php`;
+            const body = {
+                po_no: this.po_no,
+                po_status: newStatus,
+                
+            };
+            
+            fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(body),
+            })
+            .then((response) => response.json())
+            .then((json) => {
+                if (json.code === 200) {
+                    this.fetchData();
+                } else {
+                    alert(json.msg);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        },
+        comfirmToggle(){
+            if(this.displayData.po_status == 1){
+                Swal.fire({
+                    title: "確定完成訂單?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "確認!",
+                    cancelButtonText:"取消"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.toggleStatus()
+                        Swal.fire({
+                            title: "訂單完成!",
+                            icon: "success",
+                        });
+                    }
+                });
+            }else{
+                Swal.fire({
+                    title: "確定取消訂單?",
+                    text: "取消訂單需先經過審核喔!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "確認!",
+                    cancelButtonText:"取消"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.toggleStatus()
+                        Swal.fire({
+                            title: "訂單審核中!",
+                            icon: "success",
+                        });
+                    }
+                });
+            }
+        }
+    },
     computed: {
         orderId() {
             return this.$route.params.orderId;
         }
     },
-    created() {
-        // 根據 orderId 獲取訂單詳情
-    }
+    mounted() {
+        const user = localStorage.getItem('currentUser');
+        const po_no = localStorage.getItem('po_no');
+        console.log(user);
+        console.log(po_no);
+        if (user) {
+            this.userData = JSON.parse(user);
+            this.m_no = this.userData.m_no;
+        }
+        if (po_no) {
+            this.po_no = po_no;
+        }
+        if (this.m_no && this.po_no) {
+            this.fetchData(); // 確保 m_no 和 ao_no 被設置後再調用 fetchData
+        }
+
+    },
 }
 </script>
 
 <style lang="scss" scoped>
+*{
+    cursor: default;
+}
 h2 {
     text-align: center;
     color: #144433;
     margin: 20px 0;
     font-family: $titleFont;
     font-size: 24px;
-    font-weight: 500;
+    font-weight: bold;
 
     @include md() {
         font-size: 20px;
@@ -221,28 +272,54 @@ h2 {
     }
 }
 
-.order {
-    width: 90%;
 
-    @include md() {
-        font-size: 14px;
-    }
-}
 
 .order_info {
-    max-width: 100px;
+    width: 30%;
+    height: 230px;
+    max-width: 150px;
     display: flex;
     flex-direction: column;
-    border: 1px solid #144433;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $darkGreen;
     padding: 6px 8px;
     box-sizing: border-box;
 
-    span {
-        margin: 2px 6px;
-        font-size: 12px;
-        padding: 10px 0;
+    div{
+        height: 95%;
+        display: flex;
+        flex-direction: column;
+        p{
+            color: $darkGreen;
+            font-weight: bold;
+            font-size: 16px;
+            @include md(){
+                font-size: 14px;
+            }
+        }
+        span {
+            margin: 2px 0px;
+            font-size: 14px;
+            padding: 10px 0;
+            color: grey;
+            @include md(){
+                font-size: 12px;
+            }
+        }
+        .green{
+            color: $darkGreen;
+        }
+        .orange{
+            color: #E76900;
+        }
+        .red{
+            color: $red;
+        }
     }
-
+    @include md(){
+        width: 35%;
+    }
     @include sm() {
         max-width: 100px;
     }
@@ -263,7 +340,13 @@ h2 {
 ::-webkit-scrollbar-thumb {
     background-color: #144433;
 }
+.order {
+    width: 90%;
 
+    @include md() {
+        font-size: 14px;
+    }
+}
 .order_list {
     width: 100%;
     border-top: 1px solid #144433;
@@ -296,7 +379,7 @@ h2 {
 }
 
 .text {
-    font-size: 14px;
+    font-size: 16px;
 
     p {
         font-size: 12px;
@@ -345,14 +428,14 @@ h2 {
         // text-align: center;
         margin: 4px 0;
         text-align: end;
-
-
+        color: grey;
     }
-
     .int {
         width: 45%;
         text-align: end;
-
+        font-size: 16px;
+        color:$darkGreen;
+        font-weight: bold;
     }
 }
 
@@ -401,22 +484,33 @@ h2 {
     // position: relative;
     // top: 2px;
     padding-top: 10px;
+    // margin-top: 75px;
 
     button {
         background-color: #144433;
         color: #fff;
         letter-spacing: 5px;
-        padding: 5px 10px;
+        padding: 7px 15px;
         border-radius: 20px;
         border: 1.5px solid #144433;
         transition: 0.5s;
 
         &:hover {
-            background-color: transparent;
-            color: #144433;
+            background-color: $red;
+            color: #fff;
+            border: 1.5px solid transparent;
         }
-
-
+    }
+    .cancelDone{
+        background-color: $red;
+        border: 1.5px solid $red;
+    }
+    .finish{
+        &:hover {
+            background-color: #fff;
+            color: $darkGreen;
+            border: 1px solid $darkGreen;
+        }
     }
 }
 </style>

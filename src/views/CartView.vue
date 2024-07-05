@@ -9,8 +9,8 @@ export default {
     totalprice() {
       let total = 0;//加總總和 
       for (let i = 0; i < this.cartItem.length; i++) {
-        this.cartItem[i].total = this.cartItem[i].p_fee * this.cartItem[i].count;
-        total += this.cartItem[i].total
+        const price = this.cartItem[i].p_fee * this.cartItem[i].count;
+        total += price
       }
       return total;
     },
@@ -59,7 +59,7 @@ export default {
       console.log(this.responseData);
       // console.log(this.displayData );
     } else {
-      this.fetchData();
+      // this.fetchData();
       console.log("執行");
     }
   }
