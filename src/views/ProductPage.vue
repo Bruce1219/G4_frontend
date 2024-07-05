@@ -8,7 +8,8 @@ export default {
       count: 1,
       mainImage: '', // 主圖片
       m_no: '',
-      cart: ''
+      cart: [],
+      cartcount: {}
     };
   },
   computed: {
@@ -32,11 +33,19 @@ export default {
     },
     add() {
       this.count += 1;
-      // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
+      this.cartcount[this.displayData.p_no] = this.count;
+      this.cart.push(this.cartcount);
+
+      // localStorage.setItem(this.displayData.p_no, JSON.stringify(this.displayData.Count))
+      // localStorage.setItem('user1', JSON.stringify(this.cart));
     },
     subtraction() {
       if (this.count == 1) return
       this.count -= 1;
+      this.cartcount[this.displayData.p_no] = this.count
+      this.cart.push(this.cartcount);
+      // localStorage.setItem(this.displayData.p_no, JSON.stringify(this.displayData.Count))
+
       // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
 
     },
@@ -59,7 +68,6 @@ export default {
         // }
         // else {
         //   this.displayData = this.responseData.find((item) => item.p_no == this.userId);
-        //   alert('hihi');
         //   console.log(this.displayData);
         //   let unlogindata = localStorage.getItem('user1');
         //   this.cart = JSON.parse(unlogindata);
@@ -91,7 +99,9 @@ export default {
         this.displayData.isaddCart = true;
         this.displayData.Count = this.count;
         // localStorage.setItem(`shoppingItem${index}`,JSON.stringify(this.responseData[index]));
-        localStorage.setItem(`user1`, JSON.stringify(this.displayData))
+        this.cartcount[this.displayData.p_no] = this.displayData.Count
+        console.log(this.cartcount);
+        localStorage.setItem(`cartcount`, JSON.stringify(this.cartcount[this.displayData.p_no] = this.displayData.Count))
       } else {
         this.displayData.isaddCart = false;
         localStorage.setItem(`user1`, JSON.stringify(this.displayData))
@@ -234,7 +244,6 @@ export default {
                 <button class="buy">
                   <router-link to="/cart">立即購買</router-link>
                 </button>
-
               </div>
             </div>
           </div>

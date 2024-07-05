@@ -39,7 +39,6 @@ export default {
       // localStorage.setItem(`user1`, JSON.stringify(this.cart))
       // console.log(this.responseData);
       if (this.m_no != '') {
-        alert('hihi');
         this.fetchcart(targetItem.isaddCart, targetItem.p_no, targetItem.isImage1);
       }
     },
