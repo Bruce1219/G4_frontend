@@ -9,7 +9,7 @@ export default {
       mainImage: '', // 主圖片
       m_no: '',
       cart: [],
-      cartcount: {}
+      cartcount: 0
     };
   },
   computed: {
@@ -32,19 +32,34 @@ export default {
       return new URL(`../assets/image/${file}`, import.meta.url).href
     },
     add() {
-      this.count += 1;
-      this.cartcount[this.displayData.p_no] = this.count;
-      this.cart.push(this.cartcount);
+      if (this.displayData.isaddCart == true) {
+        this.count += 1;
+        // this.cartcount = this.count;
+        // this.cart(this.cartcount);
 
-      // localStorage.setItem(this.displayData.p_no, JSON.stringify(this.displayData.Count))
-      // localStorage.setItem('user1', JSON.stringify(this.cart));
+        // localStorage.setItem(, JSON.stringify(this.displayData.Count))
+        localStorage.setItem(this.m_no + `product` + this.displayData.p_no, this.count);
+      } else {
+        alert('請先加入購物車再選擇數量');
+        return;
+      }
     },
     subtraction() {
-      if (this.count == 1) return
-      this.count -= 1;
-      this.cartcount[this.displayData.p_no] = this.count
-      this.cart.push(this.cartcount);
-      // localStorage.setItem(this.displayData.p_no, JSON.stringify(this.displayData.Count))
+      if (this.displayData.isaddCart == true) {
+        if (this.count <= 1) {
+          return
+        };
+        this.count -= 1;
+        // this.cartcount = this.count;
+        // this.cartcount[this.displayData.p_no] = this.count
+        // this.cart.push(this.cartcount);
+      } else {
+        alert('請先加入購物車再選擇數量');
+        return;
+      }
+      localStorage.setItem(this.m_no + `product` + this.displayData.p_no, this.count);
+      console.log(this.count)
+
 
       // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
 
@@ -64,7 +79,15 @@ export default {
         // if (this.m_no != '') {
         this.displayData = this.responseData.find((item) => item.p_no == this.userId);
         console.log(this.displayData);
-        this.mainImage = this.parsePic(this.displayData.p_img[0])
+        this.mainImage = this.parsePic(this.displayData.p_img[0]);
+        // this.displayData['count'] = 1;
+        let elementcount = parseInt(0);
+        elementcount = localStorage.getItem(this.m_no + 'product' + this.displayData.p_no)
+        if (elementcount != null) {
+          this.count = parseInt(elementcount);
+          console.log(this.displayData)
+        }
+
         // }
         // else {
         //   this.displayData = this.responseData.find((item) => item.p_no == this.userId);
@@ -97,14 +120,10 @@ export default {
     , addCart() {
       if (this.displayData.isaddCart === false) {
         this.displayData.isaddCart = true;
-        this.displayData.Count = this.count;
-        // localStorage.setItem(`shoppingItem${index}`,JSON.stringify(this.responseData[index]));
-        this.cartcount[this.displayData.p_no] = this.displayData.Count
-        console.log(this.cartcount);
-        localStorage.setItem(`cartcount`, JSON.stringify(this.cartcount[this.displayData.p_no] = this.displayData.Count))
+        localStorage.setItem(this.m_no + `product` + this.displayData.p_no, this.count);
       } else {
         this.displayData.isaddCart = false;
-        localStorage.setItem(`user1`, JSON.stringify(this.displayData))
+        localStorage.removeItem(this.m_no + `product` + this.displayData.p_no)
       }
       console.log(this.displayData)
       if (this.m_no != 0) {
@@ -228,7 +247,7 @@ export default {
                 <p>數量:</p>
                 <div class="card-num">
                   <button @click="subtraction">-</button>
-                  {{ count }}
+                  {{ this.count }}
                   <button @click="add">+</button>
                 </div>
               </div>
