@@ -2,6 +2,7 @@
 export default {
   data() {
     return {
+      carts: [],
       responseData: [],
     }
   },
@@ -17,21 +18,45 @@ export default {
     cartItem() {
       let cart = [];
       for (let i = 0; i < this.responseData.length; i++) {
-        if (this.responseData[i].isaddCart) {
-          cart.push(this.responseData[i]);
-        }
+        cart.push(this.responseData[i]);
       }
       console.log(cart);
       return cart;
     }
   },
   methods: {
+    fetchData() {
+      let body = {
+        "userNo": this.m_no,
+      }
+      fetch(`http://localhost/php_g4/cartView.php`, {
+        method: 'post',
+        body: JSON.stringify(body)
+
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          this.carts = json['data']['list'];
+          this.responseData = this.carts;
+          this.responseData.forEach((element, index) => {
+            let elementcount = parseInt(0);
+            elementcount = localStorage.getItem(this.m_no + 'product' + element.p_no)
+            this.responseData[index]['count'] = 1;
+            if (elementcount != null) {
+              this.responseData[index]['count'] = elementcount;
+              console.log(this.responseData[index])
+            }
+
+          });
+        })
+    },
     parsePic(file) {
       return new URL(`../assets/image/${file}`, import.meta.url).href
     },
     add(index) {
-      this.cartItem[index].count += 1;
-      localStorage.setItem(`user1`, JSON.stringify(this.responseData))
+      this.cartItem[index].count = parseInt(this.cartItem[index].count) + 1;
+      console.log(this.cartItem[index].count)
+      localStorage.setItem(this.m_no + `product` + this.cartItem[index].p_no, this.cartItem[index].count);
     },
     subtraction(index) {
       if (this.cartItem[index].count === 1) {
@@ -39,29 +64,60 @@ export default {
         this.deleteItem(index);
       } else {
         this.cartItem[index].count -= 1;
-        localStorage.setItem(`user1`, JSON.stringify(this.responseData))
+        localStorage.setItem(this.m_no + `product` + this.cartItem[index].p_no, this.cartItem[index].count);
       }
     },
     deleteItem(index) {
       if (confirm("確定刪除？")) {
-        this.cartItem[index].isaddCart = false;
-        localStorage.setItem(`user1`, JSON.stringify(this.responseData))
+        localStorage.removeItem(this.m_no + `product` + this.cartItem[index].p_no);
+
+        let body = {
+          "isaddCart": false,
+          "userNo": this.m_no,
+          "p_no": this.cartItem[index].p_no
+        }
+        fetch('http://localhost/php_G4/addcartandfavorite.php', {
+          method: 'POST',
+          body: JSON.stringify(body)
+        })
+          .then(response => response.json())
+          .then(data => {
+          });
+
+
+        this.fetchData();
+        // this.cartItem[index].isaddCart = false;
+        console.log(this.cartIten[index])
+        // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
       } else {
         return this.cartItem[index].count = 1;
+
       }
     },
   },
   created() {
 
-    if (localStorage.getItem('user1') != null) {
-      let userInfo = localStorage.getItem('user1');
-      this.responseData = JSON.parse(userInfo);
-      console.log(this.responseData);
-      // console.log(this.displayData );
+    // if (localStorage.getItem('user1') != null) {
+    //   let userInfo = localStorage.getItem('user1');
+    //   this.responseData = JSON.parse(userInfo);
+    //   console.log(this.responseData);
+    //   // console.log(this.displayData );
+    // } else {
+    let account = localStorage.getItem('currentUser');
+    if (account) { // 檢查 account 是否存在
+      let member = JSON.parse(account);
+      if (member && member['m_no']) {
+        this.m_no = member['m_no'];
+        console.log(this.m_no);
+      } else {
+        console.log('Member information is not available');
+      }
     } else {
-      // this.fetchData();
-      console.log("執行");
+      console.log('Account information is not available in localStorage');
     }
+
+    this.fetchData();
+    // }
   }
 }
 
