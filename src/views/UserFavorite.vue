@@ -2,49 +2,9 @@
 export default {
   data() {
     return {
+      m_no: '',
+      userData: '',
       productlist: [
-        {
-          "f_name": "墻森園",
-          "p_name": "高山高麗菜",
-          "p_img": "cabbage.png",
-          "unit": "約五台斤*1箱",
-          "p_fee": 40
-        },
-        {
-          "f_name": "墻森園",
-          "p_name": "栗子地瓜",
-          "p_img": "pumpkin.png",
-          "unit": "約五台斤*1箱",
-          "p_fee": 335,
-        },
-        {
-          "f_name": "墻森園",
-          "p_name": "栗子地瓜",
-          "p_img": "pumpkin.png",
-          "unit": "約五台斤*1箱",
-          "p_fee": 335
-        },
-        {
-          "f_name": "墻森園",
-          "p_name": "栗子地瓜",
-          "p_img": "pumpkin.png",
-          "unit": "約五台斤*1箱",
-          "p_fee": 335
-        },
-        {
-          "f_name": "墻森園",
-          "p_name": "高山高麗菜",
-          "p_img": "cabbage.png",
-          "unit": "約五台斤*1箱",
-          "p_fee": 40
-        },
-        {
-          "f_name": "墻森園",
-          "p_name": "高山高麗菜",
-          "p_img": "cabbage.png",
-          "unit": "約五台斤*1箱",
-          "p_fee": 40
-        },
       ]
     }
   },
@@ -54,7 +14,45 @@ export default {
     },
     deleteitem(index) {
       this.productlist.splice(index, 1);
-      console.log(this.productlist);
+      // console.log(this.productlist);
+      let items = []
+      items.push(this.productlist[index].p_no)
+      let body = {
+        "m_no": this.m_no,
+        "p_noList": items,
+        "type": 1 //取消收藏
+      }
+      fetch(`http://localhost/php_g4/userFavoriteUpdate`, {
+        method: "POST",
+        body: JSON.stringify(body)
+      })
+        .then((res) => res.json())
+        .then((json) => { })
+    },
+    fetchData() {
+      if (!this.m_no) {
+        console.error("m_no is not available");
+        return;
+      }
+
+      fetch('http://localhost/php_G4/userFavorite.php', {
+        method: 'POST',
+        body: JSON.stringify({ m_no: this.m_no })
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          this.productlist = json['data']['list'];
+          // console.log(json);
+          console.log(this.productlist);
+        })
+    }
+  },
+  mounted() {
+    const user = localStorage.getItem('currentUser');
+    if (user) {
+      this.userData = JSON.parse(user);
+      this.m_no = this.userData.m_no;
+      this.fetchData(); // 確保 m_no 被設置後再調用 fetchData
     }
   }
 }
@@ -69,11 +67,12 @@ export default {
       <ul>
         <li v-for="(item, index) in productlist" :key="item.p_name">
           <div class="list">
-        <li><input type="checkbox" :id="'checkbox' + (index + 1)">
-          <label :for="'checkbox' + (index + 1)" id="checkbox"></label>
+        <li><input type="checkbox" :id="'checkbox' + (index)">
+          <label :for="'checkbox' + (index)" id="checkbox"></label>
+          {{ item.p_no }}
         </li>
         <li>
-          <div class="pic"><img :src="parsePic(item.p_img)"></div>
+          <div class="pic"><img :src="parsePic(item.pi_img)"></div>
         </li>
         <li>
           <div class="text">
@@ -92,7 +91,7 @@ export default {
     <div class="btn">
       <router-link to="/product"><button class="routebtn">更多商品<i
             class="fa-solid fa-arrow-right"></i></button></router-link>
-      <button class="routebtn">加入購物車<i class="fa-solid fa-cart-shopping"></i></button>
+      <button class="routebtn" @click=addCart>加入購物車<i class="fa-solid fa-cart-shopping"></i></button>
     </div>
   </div>
   </div>
@@ -164,7 +163,7 @@ ul {
 
   .cancelmark {
     @include md() {
-      order: -1;
+      // order: -1;
     }
   }
 }
@@ -181,9 +180,6 @@ li {
     height: 16px;
     border: 1px solid #144433;
 
-    @include md() {
-      display: none;
-    }
 
   }
 

@@ -56,7 +56,7 @@ export default {
       } else {
         Swal.fire({
           icon: "warning",
-          title: "尚未登入",
+          title: "請先登入會員",
           showConfirmButton: false,
           timer: 1500
         });

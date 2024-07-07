@@ -365,7 +365,7 @@ export default {
                             localStorage.removeItem(this.userData.m_no + 'product' + v.p_no);
                         })
                         Swal.fire({
-                            title: '<strong>報名成功</strong>',
+                            title: '<strong>訂單成立</strong>',
                             icon: 'success',
                             iconColor: '#144433',
                             html: ``,
