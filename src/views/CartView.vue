@@ -17,10 +17,12 @@ export default {
     },
     cartItem() {
       let cart = [];
+      if (!this.responseData) {
+        return cart;
+      }
       for (let i = 0; i < this.responseData.length; i++) {
         cart.push(this.responseData[i]);
       }
-      console.log(cart);
       return cart;
     }
   },
@@ -38,6 +40,11 @@ export default {
         .then((json) => {
           this.carts = json['data']['list'];
           this.responseData = this.carts;
+          if (!this.responseData) {
+            alert("購物車內無品項，請先選購商品")
+            this.$router.push('/product')
+            return;
+          }
           this.responseData.forEach((element, index) => {
             let elementcount = parseInt(0);
             elementcount = localStorage.getItem(this.m_no + 'product' + element.p_no)
@@ -97,12 +104,6 @@ export default {
   },
   created() {
 
-    // if (localStorage.getItem('user1') != null) {
-    //   let userInfo = localStorage.getItem('user1');
-    //   this.responseData = JSON.parse(userInfo);
-    //   console.log(this.responseData);
-    //   // console.log(this.displayData );
-    // } else {
     let account = localStorage.getItem('currentUser');
     if (account) { // 檢查 account 是否存在
       let member = JSON.parse(account);

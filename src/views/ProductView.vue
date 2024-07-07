@@ -1,5 +1,5 @@
 <script>
-import { useAdminStore } from '@/stores/userLogin';
+import Swal from 'sweetalert2'//引用sweetalert2
 export default {
   data() {
     return {
@@ -25,19 +25,7 @@ export default {
     addCart(id) {
       const targetItem = this.responseData.find(v => v.id === id)
       targetItem.isaddCart = !targetItem.isaddCart;
-      console.log(this.m_no);
-      // targetItem.count = 0;
-      // if (targetItem.isaddCart === true) {
-      //   targetItem.count = 1;
-      //   this.cart.push(targetItem)
-      // }
-      // if (targetItem.isaddCart === false) {
-      //   const finalcart = this.cart.find(v => v.id === id)
-      //   this.cart.splice(this.cart.indexOf(finalcart), 1)
-      // }
-      // localStorage.setItem(`isLogin`, JSON.stringify(this.m_no))
-      // localStorage.setItem(`user1`, JSON.stringify(this.cart))
-      // console.log(this.responseData);
+      // console.log(this.m_no);
       if (this.m_no != '') {
         this.fetchcart(targetItem.isaddCart, targetItem.p_no, targetItem.isImage1);
       }
@@ -65,6 +53,14 @@ export default {
       targetItem.isImage1 = !targetItem.isImage1 //hart2加入收藏
       if (this.m_no != 0) {
         this.fetchFav(targetItem.isImage1, targetItem.p_no, targetItem.isaddCart)
+      } else {
+        Swal.fire({
+          icon: "warning",
+          title: "尚未登入",
+          showConfirmButton: false,
+          timer: 1500
+        });
+        this.$router.push(`/user?page=${encodeURIComponent(this.$route.fullPath)}`); // 導向登入頁
       }
     },
     // 收藏商品存入資料庫(boolean)並更新狀態(存到資料庫
@@ -114,14 +110,6 @@ export default {
         .catch(error => {
           console.error("Error fetching data:", error);
           this.loading = false;
-
-
-          // .then((json) => {
-          //   this.responseData = json["data"]["list"]
-          //   // localStorage.setItem(`user1`, JSON.stringify(json))
-
-          //   console.log(json);
-          //   console.log(this.responseData);
         }
         )
     },
@@ -207,10 +195,7 @@ export default {
       return filteredData;
     },
 
-  },
-  mounted() {
-
-  },
+  }
 }
 </script>
 
@@ -256,7 +241,6 @@ export default {
       <div class="container">
         <div v-if="!loading">
           <div class="row list-product">
-            <!-- <img :src="parsePic(responseData[2].p_img[0])" alt="商品圖片" /> -->
             <div class="col-12 col-md-6 col-lg-3" v-for="(cardtItem, cardtIndex) in filterDataDisplay"
               :key="cardtIndex">
               <div class="card-product">
@@ -596,22 +580,8 @@ section {
               transform: scale(1.3);
             }
 
-            // @include s2bmd() {
-            //   &:not(:last-child):after {
-            //     content: '';
-            //     width: 50%;
-            //     height: 1.5px;
-            //     position: absolute;
-            //     transform: translateX(25%);
-
-            //     top: 50%;
-            //     background-color: $darkGreen;
-            //   }
-            // }
           }
         }
-
-        // .button-next {}
       }
     }
   }

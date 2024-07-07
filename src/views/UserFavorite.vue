@@ -54,6 +54,7 @@ export default {
     },
     deleteitem(index) {
       this.productlist.splice(index, 1);
+      console.log(this.productlist);
     }
   }
 }
