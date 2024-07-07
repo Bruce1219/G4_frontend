@@ -139,8 +139,11 @@
                             <p>我們期待您的參與，共同探討有機農業的未來發展與挑戰。如果您有任何疑問或需要更多資訊，請隨時與我們聯繫。</p>
                         </div>
                     </div>
-                    <div class="signup">
+                    <div class="signup" v-if="displayData.a_attendee < displayData.a_max ">
                         <router-link :to="`/signuppage/${activityId}`">立即報名</router-link>
+                    </div>
+                    <div class="signup" v-if="displayData.a_attendee == displayData.a_max ">
+                        <router-link class="full">已額滿</router-link>
                     </div>
                 </div>
             </div>
@@ -587,7 +590,14 @@ section {
                         background-color: $bcgw;
                         border: solid 1px $darkGreen;
                         // box-sizing: border-box;
-
+                    }
+                }
+                .full{
+                    background-color: $red;
+                    &:hover {
+                        color: #fff;
+                        background-color: $red;
+                        border: solid 1px $red;
                     }
                 }
             }
