@@ -356,11 +356,13 @@ export default {
                 .then(
                     json => {
                         this.data = json
+                        console.log(this.data);
                         // 清除購物車相關的 local storage
-                        localStorage.removeItem('user1');
+                        // localStorage.removeItem('user1');
                         // 重置 cartItem
-                        this.responseData.forEach(v => {
-                            v.isaddCart = false
+
+                        (this.data['data']).forEach(v => {
+                            localStorage.removeItem(this.userData.m_no + 'product' + v.p_no);
                         })
                         Swal.fire({
                             title: '<strong>報名成功</strong>',
