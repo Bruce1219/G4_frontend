@@ -32,7 +32,8 @@
                 type="number"
                 id="ao_count"
                 name="ao_count"
-                min="1"
+                :min="1"
+                :max = "numMax"
                 v-on:change="totalFee()"
             />
             </div>
@@ -183,6 +184,9 @@ export default {
         activityInfo: [],
         displayData:[],
         name: '',
+        a_max:'',
+        a_attendee:'',
+        numMax:'',
         ao_count: 1,
         ao_status:1,
         email:'',
@@ -229,6 +233,7 @@ export default {
                 console.log(this.activityId)
                 this.displayData = this.activityInfo.find((item) => item.a_no == this.activityId )
                 console.log( this.displayData);
+                this.numberLimit();
             })
         },
         // 前端驗證：使用者註冊時姓名不得為空
@@ -244,6 +249,12 @@ export default {
             this.errorMsg.name = '*姓名不得輸入數字、空白及特殊符號';
             return false;
         }
+        },
+        numberLimit(){
+            this.a_max = this.displayData.a_max
+            this.a_attendee = this.displayData.a_attendee
+            this.numMax = this.a_max - this.a_attendee
+            return this.numMax
         },
         // 前端驗證：使用者email有效
         checkemail() {
