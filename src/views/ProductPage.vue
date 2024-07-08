@@ -1,4 +1,5 @@
 <script>
+import Swal from 'sweetalert2';
 import { useAdminStore } from '@/stores/userLogin';
 export default {
   data() {
@@ -32,33 +33,28 @@ export default {
       return new URL(`../assets/image/${file}`, import.meta.url).href
     },
     add() {
-      if (this.displayData.isaddCart == true) {
-        this.count += 1;
-        // this.cartcount = this.count;
-        // this.cart(this.cartcount);
+      this.count += 1;
+      // this.cartcount = this.count;
+      // this.cart(this.cartcount);
 
-        // localStorage.setItem(, JSON.stringify(this.displayData.Count))
+      // localStorage.setItem(, JSON.stringify(this.displayData.Count))
+      if (this.m_no != 0) {
         localStorage.setItem(this.m_no + `product` + this.displayData.p_no, this.count);
-      } else {
-        alert('請先加入購物車再選擇數量');
-        return;
+        console.log(this.count)
       }
     },
     subtraction() {
-      if (this.displayData.isaddCart == true) {
-        if (this.count <= 1) {
-          return
-        };
-        this.count -= 1;
-        // this.cartcount = this.count;
-        // this.cartcount[this.displayData.p_no] = this.count
-        // this.cart.push(this.cartcount);
-      } else {
-        alert('請先加入購物車再選擇數量');
-        return;
+      if (this.count <= 1) {
+        return
+      };
+      this.count -= 1;
+      // this.cartcount = this.count;
+      // this.cartcount[this.displayData.p_no] = this.count
+      // this.cart.push(this.cartcount);
+      if (this.m_no != 0) {
+        localStorage.setItem(this.m_no + `product` + this.displayData.p_no, this.count);
+        console.log(this.count)
       }
-      localStorage.setItem(this.m_no + `product` + this.displayData.p_no, this.count);
-      console.log(this.count)
 
 
       // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
@@ -116,25 +112,35 @@ export default {
       // );
 
 
+    },
+    imAddCart() {
+      this.fetchcart(true, this.displayData.p_no)
     }
     , addCart() {
-      if (this.displayData.isaddCart === false) {
-        this.displayData.isaddCart = true;
-        localStorage.setItem(this.m_no + `product` + this.displayData.p_no, this.count);
-      } else {
-        this.displayData.isaddCart = false;
-        localStorage.removeItem(this.m_no + `product` + this.displayData.p_no)
-      }
-      console.log(this.displayData)
       if (this.m_no != 0) {
+        if (this.displayData.isaddCart === false) {
+          this.displayData.isaddCart = true;
+          localStorage.setItem(this.m_no + `product` + this.displayData.p_no, this.count);
+        } else {
+          this.displayData.isaddCart = false;
+          localStorage.removeItem(this.m_no + `product` + this.displayData.p_no)
+        }
+        console.log(this.displayData)
         this.fetchcart(this.displayData.isaddCart, this.userId, this.displayData.isImage1)
+      } else {
+        Swal.fire({
+          icon: "warning",
+          title: "請先登入",
+          showConfirmButton: false,
+          timer: 1500
+        });
+        this.$router.push(`/user?page=${encodeURIComponent(this.$route.fullPath)}`); // 導向登入頁
       }
     },
-    fetchcart(isaddCart, id, isImage1) {
+    fetchcart(isaddCart, id) {
       let body = {
         "isaddCart": isaddCart,
         "userNo": this.m_no,
-        "isImage1": isImage1,
         "p_no": id
       }
       fetch('http://localhost/php_G4/addcartandfavorite.php', {
@@ -260,7 +266,7 @@ export default {
                 <button class="cart-cancel-btn cart-shopping" @click="addCart()" v-if="displayData.isaddCart === true">
                   <i class="fa-solid fa-xmark"></i>取消
                 </button>
-                <button class="buy">
+                <button class="buy" @click="imAddCart()">
                   <router-link to="/cart">立即購買</router-link>
                 </button>
               </div>
