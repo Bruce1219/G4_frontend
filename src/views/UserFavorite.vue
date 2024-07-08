@@ -12,11 +12,15 @@ export default {
     parsePic(file) {
       return new URL(`../assets/image/${file}`, import.meta.url).href
     },
+    toggleBTN() {
+      this.$refs.toggleBtn.classList.toggle('active')
+    },
     deleteitem(index) {
-      this.productlist.splice(index, 1);
       // console.log(this.productlist);
       let items = []
       items.push(this.productlist[index].p_no)
+      console.log(items)
+      this.productlist.splice(index, 1);
       let body = {
         "m_no": this.m_no,
         "p_noList": items,
@@ -29,6 +33,16 @@ export default {
         .then((res) => res.json())
         .then((json) => { })
     },
+    addCart(index) {
+      let item = [];
+      //找出checked的p_no
+      for (let i = 0; i < this.productlist.length; i++) {
+
+      }
+      item.push(this.productlist[index].p_no)
+      console.log(item);
+    }
+    ,
     fetchData() {
       if (!this.m_no) {
         console.error("m_no is not available");
@@ -70,6 +84,7 @@ export default {
         <li><input type="checkbox" :id="'checkbox' + (index)">
           <label :for="'checkbox' + (index)" id="checkbox"></label>
           {{ item.p_no }}
+          {{ index }}
         </li>
         <li>
           <div class="pic"><img :src="parsePic(item.pi_img)"></div>
@@ -91,7 +106,7 @@ export default {
     <div class="btn">
       <router-link to="/product"><button class="routebtn">更多商品<i
             class="fa-solid fa-arrow-right"></i></button></router-link>
-      <button class="routebtn" @click=addCart>加入購物車<i class="fa-solid fa-cart-shopping"></i></button>
+      <button class="routebtn" @click=addCart(index)>加入購物車<i class="fa-solid fa-cart-shopping"></i></button>
     </div>
   </div>
   </div>
