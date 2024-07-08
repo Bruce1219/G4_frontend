@@ -1,204 +1,3 @@
-<script>
-import Swal from 'sweetalert2'//引用sweetalert2
-export default {
-  data() {
-    return {
-      responseData: [],
-      displayData: [],
-      cart: [],
-      currentPage: 1,
-      keyworlds: '',
-      search: '',
-      currentClass: '0',
-      itemsPerPage: 12,
-      totalPages: 1,
-      loading: false,
-      m_no: ''
-    }
-  },
-  methods: {
-    // 確保json檔回傳圖片路徑正確
-    parsePic(file) {
-      return new URL(`../assets/image/${file}`, import.meta.url).href
-    },
-    // 判斷商品是否加入購物車(boolean)並更新狀態(1.有登入情況下存入後台 2未登入存到localStorage)
-    addCart(id) {
-      const targetItem = this.responseData.find(v => v.id === id)
-      targetItem.isaddCart = !targetItem.isaddCart;
-      // console.log(this.m_no);
-      if (this.m_no != '') {
-        this.fetchcart(targetItem.isaddCart, targetItem.p_no, targetItem.isImage1);
-      }
-    },
-    // 購買商品存入資料庫(boolean)並更新狀態(存到資料庫
-    fetchcart(isaddCart, id, isImage1) {
-      let body = {
-        "isaddCart": isaddCart,
-        "userNo": this.m_no,
-        "isImage1": isImage1,
-        "p_no": id
-      }
-      fetch('http://localhost/php_G4/addcartandfavorite.php', {
-        method: 'POST',
-        body: JSON.stringify(body)
-      })
-        .then(response => response.json())
-        .then(data => {
-        });
-    },
-    //愛心收藏功能
-    toggleImage(id) {
-      let targetItem = this.responseData.find(v => v.id === id);
-      console.log(targetItem)
-      targetItem.isImage1 = !targetItem.isImage1 //hart2加入收藏
-      if (this.m_no != 0) {
-        this.fetchFav(targetItem.isImage1, targetItem.p_no, targetItem.isaddCart)
-      } else {
-        Swal.fire({
-          icon: "warning",
-          title: "請先登入會員",
-          showConfirmButton: false,
-          timer: 1500
-        });
-        this.$router.push(`/user?page=${encodeURIComponent(this.$route.fullPath)}`); // 導向登入頁
-      }
-    },
-    // 收藏商品存入資料庫(boolean)並更新狀態(存到資料庫
-    fetchFav(isImage1, p_no, isaddCart) {
-      let body = {
-        "isImage1": isImage1,
-        "userNo": this.m_no,
-        "isaddCart": isaddCart,
-        "p_no": p_no
-      }
-      fetch('http://localhost/php_G4/addcartandfavorite.php', {
-        method: 'POST',
-        body: JSON.stringify(body)
-      })
-        .then(response => response.json())
-        .then(data => {
-        });
-    },
-
-
-    //fetch json檔商品資料
-    fetchData() {
-      this.loading = true;
-
-      let body = {
-        "page": this.currentPage,
-        "userNo": this.m_no,
-      }
-      fetch(`http://localhost/php_g4/product.php`, {
-        method: "POST",
-        body: JSON.stringify(body)
-      })
-        .then((res) => res.json())
-        .then((json) => {
-          this.responseData = json["data"]["list"].map((item, index) => ({
-            ...item,
-            id: item.id || index + 1,
-            "hartImage": "hart.svg",
-            "hartImage1": "hart2.svg",
-          }));
-          this.totalPages = json["data"]["total_pages"] || 1;
-          console.log("Current page:", this.currentPage);
-          console.log("Total pages:", this.totalPages);
-          console.log("Items loaded:", this.responseData.length);
-          this.loading = false;
-        })
-        .catch(error => {
-          console.error("Error fetching data:", error);
-          this.loading = false;
-        }
-        )
-    },
-    changePage(page) {
-      if (page >= 1 && page <= this.totalPages) {
-        this.currentPage = page;
-        this.fetchData();
-      }
-    },
-
-    nextPage() {
-      console.log("點擊下一頁");
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-        this.fetchData();
-      }
-    },
-    prevPage() {
-
-      console.log("點擊上一頁");
-      if (this.currentPage > 1) {
-        this.currentPage--;
-        this.fetchData();
-      }
-
-
-    },
-    clear() {
-      //清空搜尋資料
-      this.search = ''
-      this.isSearchMode = false
-      this.displayData = this.responseData
-    },
-    activedClass() {
-      let activeClass = document.querySelector('#filter') // //偵測目前商品類別為何
-      this.currentClass = activeClass.value;
-    }
-  },
-  created() {
-
-    let account = localStorage.getItem('currentUser');
-    if (account) { // 檢查 account 是否存在
-      let member = JSON.parse(account);
-      if (member && member['m_no']) {
-        this.m_no = member['m_no'];
-        console.log(this.m_no);
-      } else {
-        console.log('Member information is not available');
-      }
-    } else {
-      console.log('Account information is not available in localStorage');
-    }
-
-    this.fetchData(this.currentPage);
-  },
-  computed: {
-    filterDataDisplay() {
-      if (this.loading) {
-        return [];
-      }
-
-      let filteredData = this.responseData;
-
-      // 应用搜索过滤
-      if (this.search) {
-        filteredData = filteredData.filter((item) => {
-          return (
-            item.p_name.includes(this.search) ||
-            item.pc_name.includes(this.search) ||
-            item.f_name.includes(this.search)
-          );
-        });
-      }
-
-      // 应用分类过滤
-      if (this.currentClass !== "0") {
-        filteredData = filteredData.filter((item) => {
-          return item.pc_name === this.currentClass;
-        });
-      }
-
-      console.log("Filtered items:", filteredData.length);
-      return filteredData;
-    },
-
-  }
-}
-</script>
-
 <template>
   <section productView>
     <div class="container section">
@@ -219,13 +18,13 @@ export default {
               <i class="fa-solid fa-magnifying-glass"></i>
             </div>
             <label for="">
-              <input type="text" placeholder="搜尋商品" v-model.lazy="search" />
+              <input type="text" placeholder="搜尋商品" v-model="search"  />
               <button @click="clear">X</button>
             </label>
           </div>
         </div>
-        <div class="filter-product" @change="activedClass()">
-          <select name="filter" id="filter">
+        <div class="filter-product" @change="onCategoryChange">
+          <select v-model="currentClass">
             <option value="0">全部商品</option>
             <option value="蔬菜">蔬菜</option>
             <option value="水果">水果</option>
@@ -241,10 +40,8 @@ export default {
       <div class="container">
         <div v-if="!loading">
           <div class="row list-product">
-            <div class="col-12 col-md-6 col-lg-3" v-for="(cardtItem, cardtIndex) in filterDataDisplay"
-              :key="cardtIndex">
+            <div class="col-12 col-md-6 col-lg-3" v-for="(cardtItem, cardtIndex) in filterDataDisplay" :key="cardtIndex">
               <div class="card-product">
-
                 <router-link :to='`/ProductPage/${cardtItem.p_no}`'>
                   <div class="img-product">
                     <img :src="parsePic(cardtItem.p_img[0])" alt="商品圖片" />
@@ -266,13 +63,12 @@ export default {
                     </div>
                   </div>
                   <div class="member-card">
-                    <button class="cart-shopping" @click="addCart(cardtItem.id)" v-if="cardtItem.isaddCart === false">
+                    <button class="cart-shopping" @click="addCart(cardtItem.id)" v-if="!cardtItem.isaddCart">
                       <i class="fa-solid fa-cart-shopping"></i>加入購物車
                     </button>
-                    <button class="cart-cancel-btn" @click="addCart(cardtItem.id)" v-if="cardtItem.isaddCart === true">
+                    <button class="cart-cancel-btn" @click="addCart(cardtItem.id)" v-else>
                       <i class="fa-solid fa-xmark"></i>取消
                     </button>
-
                     <div class="money-card">
                       <span>NT${{ cardtItem['p_fee'] }}</span>
                     </div>
@@ -281,7 +77,7 @@ export default {
               </div>
             </div>
           </div>
-          <div class="carousel">
+          <div class="carousel" v-if="!isSearchMode">
             <div class="button prev" @click="prevPage" :class="{ disabled: currentPage === 1 }">
               <img src="../assets/image/leftbutton.svg" alt="" />
             </div>
@@ -295,7 +91,6 @@ export default {
               <img src="../assets/image/rightbutton.svg" alt="" />
             </div>
           </div>
-
         </div>
         <div v-else>
           加载中...
@@ -304,6 +99,214 @@ export default {
     </div>
   </section>
 </template>
+
+<script>
+import Swal from 'sweetalert2';
+
+export default {
+  data() {
+    return {
+      responseData: [],
+      cart: [],
+      currentPage: 1,
+      search: '',
+      currentClass: '0',
+      itemsPerPage: 12,
+      totalPages: 1,
+      loading: false,
+      m_no: '',
+      searchResults: [],
+      isSearchMode: false,
+      // searchFields: ['p_name', 'f_name'],
+    };
+  },
+  computed: {
+    filterDataDisplay() {
+      if (this.loading) {
+        return [];
+      }
+
+      return this.responseData;
+
+      // 应用搜索过滤
+      // if (this.search) {
+      //   filteredData = filteredData.filter((item) => {
+      //     return (
+      //       item.p_name.includes(this.search) ||
+      //       item.pc_name.includes(this.search) ||
+      //       item.f_name.includes(this.search)
+      //     );
+      //   });
+      // }
+
+      // // 应用分类过滤
+      // if (this.currentClass !== "0") {
+      //   filteredData = filteredData.filter((item) => {
+      //     return item.pc_name === this.currentClass;
+      //   });
+      // }
+
+      // console.log("Filtered items:", filteredData.length);
+      // return filteredData;
+    },
+
+  },
+
+  methods: {
+    async fetchData() {
+      this.loading = true;
+
+      let body = {
+        page: this.currentPage,
+        userNo: this.m_no,
+        searchTerm: this.search,
+        categoryFilter: this.currentClass !== "0" ? this.currentClass : "",
+        itemsPerPage: this.itemsPerPage
+      };
+
+      try {
+        const response = await fetch('http://localhost/php_G4/product.php', {
+          method: 'POST',
+          body: JSON.stringify(body)
+        });
+        const json = await response.json();
+        this.responseData = json.data.list.map((item, index) => ({
+          ...item,
+          id: item.id || index + 1,
+          hartImage: "hart.svg",
+          hartImage1: "hart2.svg",
+        }));
+        this.totalPages = json.data.totalPages || 1;
+        this.isSearchMode = this.search !== '';
+        console.log("Current page:", this.currentPage);
+        console.log("Total pages:", this.totalPages);
+        console.log("Items loaded:", this.responseData.length);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    parsePic(file) {
+      return new URL(`../assets/image/${file}`, import.meta.url).href;
+    },
+    addCart(id) {
+      const targetItem = this.responseData.find(v => v.id === id);
+      targetItem.isaddCart = !targetItem.isaddCart;
+      if (this.m_no !== '') {
+        this.fetchcart(targetItem.isaddCart, targetItem.p_no, targetItem.isImage1);
+      }
+    },
+    async fetchcart(isaddCart, id, isImage1) {
+      let body = {
+        isaddCart: isaddCart,
+        userNo: this.m_no,
+        isImage1: isImage1,
+        p_no: id
+      };
+      try {
+        await fetch('http://localhost/php_G4/addcartandfavorite.php', {
+          method: 'POST',
+          body: JSON.stringify(body)
+        });
+      } catch (error) {
+        console.error("Error updating cart:", error);
+      }
+    },
+    toggleImage(id) {
+      let targetItem = this.responseData.find(v => v.id === id);
+      targetItem.isImage1 = !targetItem.isImage1;
+      if (this.m_no !== 0) {
+        this.fetchFav(targetItem.isImage1, targetItem.p_no, targetItem.isaddCart);
+      } else {
+        Swal.fire({
+          icon: "warning",
+          title: "請先登入會員",
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }
+    },
+    async fetchFav(isImage1, p_no, isaddCart) {
+      let body = {
+        isImage1: isImage1,
+        userNo: this.m_no,
+        isaddCart: isaddCart,
+        p_no: p_no
+      };
+      try {
+        await fetch('http://localhost/php_G4/addcartandfavorite.php', {
+          method: 'POST',
+          body: JSON.stringify(body)
+        });
+      } catch (error) {
+        console.error("Error updating favorite:", error);
+      }
+    },
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+        this.fetchData();
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+        this.fetchData();
+      }
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+        this.fetchData();
+      }
+    },
+    clear() {
+      this.search = '';
+      this.isSearchMode = false;
+      this.currentPage = 1;
+      this.fetchData();
+    },
+    // onSearchInput() {
+    // clearTimeout(this.searchTimeout);
+    // this.searchTimeout = setTimeout(() => {
+    //   this.currentPage = 1;
+    //   this.fetchData();
+    // }, 500);},
+    onCategoryChange() {
+      this.currentPage = 1;
+      this.fetchData();
+    }
+  },
+  mounted() {
+    let account = localStorage.getItem('currentUser');
+    if (account) {
+      let member = JSON.parse(account);
+      if (member && member['m_no']) {
+        this.m_no = member['m_no'];
+        console.log(this.m_no);
+      } else {
+        console.log('Member information is not available');
+      }
+    } else {
+      console.log('Account information is not available in localStorage');
+    }
+
+    this.fetchData();
+  },
+  watch: {
+    search() {
+    console.log('Search term changed:', this.search); // 添加這行來檢查搜索詞是否更新
+    this.currentPage = 1;
+    this.fetchData();
+  },
+    currentClass() {
+      this.currentPage = 1;
+      this.fetchData();
+    }
+  }
+};
+</script>
 <style lang="scss" scoped>
 *:focus {
   outline: none;
@@ -505,12 +508,14 @@ section {
               margin: 14px 10px;
 
               .cart-shopping {
-                padding: 10px 15px;
+                padding: 10px 10px;
                 font-family: $pFont;
                 color: #fff;
                 background-color: $darkGreen;
                 border-radius: 20px;
                 border: 1px solid #000;
+                flex-wrap: nowrap;
+                box-sizing: border-box;
 
                 &:hover {
                   background-color: $lightGreen;
