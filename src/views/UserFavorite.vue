@@ -12,9 +12,6 @@ export default {
     parsePic(file) {
       return new URL(`../assets/image/${file}`, import.meta.url).href
     },
-    toggleBTN() {
-      this.$refs.toggleBtn.classList.toggle('active')
-    },
     deleteitem(index) {
       // console.log(this.productlist);
       let items = []
@@ -33,16 +30,24 @@ export default {
         .then((res) => res.json())
         .then((json) => { })
     },
-    addCart(index) {
-      let item = [];
-      //找出checked的p_no
-      for (let i = 0; i < this.productlist.length; i++) {
-
-      }
-      item.push(this.productlist[index].p_no)
-      console.log(item);
-    }
-    ,
+    addCart() {
+      // 找出已選中的商品的 p_no
+      let selectedItems = this.productlist.filter(item => item.checked).map(item => item.p_no);
+      console.log(selectedItems);
+      let body = {
+        m_no: this.m_no,
+        p_noList: selectedItems,
+        type: 2 // 添加到購物車
+      };
+      fetch(`http://localhost/php_g4/userFavoriteUpdate`, {
+        method: "POST",
+        body: JSON.stringify(body)
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          console.log('Add to cart response:', json);
+        });
+    },
     fetchData() {
       if (!this.m_no) {
         console.error("m_no is not available");
@@ -81,7 +86,7 @@ export default {
       <ul>
         <li v-for="(item, index) in productlist" :key="item.p_name">
           <div class="list">
-        <li><input type="checkbox" :id="'checkbox' + (index)">
+        <li><input type="checkbox" :id="'checkbox' + (index)" v-model="item.checked">
           <label :for="'checkbox' + (index)" id="checkbox"></label>
           {{ item.p_no }}
           {{ index }}
@@ -106,7 +111,7 @@ export default {
     <div class="btn">
       <router-link to="/product"><button class="routebtn">更多商品<i
             class="fa-solid fa-arrow-right"></i></button></router-link>
-      <button class="routebtn" @click=addCart(index)>加入購物車<i class="fa-solid fa-cart-shopping"></i></button>
+      <button class="routebtn" @click=addCart()>加入購物車<i class="fa-solid fa-cart-shopping"></i></button>
     </div>
   </div>
   </div>

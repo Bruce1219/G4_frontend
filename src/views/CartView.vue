@@ -94,7 +94,7 @@ export default {
 
         this.fetchData();
         // this.cartItem[index].isaddCart = false;
-        console.log(this.cartIten[index])
+        console.log(this.cartItem[index])
         // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
       } else {
         return this.cartItem[index].count = 1;
