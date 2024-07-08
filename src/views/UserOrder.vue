@@ -35,6 +35,16 @@ export default {
       localStorage.setItem('po_no', po_no);
       console.log(po_no);
     },
+    addSevenDays(dateTime) {
+      // 將日期字串轉換為 Date 物件
+      const date = new Date(dateTime);
+      // 加上7天
+      date.setDate(date.getDate() + 7);
+      // 格式化為 YYYY-MM-DD 字串
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${month}-${day}`;
+    },
   },
   mounted() {
     const user = localStorage.getItem('currentUser');
@@ -65,7 +75,10 @@ export default {
         <tr v-for="(order, index) in orders" :key="index">
           <!-- <td>{{ order.po_no }}</td> -->
           <td>{{ formatTime(order.po_time) }}</td>
-          <td>{{ formatTime(order.po_deliverdate) }}</td>
+          <td>
+            <span v-if="order.po_status == 0 || order.po_status == 3">{{ addSevenDays(order.po_time) }}前</span>
+            <span v-if="order.po_status == 1 || order.po_status == 2">{{ formatTime(order.po_deliverdate) }}</span>
+          </td>
           <td>
             <span v-if="order.po_status == 0">待配送</span>
             <span v-if="order.po_status == 1">配送中</span>
