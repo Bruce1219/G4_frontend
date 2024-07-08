@@ -10,8 +10,9 @@
                     <span>{{ formatDate(displayData.po_time)  }}</span>
                     <p>訂單編號:</p> 
                     <span>{{ displayData.po_no }}</span>
-                    <p>出貨日期:</p> 
-                    <span>{{ formatDate(displayData.po_deliverdate)  }}</span>
+                    <p v-if="displayData.po_status != 4">出貨日期:</p> 
+                    <span v-if="displayData.po_status == 0 || displayData.po_status == 3">{{ addSevenDays(displayData.po_time) }}前</span>
+                    <span v-if="displayData.po_status == 1 || displayData.po_status == 2">{{ formatTime(displayData.po_deliverdate) }}</span>
                     <p>訂單狀態:</p> 
                     <span v-if="displayData.po_status == 0">待配送</span>
                     <span v-if="displayData.po_status == 1">配送中</span>
@@ -131,6 +132,16 @@ export default {
                 return ''; 
             }
         return dateTime.split(' ')[1]; 
+        },
+        addSevenDays(dateTime) {
+            // 將日期字串轉換為 Date 物件
+            const date = new Date(dateTime);
+            // 加上7天
+            date.setDate(date.getDate() + 7);
+            // 格式化為 YYYY-MM-DD 字串
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${month}-${day}`;
         },
         toggleStatus() {
             
