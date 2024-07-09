@@ -4,6 +4,9 @@ export default {
     return {
       carts: [],
       responseData: [],
+      selected: '', // 添加 selected 属性来存储选择的优惠券
+      m_no: '',// 确保有 m_no 属性
+      coupon: '', // 添加 coupon 属性来存储选择的优惠券
     }
   },
   computed: {
@@ -13,8 +16,21 @@ export default {
         const price = this.cartItem[i].p_fee * this.cartItem[i].count;
         total += price
       }
-      return total;
+      // 應用優惠券折扣
+      if (this.selected == 'CCC8888') {
+        this.coupon = Math.floor(total * 0.2); // 8折
+      }
+      if (this.selected == 'CCC8585') {
+        this.coupon = Math.floor(total * 0.15); // 85折
+
+      }
+      if (this.selected == 'CCC9999') {
+        this.coupon = Math.floor(total * 0.1); // 9折
+      }
+      total = Math.ceil(total);
+      return total; // 返回總價
     },
+
     cartItem() {
       let cart = [];
       if (!this.responseData) {
@@ -181,9 +197,14 @@ export default {
         <div class="information">
           <div class="discount">
             <p>優惠券</p>
-            <label for="">
-              <input type="text" placeholder="請輸入優惠券碼">
-            </label>
+            <!-- <label for="">
+              <input type="select" placeholder="請輸入優惠券碼">
+            </label> -->
+            <select name="" id="" v-model="selected">請選擇優惠券
+              <option value="CCC8888">CCC8888</option>
+              <option value="CCC8585">CCC8585</option>
+              <option value="CCC9999">CCC9999</option>
+            </select>
           </div>
           <!-- 付款資訊 -->
           <div class="receive">
@@ -234,6 +255,10 @@ export default {
             <span>商品:</span>
             <span>NT.{{ totalprice }}</span>
           </div>
+          <div class="Product-name" v-if="this.coupon">
+            <span>優惠卷:</span>
+            <span>— NT.{{ this.coupon }}</span>
+          </div>
           <div class="freight">
             <span>運費:</span>
             <span>NT.60</span>
@@ -241,7 +266,7 @@ export default {
           </div>
           <div class="alltotal">
             <span>總計:</span>
-            <span>NT.{{ totalprice + 60 }}</span>
+            <span>NT.{{ totalprice - coupon + 60 }}</span>
           </div>
           <div class="Checkout">
             <button class="shopping">
@@ -439,6 +464,17 @@ section {
             width: 300px;
             height: 35px;
             padding: 0 10px;
+          }
+
+          select {
+            margin: 15px 0;
+            background-color: $bcgw;
+            width: 300px;
+            height: 35px;
+
+            option {
+              background-color: $bcgw;
+            }
           }
         }
 
