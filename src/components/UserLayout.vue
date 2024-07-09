@@ -7,42 +7,115 @@ const route = useRoute()
 const hideChild = computed(() => {
   return route.name === 'UserLayout'
 })
-// const handleResize = () => {
-//       // 你可以在這裡設置具體的條件來決定何時跳轉
-//         if (window.innerWidth > 768) {
-//         route.push('/userlayout/userdata');
-//         console.log('change')
-//         }
-//     };
 </script>
 
 <script>
 import { useRouter } from 'vue-router';
 import { onMounted, onUnmounted } from 'vue';
 import { useAdminStore } from '@/stores/userLogin.js'; // 引入 Pinia store
+import Swal from 'sweetalert2' //引用sweetalert2
+
 export default {
   data() {
     return {
-      countDown: 10, // 倒數的秒數
-      timer: null, // 定時器的引用
       m_name: '',
+      m_no:'',
+      userData:'',
+      member:[],
+      displayData:[],
+      m_img:null,
+      file:null,
+      oldFileName:'',
+
     }
   },
-  created() {
-    this.startTimer() //在此執行-->寫在事件結束後執行
-  },
   methods: {
-    startTimer() {
-      this.timer = setInterval(() => {
-        if (this.countDown > 0) {
-          // 時間未到，減一秒
-          this.countDown--
+    fetchMemberInfo() {
+      // 檢查是否有 m_no
+      if (!this.m_no) {
+        console.error("m_no is not available");
+        return;
+      }
+      
+      fetch('http://localhost/php_g4/userInfo.php', {
+        method: 'POST',
+        body: JSON.stringify({ m_no: this.m_no }) // 將 m_no 作為字串發送
+      })
+      .then((res) => res.json())
+      .then((json) => {
+        this.member = json['data'];
+        console.log(json);
+        console.log(this.member);
+      })
+    },
+    parsePic(file) {
+      return new URL(`../assets/image/${file}`, import.meta.url).href
+    },
+    getfile(event) {
+      this.file = event.target.files[0]
+      this.m_img = this.file.name
+      this.editConfirm()
+    },
+    updateImage() {
+      let formData = new FormData();
+      formData.append('m_img',this.file)//建立新的formdata
+      const url = `http://localhost/php_G4/addUserImg.php`
+      // const url = `../../php_G4/addEventImage.php`
+      fetch(url,{
+        method:'POST',
+        body:formData,
+      })
+      .then((res)=>res.json)
+      .then((json)=>{
+        this.member = json;
+      })
+    },
+    deleteImage () {
+      this.oldFileName = '../G4_frontend/src/assets/image/' + this.member.m_img
+      let body = {
+        oldFileName : this.oldFileName
+      }
+      fetch(`http://localhost/php_G4/deleteUserImg.php`,{
+        method:'POST',
+        body:JSON.stringify(body),
+      })
+      .then((res) =>res.json)
+      .then((json)=>{
+        this.member = json;
+      })
+    },
+    editConfirm() {
+      this.updateImage()
+      this.deleteImage()
+      const url = `http://localhost/php_G4/editUserImg.php`
+      let body = {
+        m_no: this.m_no,
+        m_img: this.m_img,
+        oldFileName: this.oldFileName
+      }
+      fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(body)
+      })
+      .then((res) => res.json())
+      .then((json) => {
+        this.data = json
+        if (
+            this.data != null ||
+            this.m_img_no != null
+          ) {
+            Swal.fire({
+            title: "編輯成功",
+            icon: "success",
+          });
+            this.fetchMemberInfo()
         } else {
-          // 時間到，清除計時器
-          clearInterval(this.timer)
-          this.timer = null
+            alert(this.data.msg)
         }
-      }, 1000) // 每秒執行一次進入作用域
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
     },
     async memsignout() {
       try {
@@ -54,23 +127,30 @@ export default {
         console.error('發生錯誤:', error)
         alert('發生錯誤')
       }
-    }
+    },
+    triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
   },
   mounted() {
     const store = useAdminStore() // 獲取 Pinia store
     this.m_name = store.currentAccount;
+    const user = localStorage.getItem('currentUser');
+    console.log(user);
+    if (user) {
+      this.userData = JSON.parse(user);
+      this.m_no = this.userData.m_no;
+      this.fetchMemberInfo(); // 確保 m_no 被設置後再調用 fetchData
+    }
   },
-  // mounted () {
-  //   window.addEventListener('resize',handleResize)
-  // },unmount () {
-  //   window.removeEventListener('resize',handleResize)
-  // }
+
   beforeUnmount() {
     // vue實體銷毀前，關掉這一頁面
     if (this.timer) {
       clearInterval(this.timer) // 防止記憶體洩漏，清除定時器
     }
-  }, setup() {
+  }, 
+  setup() {
     const router = useRouter();
     const handleResize = () => {
       if (window.innerWidth > 768) {
@@ -98,8 +178,11 @@ export default {
     <div class="wrapper">
       <div class="member-context">
         <div class="member-pic">
-          <!-- <img :src="member.image" /> -->
-          <img src="/src/assets/image/memberPic.png" />
+          <div class="member-img">
+            <img :src="parsePic( member.m_img)" alt="userhead"/>
+          </div>
+          <input type="file" ref="fileInput" @change="getfile($event)">
+          <button class="edit" type="button" @click="triggerFileInput"><i class="fa-solid fa-pen-to-square"></i></button>
         </div>
         <span class="member-name">{{ m_name }}</span>
         <div class="btn-selection">
@@ -123,7 +206,11 @@ export default {
   <section>
     <div class="mb-memberContext">
       <div class="member-pic">
-        <img src="/src/assets/image/memberPic.png" />
+        <div class="member-img">
+            <img :src="parsePic( member.m_img)" alt="userhead"/>
+        </div>
+        <input type="file" ref="fileInput" @change="getfile($event)">
+        <button class="edit" type="button" @click="triggerFileInput"><i class="fa-solid fa-pen-to-square"></i></button>
       </div>
       <span class="member-name">{{ m_name }}</span>
       <div class="btn-selection">
@@ -210,15 +297,38 @@ export default {
 }
 
 .member-pic {
+  position:relative;
   margin-bottom: 25px;
-  width: 125px;
-  height: 125px;
 
-  img {
-    width: 100%;
-    vertical-align: top;
-    object-fit: cover;
-    border-radius: 50%;
+  .member-img{
+    width: 125px;
+    height: 125px;
+    overflow: hidden;
+    border-radius: 500px;
+    img {
+      width: 100%;
+      vertical-align: top;
+      // object-fit: contain;
+      border-radius: 1000px;
+    
+    }
+  }
+  input{
+    display: none;
+  }
+  .edit{
+    position: absolute;
+    bottom:0;
+    right:0;
+    padding: 0;
+    border-radius: 0;
+    background-color: transparent;
+    i{
+      transition:.5s;
+      &:hover {
+        scale:1.5;
+      }
+    }
   }
 }
 
