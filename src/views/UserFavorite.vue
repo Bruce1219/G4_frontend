@@ -47,6 +47,7 @@ export default {
         .then((json) => {
           console.log('Add to cart response:', json);
         });
+      this.fetchData();
     },
     fetchData() {
       if (!this.m_no) {
@@ -88,8 +89,6 @@ export default {
           <div class="list">
         <li><input type="checkbox" :id="'checkbox' + (index)" v-model="item.checked">
           <label :for="'checkbox' + (index)" id="checkbox"></label>
-          {{ item.p_no }}
-          {{ index }}
         </li>
         <li>
           <div class="pic"><img :src="parsePic(item.pi_img)"></div>
