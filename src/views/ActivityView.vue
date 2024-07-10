@@ -42,7 +42,7 @@
         </div>
         <div class="container">
           <div class="row">
-            <div class="noEvent-field"  v-show="noEventSearch === true ">
+            <div class="noEvent-field"  v-show="noEventSearch === true && isSearchMode === true">
             <img src="../assets/image/noEventImage.svg" alt="沒有活動日圖片" class="noEvent-img" />
             <p>目前沒有活動...</p>
             </div>
