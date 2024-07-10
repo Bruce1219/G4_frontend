@@ -30,7 +30,8 @@ export default {
   },
   methods: {
     parsePic(file) {//修改照片路徑
-      return new URL(`../assets/image/${file}`, import.meta.url).href
+      // return new URL(`../assets/image/${file}`, import.meta.url).href
+      return `${import.meta.env.VITE_FILE_URL}${file}`;
     },
     add() {
       this.count += 1;
@@ -66,7 +67,7 @@ export default {
         "userNo": this.m_no,
       }
       try {
-        const response = await fetch(`http://localhost/php_g4/product_detail.php`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/product_detail.php`, {
           method: "POST",
           body: JSON.stringify(body)
         });

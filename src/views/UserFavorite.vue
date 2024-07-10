@@ -201,8 +201,12 @@ ul {
 }
 
 li {
+  position: relative;
+
   input[type="checkbox"] {
-    display: none;
+    opacity: 0;
+    top: 0;
+    position: absolute;
   }
 
   input[type="checkbox"]+label::before {
