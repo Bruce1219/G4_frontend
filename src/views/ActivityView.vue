@@ -37,16 +37,21 @@
             <div class="curr-content" v-for="(item, index) in currentEvent" :key="item.a_no">
               <router-link :to="`/activity/${index + 1}`"> {{ item.a_name }}</router-link>
             </div>
+            <div v-show="noEvent == true" class="curr-content">目前沒有活動</div>
           </div>
         </div>
         <div class="container">
           <div class="row">
+            <div class="noEvent-field"  v-show="noEventSearch === true ">
+            <img src="../assets/image/noEventImage.svg" alt="沒有活動日圖片" class="noEvent-img" />
+            <p>目前沒有活動...</p>
+            </div>
             <div
               class="event-card"
               v-show="isSearchMode === true"
               v-for="item in searchModePage"
-              :key="item.a_no"
-            >
+              :key="item.a_no">
+            <!-- 搜尋模式 -->
               <router-link :to="`/activity/${item.a_no}`">
                 <img :src="parsePic(item.a_img)" alt="活動圖片" class="event-img" />
                 <div class="event-content">
@@ -64,9 +69,19 @@
                     <div v-show="item.c_no === '講座'" class="parti-curr">
                       目前報名人數:{{ item.a_curr }}人/{{ item.a_max }}
                     </div>
+                    <div
+                      v-show="item.c_no === '講座' && item.a_attendee == a_max"
+                      class="fully-booked"
+                    >
+                      已額滿
+                    </div>
                   </div>
                 </div>
               </router-link>
+            </div>
+            <div class="noEvent-field"  v-show="noEvent && isSearchMode === false">
+            <img src="../assets/image/noEventImage.svg" alt="沒有活動日圖片" class="noEvent-img" />
+            <p>目前沒有活動...</p>
             </div>
             <div
               class="event-card col-12 col-md-6 col-lg-3"
@@ -90,13 +105,13 @@
                       >{{ item.a_loc }}
                     </div>
                     <div
-                      v-show="item.c_no === '講座' && item.a_status === 1"
+                      v-show="item.c_no === '講座' && item.a_status === 1 && item.a_attendee != item.a_max"
                       class="parti-curr"
                     >
                       報名人數:{{ item.a_attendee }}/{{ item.a_max }}人
                     </div>
                     <div
-                      v-show="item.c_no === '講座' && item.a_attendee === a_max"
+                      v-show="item.a_attendee == item.a_max"
                       class="fully-booked"
                     >
                       已額滿
@@ -167,7 +182,9 @@ export default {
       keyworlds: '',
       date: new Date(),
       currentClass: 0,
-      activeEvents: []
+      activeEvents: [],
+      noEvent:false,
+      noEventSearch:false
     }
   },
   methods: {
@@ -210,7 +227,7 @@ export default {
     },
     //fetch json檔活動資料
     fetchData() {
-      fetch(`http://localhost/php_G4/activitiesList.php`, {
+      fetch(`http://localhost/php_G4/activitiesListFront.php`, {
         method: 'post'
       })
         .then((res) => res.json())
@@ -268,7 +285,16 @@ export default {
       
     },
     pagenateData() {
-      return this.isVisable.slice((this.currentPage - 1) * perPage, this.currentPage * perPage)
+      if(this.isVisable.length == 0) {
+        this.noEvent = true;
+        console.log(this.noEvent)
+        return this.isVisable.slice((this.currentPage - 1) * perPage, this.currentPage * perPage)
+      }else{
+        this.noEvent = false;
+        console.log(this.noEvent)
+        return this.isVisable.slice((this.currentPage - 1) * perPage, this.currentPage * perPage)
+      }
+     
     },
     filterEvents() {
       const strArr = this.keyworlds.split(' ')
@@ -290,7 +316,17 @@ export default {
       }
     },
     searchModePage() {
+      if(this.filterEvents.length == 0) {
+        this.noEventSearch = true
+        console.log(this.noEventSearch)
+        console.log(this.filterEvents)
+        return this.filterEvents.slice((this.currentPage - 1) * perPage, this.currentPage * perPage)
+      }else{
+        this.noEventSearch = false;
+        console.log(this.filterEvents)
+        console.log(this.noEventSearch)
       return this.filterEvents.slice((this.currentPage - 1) * perPage, this.currentPage * perPage)
+      }
     }
   },
   mounted() {
@@ -651,6 +687,18 @@ const rules = ref(
             }
           }
         }
+        .noEvent-field {
+                width: 100%;
+                text-align: center;
+                margin-top: 10%;
+                img{
+                  width: 50%;
+                  margin: auto
+                }
+                p {
+                  color:$darkGreen;
+                }
+              }
         .btn-field {
           width: 100%;
           text-align: center;

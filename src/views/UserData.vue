@@ -14,13 +14,43 @@ export default {
       old_psw: '',
       psw: '',
       dbpsw: '',
-      userData: '',
+      // userData: '',
+      m_birth: '',
+      m_add: '',
+      m_no: '',
+      member: []
 
     }
 
 
   },
   methods: {
+    fetchMemberInfo() {
+      // 檢查是否有 m_no
+      if (!this.m_no) {
+        console.error("m_no is not available");
+        return;
+      }
+
+      fetch('http://localhost/php_g4/userInfo.php', {
+        method: 'POST',
+        body: JSON.stringify({ m_no: this.m_no }) // 將 m_no 作為字串發送
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          this.member = json['data'];
+          this.name = this.member.m_name;
+          this.account = this.member.m_account;
+          this.phone = this.member.m_phone;
+          this.m_birth = this.member.m_birth;
+          this.m_add = this.member.m_add;
+          this.password = this.member.m_password;
+          console.log(json);
+          console.log(this.member);
+          console.log(this.phone);
+          console.log("password", this.password)
+        })
+    },
     checkname() {
       if (this.name == "") {
         alert("姓名不得為空值");
@@ -33,29 +63,60 @@ export default {
       }
     },
     checkoldpsw() {
-      if (md5(this.old_psw) !== this.userData["m_password"]) {
+      if (md5(this.old_psw) != this.member.m_password) {
         alert("舊密碼錯誤");
+        return false;
+      } else {
+        return true;
+      }
+    },
+    checkNewpsw() {
+      const pswlimit = /^(?=.*[A-Z])[a-zA-Z0-9]{6,12}$/g; //正規表達式：密碼長度6-12位，至少一個大寫字母
+      if (this.psw == this.old_psw) {
+        alert("新密碼不得與舊密碼相同")
+        return false;
+      } else {
+        if (!pswlimit.test(this.psw)) {
+          alert("請輸入6-12位，至少一大寫字母")
+          return false;
+        } else {
+          return true;
+        }
       }
     },
     dbcheckpsw() {
       if (this.psw !== this.dbpsw) {
         alert("兩者密碼不相同，請重新輸入");
+        return false;
+      } else {
+        return true;
       }
     },
     submit() {
-      alert("hihi");
-      // if (!this.checkname() || !this.checkphone() || !this.checkoldpsw() || !this.dbcheckpsw()) {
-      //   return false;
-      // }
+      if (this.psw != '' || this.old_psw != '' || this.dbpsw != '') {
+        if (this.psw == '' || this.old_psw == '' || this.dbpsw == '') {
+          alert('aaa')
+          return false;
+        }
+
+        if (!this.checkNewpsw() || !this.checkoldpsw() || !this.dbcheckpsw()) {
+          alert('bbb')
+          return false;
+        }
+      }
+
       const url = `http://localhost/php_G4/revise_member.php`
+
       let body = {
         "m_id": this.userData.m_id,
         "name": this.name,
         "phone": this.phone,
-        "psw": this.psw,
-        "dbpsw": this.dbpsw,
+        "m_birth": this.m_birth,
+        "m_add": this.m_add,
       }
-
+      if (this.psw != '') {
+        body.psw = this.psw
+      }
       fetch(url, {
         method: "POST",
         body: JSON.stringify(body)
@@ -64,6 +125,11 @@ export default {
         .then(
           json => {
             this.data = json
+            this.old_psw = '';
+            this.psw = '';
+            this.dbpsw = '';
+            alert(this.data["msg"]);
+            this.fetchMemberInfo();
           }
         );
     }
@@ -79,8 +145,10 @@ export default {
     console.log(user);//抓回localStorage
     if (user) {
       this.userData = JSON.parse(user);
-      this.name = this.userData.m_name;
+      this.m_no = this.userData.m_no;
     }
+    this.fetchMemberInfo(); // 確保 m_no 被設置後再調用 fetchData
+
   },
 }
 </script>
@@ -104,11 +172,11 @@ export default {
       </div>
       <div class="birth">
         <label for="birth">生日</label>
-        <input type="date" v-model="birth" name="m_birth" class="m_birth">
+        <input type="date" v-model="m_birth" name="m_birth" class="m_birth">
       </div>
       <div class="address">
         <label for="add">地址</label>
-        <input type="email" v-model="add" name="m_add">
+        <input type="email" v-model="m_add" name="m_add">
       </div>
       <hr style="color: #144433; width: 100%;">
       <div class="oldpsw">
@@ -117,11 +185,11 @@ export default {
       </div>
       <div class="newpsw">
         <label for="new_psw">新密碼</label>
-        <input type="password" name="" v-model="psw">
+        <input type="password" name="" v-model="psw" @change="checkNewpsw()">
       </div>
       <div class="dbpsw">
         <label for="dbc_psw">確認新密碼</label>
-        <input type="password" name="" v-model="dbpsw" @blur="dbcheckpsw()">
+        <input type="password" name="" v-model="dbpsw" @change="dbcheckpsw()">
       </div>
     </form>
   </div>

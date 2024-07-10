@@ -16,7 +16,7 @@ const requireAuth = (to, from, next) => {
       showConfirmButton: false,
       timer: 1500
     });
-    next('/user?page=' + from.fullPath); // 導向登入頁
+    next(`/user?page=${encodeURIComponent(to.fullPath)}`); // 導向登入頁
 
 
   } else {
@@ -100,6 +100,7 @@ const router = createRouter({
       meta: {
         title: '購物車',
       },
+      beforeEnter: requireAuth
     },
     {
       path: '/ProductPage/:productId',
@@ -161,7 +162,7 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
-      component: () => import('../views/NotFoundView.vue')
+      component: () => import('../components/NotFoundView.vue')
     },
     {
       path: '/SvgAnimation',
@@ -176,7 +177,7 @@ const router = createRouter({
     {
       path: '/search',
       name: 'search',
-      component: () => import('../components/search.vue')
+      component: () => import('../components/NotFoundView.vue')
     },
   ],
   scrollBehavior(to, from, savedPosition) {

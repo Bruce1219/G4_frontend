@@ -143,6 +143,7 @@ export default {
         return {
             userData: '',
             responseData: [],
+            carts: [],
             ao_count: 1,
             fee: 500,
             name: '',
@@ -187,11 +188,11 @@ export default {
         // }
         cartItem() {
             let cart = [];
-            for (let i = 0; i < this.responseData.length; i++) {
-                if (this.responseData[i].isaddCart) {
-                    cart.push(this.responseData[i]);
-                }
+            for (let i = 0; i < this.responseData.length;
+                i++) {
+                cart.push(this.responseData[i]);
             }
+            console.log(cart);
             return cart;
         }
     },
@@ -202,6 +203,32 @@ export default {
     },
     methods: {
         ...mapActions(useAdminStore, ['loadCurrentUser']),
+        fetchproducData() {
+            let body = {
+                "userNo": this.userData.m_no,
+            }
+            fetch(`http://localhost/php_g4/cartView.php`, {
+                method: 'post',
+                body: JSON.stringify(body)
+
+            })
+                .then((res) => res.json())
+                .then((json) => {
+                    this.carts = json['data']['list'];
+                    this.responseData = this.carts;
+                    this.responseData.forEach((element, index) => {
+                        let elementcount = parseInt(0);
+                        elementcount = localStorage.getItem(this.userData.m_no + 'product' + element.p_no)
+                        this.responseData[index]['count'] = 1;
+                        if (elementcount != null) {
+                            this.responseData[index]['count'] = elementcount;
+                            console.log(this.responseData[index])
+                        }
+
+                    });
+                    console.log(this.responseData)
+                })
+        },
         fetchActivityInfo() {
             fetch(`http://localhost/php_g4/product_detail.php`, {
                 method: 'post'
@@ -329,14 +356,16 @@ export default {
                 .then(
                     json => {
                         this.data = json
+                        console.log(this.data);
                         // 清除購物車相關的 local storage
-                        localStorage.removeItem('user1');
+                        // localStorage.removeItem('user1');
                         // 重置 cartItem
-                        this.responseData.forEach(v => {
-                            v.isaddCart = false
+
+                        (this.data['data']).forEach(v => {
+                            localStorage.removeItem(this.userData.m_no + 'product' + v.p_no);
                         })
                         Swal.fire({
-                            title: '<strong>報名成功</strong>',
+                            title: '<strong>訂單成立</strong>',
                             icon: 'success',
                             iconColor: '#144433',
                             html: ``,
@@ -383,7 +412,7 @@ export default {
         //     }
         // },
     },
-    mounted() {
+    created() {
         const user = localStorage.getItem('currentUser');
         // console.log(user);
         if (user) {
@@ -394,19 +423,10 @@ export default {
             this.email = this.userData.m_account;
             this.m_add = this.userData.po_address;
             this.phone = this.userData.m_phone;
+            this.m_add = this.userData.m_add;
         }
-    },
-    async created() {
-        if (localStorage.getItem('user1') != null) {
-            let userInfo = localStorage.getItem('user1');
-            this.responseData = JSON.parse(userInfo);
-            console.log(this.responseData);
-            // console.log(this.displayData );
-        } else {
-            // this.cartItem = [];
-            // this.fetchData();
-            console.log("執行");
-        }
+        this.fetchproducData();
+
     }
 }
 
