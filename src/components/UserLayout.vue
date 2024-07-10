@@ -19,13 +19,13 @@ export default {
   data() {
     return {
       m_name: '',
-      m_no:'',
-      userData:'',
-      member:[],
-      displayData:[],
-      m_img:null,
-      file:null,
-      oldFileName:'',
+      m_no: '',
+      userData: '',
+      member: [],
+      displayData: [],
+      m_img: null,
+      file: null,
+      oldFileName: '',
 
     }
   },
@@ -36,17 +36,17 @@ export default {
         console.error("m_no is not available");
         return;
       }
-      
+
       fetch('http://localhost/php_g4/userInfo.php', {
         method: 'POST',
         body: JSON.stringify({ m_no: this.m_no }) // 將 m_no 作為字串發送
       })
-      .then((res) => res.json())
-      .then((json) => {
-        this.member = json['data'];
-        console.log(json);
-        console.log(this.member);
-      })
+        .then((res) => res.json())
+        .then((json) => {
+          this.member = json['data'];
+          // console.log(json);
+          // console.log(this.member);
+        })
     },
     parsePic(file) {
       return new URL(`../assets/image/${file}`, import.meta.url).href
@@ -58,31 +58,31 @@ export default {
     },
     updateImage() {
       let formData = new FormData();
-      formData.append('m_img',this.file)//建立新的formdata
+      formData.append('m_img', this.file)//建立新的formdata
       const url = `http://localhost/php_G4/addUserImg.php`
       // const url = `../../php_G4/addEventImage.php`
-      fetch(url,{
-        method:'POST',
-        body:formData,
+      fetch(url, {
+        method: 'POST',
+        body: formData,
       })
-      .then((res)=>res.json)
-      .then((json)=>{
-        this.member = json;
-      })
+        .then((res) => res.json)
+        .then((json) => {
+          this.member = json;
+        })
     },
-    deleteImage () {
+    deleteImage() {
       this.oldFileName = '../G4_frontend/src/assets/image/' + this.member.m_img
       let body = {
-        oldFileName : this.oldFileName
+        oldFileName: this.oldFileName
       }
-      fetch(`http://localhost/php_G4/deleteUserImg.php`,{
-        method:'POST',
-        body:JSON.stringify(body),
+      fetch(`http://localhost/php_G4/deleteUserImg.php`, {
+        method: 'POST',
+        body: JSON.stringify(body),
       })
-      .then((res) =>res.json)
-      .then((json)=>{
-        this.member = json;
-      })
+        .then((res) => res.json)
+        .then((json) => {
+          this.member = json;
+        })
     },
     editConfirm() {
       this.updateImage()
@@ -97,25 +97,25 @@ export default {
         method: 'POST',
         body: JSON.stringify(body)
       })
-      .then((res) => res.json())
-      .then((json) => {
-        this.data = json
-        if (
+        .then((res) => res.json())
+        .then((json) => {
+          this.data = json
+          if (
             this.data != null ||
             this.m_img_no != null
           ) {
             Swal.fire({
-            title: "編輯成功",
-            icon: "success",
-          });
+              title: "編輯成功",
+              icon: "success",
+            });
             this.fetchMemberInfo()
-        } else {
+          } else {
             alert(this.data.msg)
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error)
-      })
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error)
+        })
     },
     async memsignout() {
       try {
@@ -136,7 +136,7 @@ export default {
     const store = useAdminStore() // 獲取 Pinia store
     this.m_name = store.currentAccount;
     const user = localStorage.getItem('currentUser');
-    console.log(user);
+    // console.log(user);
     if (user) {
       this.userData = JSON.parse(user);
       this.m_no = this.userData.m_no;
@@ -149,7 +149,7 @@ export default {
     if (this.timer) {
       clearInterval(this.timer) // 防止記憶體洩漏，清除定時器
     }
-  }, 
+  },
   setup() {
     const router = useRouter();
     const handleResize = () => {
@@ -179,10 +179,11 @@ export default {
       <div class="member-context">
         <div class="member-pic">
           <div class="member-img">
-            <img :src="parsePic( member.m_img)" alt="userhead"/>
+            <img :src="parsePic(member.m_img)" alt="userhead" />
           </div>
           <input type="file" ref="fileInput" @change="getfile($event)">
-          <button class="edit" type="button" @click="triggerFileInput"><i class="fa-solid fa-pen-to-square"></i></button>
+          <button class="edit" type="button" @click="triggerFileInput"><i
+              class="fa-solid fa-pen-to-square"></i></button>
         </div>
         <span class="member-name">{{ m_name }}</span>
         <div class="btn-selection">
@@ -207,7 +208,7 @@ export default {
     <div class="mb-memberContext">
       <div class="member-pic">
         <div class="member-img">
-            <img :src="parsePic( member.m_img)" alt="userhead"/>
+          <img :src="parsePic(member.m_img)" alt="userhead" />
         </div>
         <input type="file" ref="fileInput" @change="getfile($event)">
         <button class="edit" type="button" @click="triggerFileInput"><i class="fa-solid fa-pen-to-square"></i></button>
@@ -297,36 +298,41 @@ export default {
 }
 
 .member-pic {
-  position:relative;
+  position: relative;
   margin-bottom: 25px;
 
-  .member-img{
+  .member-img {
     width: 125px;
     height: 125px;
     overflow: hidden;
     border-radius: 500px;
+
     img {
       width: 100%;
       vertical-align: top;
       // object-fit: contain;
       border-radius: 1000px;
-    
+
     }
   }
-  input{
+
+  input {
     display: none;
   }
-  .edit{
+
+  .edit {
     position: absolute;
-    bottom:0;
-    right:0;
+    bottom: 0;
+    right: 0;
     padding: 0;
     border-radius: 0;
     background-color: transparent;
-    i{
-      transition:.5s;
+
+    i {
+      transition: .5s;
+
       &:hover {
-        scale:1.5;
+        scale: 1.5;
       }
     }
   }

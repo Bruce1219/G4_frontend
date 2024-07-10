@@ -5,7 +5,8 @@ export default {
       m_no: '',
       userData: '',
       productlist: [
-      ]
+      ],
+      msg: ''
     }
   },
   methods: {
@@ -29,6 +30,11 @@ export default {
       })
         .then((res) => res.json())
         .then((json) => { })
+      if (this.productlist.length === 0) {
+        this.msg = "尚無收藏商品";
+      } else {
+        this.msg = "";
+      }
     },
     addCart() {
       // 找出已選中的商品的 p_no
@@ -62,9 +68,12 @@ export default {
         .then((res) => res.json())
         .then((json) => {
           this.productlist = json['data']['list'];
-          // console.log(json);
-          console.log(this.productlist);
         })
+      if (this.productlist.length === 0) {
+        this.msg = "尚無收藏商品";
+      } else {
+        this.msg = "";
+      }
     }
   },
   mounted() {
@@ -84,7 +93,7 @@ export default {
     <h2>收藏</h2>
     <hr>
     <div class="productlist">
-      <ul>
+      <ul v-show="productlist.length > 0">
         <li v-for="(item, index) in productlist" :key="item.p_name">
           <div class="list">
         <li><input type="checkbox" :id="'checkbox' + (index)" v-model="item.checked">
@@ -107,6 +116,10 @@ export default {
     <hr>
     </li>
     </ul>
+    <ul v-show="productlist.length == 0" class="no-items">
+      <p style="text-align: center;margin-top: 30px">尚無收藏商品</p>
+    </ul>
+
     <div class="btn">
       <router-link to="/product"><button class="routebtn">更多商品<i
             class="fa-solid fa-arrow-right"></i></button></router-link>

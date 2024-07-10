@@ -423,6 +423,7 @@ export default {
             this.email = this.userData.m_account;
             this.m_add = this.userData.po_address;
             this.phone = this.userData.m_phone;
+            this.m_add = this.userData.m_add;
         }
         this.fetchproducData();
 
