@@ -4,9 +4,10 @@ export default {
     return {
       carts: [],
       responseData: [],
-      selected: '', // 添加 selected 属性来存储选择的优惠券
+      selected: '', // selected 属性優惠券折扣
       m_no: '',// 确保有 m_no 属性
-      coupon: '', // 添加 coupon 属性来存储选择的优惠券
+      coupon: '', // 添加 coupon 属性優惠券折扣
+      address: ''
     }
   },
   computed: {
@@ -125,7 +126,9 @@ export default {
       let member = JSON.parse(account);
       if (member && member['m_no']) {
         this.m_no = member['m_no'];
-        console.log(this.m_no);
+        // console.log(this.m_no);
+        this.address = member['m_add'];
+        this.address = this.address.substring(3)
       } else {
         console.log('Member information is not available');
       }
@@ -241,7 +244,7 @@ export default {
 
             <span>地址:</span>
             <label for="">
-              <input type="text" placeholder="請輸入地址">
+              <input type="text" placeholder="請輸入地址" :value="this.address">
             </label>
 
 

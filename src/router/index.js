@@ -162,7 +162,7 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
-      component: () => import('../views/NotFoundView.vue')
+      component: () => import('../components/NotFoundView.vue')
     },
     {
       path: '/SvgAnimation',
@@ -177,7 +177,7 @@ const router = createRouter({
     {
       path: '/search',
       name: 'search',
-      component: () => import('../components/search.vue')
+      component: () => import('../components/NotFoundView.vue')
     },
   ],
   scrollBehavior(to, from, savedPosition) {
