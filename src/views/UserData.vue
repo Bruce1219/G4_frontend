@@ -1,6 +1,7 @@
 <script>
 import { useAdminStore } from '@/stores/userLogin.js'; // 引入 Pinia store
 import md5 from 'js-md5';
+import Swal from 'sweetalert2' //引用sweetalert2
 export default {
   data() {
     return {
@@ -53,18 +54,27 @@ export default {
     },
     checkname() {
       if (this.name == "") {
-        alert("姓名不得為空值");
+        Swal.fire({
+          title: "姓名必須填寫!",
+          icon: "warning",
+        });
       }
     },
     checkphone() {
       const phonerule = /09\d{8}/;
       if (!phonerule.test(this.phone)) {
-        alert("電話號碼格式錯誤");
+        Swal.fire({
+          title: "電話號碼格式錯誤!",
+          icon: "warning",
+        });
       }
     },
     checkoldpsw() {
       if (md5(this.old_psw) != this.member.m_password) {
-        alert("舊密碼錯誤");
+        Swal.fire({
+          title: "舊密碼錯誤!",
+          icon: "warning",
+        });
         return false;
       } else {
         return true;
@@ -73,11 +83,17 @@ export default {
     checkNewpsw() {
       const pswlimit = /^(?=.*[A-Z])[a-zA-Z0-9]{6,12}$/g; //正規表達式：密碼長度6-12位，至少一個大寫字母
       if (this.psw == this.old_psw) {
-        alert("新密碼不得與舊密碼相同")
+        Swal.fire({
+          title: "新密碼不得與舊密碼相同!",
+          icon: "warning",
+        });
         return false;
       } else {
         if (!pswlimit.test(this.psw)) {
-          alert("請輸入6-12位，至少一大寫字母")
+          Swal.fire({
+            title: "請輸入6-12位，至少一大寫字母!",
+            icon: "warning",
+          });
           return false;
         } else {
           return true;
@@ -86,7 +102,10 @@ export default {
     },
     dbcheckpsw() {
       if (this.psw !== this.dbpsw) {
-        alert("兩者密碼不相同，請重新輸入");
+        Swal.fire({
+          title: "兩者密碼不相同，請重新輸入!",
+          icon: "warning",
+        });
         return false;
       } else {
         return true;
@@ -95,12 +114,18 @@ export default {
     submit() {
       if (this.psw != '' || this.old_psw != '' || this.dbpsw != '') {
         if (this.psw == '' || this.old_psw == '' || this.dbpsw == '') {
-          alert('aaa')
+          Swal.fire({
+            title: "請填寫完整密碼資料!",
+            icon: "warning",
+          });
           return false;
         }
 
         if (!this.checkNewpsw() || !this.checkoldpsw() || !this.dbcheckpsw()) {
-          alert('bbb')
+          Swal.fire({
+            title: "請填寫完整密碼資料!",
+            icon: "warning",
+          });
           return false;
         }
       }
@@ -128,9 +153,19 @@ export default {
             this.old_psw = '';
             this.psw = '';
             this.dbpsw = '';
-            alert(this.data["msg"]);
+            if (this.data["msg"]) {
+              Swal.fire({
+                title: this.data["msg"],
+                icon: "success", // 根據需要調整圖示
+              });
+            } else {
+              Swal.fire({
+                title: "資料錯誤",
+                icon: "warning",
+              });
+            }
             this.fetchMemberInfo();
-          }
+              }
         );
     }
   },
@@ -226,13 +261,19 @@ export default {
     text-align: center;
     color: #144433;
     margin: 20px 0;
-    font-family: $pFont;
+    padding-bottom: 10px;
+    font-family: $titleFont;
     font-size: 24px;
     font-weight: 500;
+    border-bottom: solid 1px $darkGreen;
 
     @include md() {
       font-size: 20px;
     }
+  }
+
+  form{
+    margin-top: 30px;
   }
 
   div {
@@ -294,7 +335,7 @@ label {
 
 button {
   display: block;
-  margin: 0 auto;
+  margin: 30px auto 0;
   border-radius: 25px;
   border: 1px solid #eee;
   background-color: #144433;
@@ -305,6 +346,7 @@ button {
   letter-spacing: 1px;
   cursor: pointer;
   transition: transform .1s ease-in;
+  transition: .5s;
 
   &:active {
     transform: scale(.9);
@@ -312,6 +354,12 @@ button {
 
   &:focus {
     outline: none;
+  }
+
+  &:hover{
+    background-color: #fff;
+    color: $darkGreen;
+    border: 1px solid $darkGreen;
   }
 
   @include md() {
