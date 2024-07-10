@@ -35,8 +35,8 @@ export default {
     },
 
     validateForm() {
-      if (!this.formData.name || !this.formData.gender || !this.formData.phone || 
-          !this.formData.email || !this.formData.opinion) {
+      if (!this.formData.name || !this.formData.gender || !this.formData.phone ||
+        !this.formData.email || !this.formData.opinion) {
         return false;
       }
       return true;
@@ -52,11 +52,20 @@ export default {
       }
 
       let templateParams = { ...this.formData };
-      
+
       if (this.imageFile) {
         try {
           const base64Image = await this.getBase64(this.imageFile);
-          templateParams.image = base64Image;
+          // templateParams.image = base64Image;
+          templateParams.attachments  =[
+          {
+            filename: "image.jpg",
+            content: base64Image,
+            contentType: "image/jpeg",
+            content_id: "image",
+            disposition: "inline",
+          }
+          ]
         } catch (error) {
           console.error('Error converting image to base64:', error);
         }
@@ -65,28 +74,28 @@ export default {
       emailjs.send('service_r4x88gc', 'template_81m7vda', templateParams, {
         publicKey: 'NGQSgNlFa5ZotRrJh',
       })
-      .then((response) => {
-        console.log('SUCCESS!', response.status, response.text);
-        Swal.fire({
-          title: '<strong>表單提交成功</strong>',
-          icon: 'success',
-          iconColor: '#144433',
-          html: `我們將會在3~5個工作天內盡速與您聯繫!`,
-          confirmButtonText: '確定',
-          confirmButtonColor: '#144433',
-          background: '#eeeeee'
-        }).then(() => {
-          this.clearForm();
+        .then((response) => {
+          console.log('SUCCESS!', response.status, response.text);
+          Swal.fire({
+            title: '<strong>表單提交成功</strong>',
+            icon: 'success',
+            iconColor: '#144433',
+            html: `我們將會在3~5個工作天內盡速與您聯繫!`,
+            confirmButtonText: '確定',
+            confirmButtonColor: '#144433',
+            background: '#eeeeee'
+          }).then(() => {
+            this.clearForm();
+          });
+        })
+        .catch((error) => {
+          console.log('FAILED...', error);
+          Swal.fire({
+            title: '提交失敗',
+            text: '請稍後再試',
+            icon: 'error'
+          });
         });
-      })
-      .catch((error) => {
-        console.log('FAILED...', error);
-        Swal.fire({
-          title: '提交失敗',
-          text: '請稍後再試',
-          icon: 'error'
-        });
-      });
     },
 
     clearForm() {
@@ -453,6 +462,7 @@ h3 {
     .uploa {
       margin: 3% 0;
       color: $darkGreen ;
+      display: none;
 
       .uploa-pic {
         margin: 2% 0;
