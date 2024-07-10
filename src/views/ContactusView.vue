@@ -1,10 +1,13 @@
 <script>
+import Swal from 'sweetalert2'
 import emailjs from '@emailjs/browser';
+
 export default {
   data() {
     return {
       currentIndex: 0,
       image: '',
+      imageFile: null,
       formData: {
         name: '',
         gender: '',
@@ -14,54 +17,96 @@ export default {
         purchaseTime: '',
         opinion: '',
         age: '',
-        cooperation: ''
+        cooperation: '',
       },
-
     }
   },
   methods: {
     fileSelected(e) {
-      const file = e.target.files.item(0);
-      const reader = new FileReader();
-      reader.addEventListener('load', this.imageLoaded);
-      reader.readAsDataURL(file);
+      const file = e.target.files[0];
+      if (file) {
+        this.imageFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.image = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
     },
-    imageLoaded(e) {
-      this.image = e.target.result;
-    },
-    upload() {
-      // 用base64字串的方式上傳
-      axios.post('/upload', { image: this.image });
-      // 用FormData這種非字串的方式上傳
-      //const form = new formData();
-      //form.append(this.file, this.file.name)
 
+    validateForm() {
+      if (!this.formData.name || !this.formData.gender || !this.formData.phone || 
+          !this.formData.email || !this.formData.opinion) {
+        return false;
+      }
+      return true;
     },
-    sendEmail() {
-  const templateParams = {
-    ...this.formData,
-    image: this.image
-  };
-  
-  emailjs
-    .send('service_r4x88gc', 'template_81m7vda', templateParams, {
-      publicKey: 'NGQSgNlFa5ZotRrJh',
-    })
-    .then(
-      (response) => {
+
+    async submit() {
+      if (!this.validateForm()) {
+        Swal.fire({
+          title: "資料未填寫完全",
+          icon: "error"
+        });
+        return false;
+      }
+
+      let templateParams = { ...this.formData };
+      
+      if (this.imageFile) {
+        try {
+          const base64Image = await this.getBase64(this.imageFile);
+          templateParams.image = base64Image;
+        } catch (error) {
+          console.error('Error converting image to base64:', error);
+        }
+      }
+
+      emailjs.send('service_r4x88gc', 'template_81m7vda', templateParams, {
+        publicKey: 'NGQSgNlFa5ZotRrJh',
+      })
+      .then((response) => {
         console.log('SUCCESS!', response.status, response.text);
-        alert('表單已成功提交！');
-      },
-      (error) => {
+        Swal.fire({
+          title: '<strong>表單提交成功</strong>',
+          icon: 'success',
+          iconColor: '#144433',
+          html: `我們將會在3~5個工作天內盡速與您聯繫!`,
+          confirmButtonText: '確定',
+          confirmButtonColor: '#144433',
+          background: '#eeeeee'
+        }).then(() => {
+          this.clearForm();
+        });
+      })
+      .catch((error) => {
         console.log('FAILED...', error);
-        alert('照片檔案太大，請重新提交。');
-      },
-    );
-},
+        Swal.fire({
+          title: '提交失敗',
+          text: '請稍後再試',
+          icon: 'error'
+        });
+      });
+    },
+
+    clearForm() {
+      for (let key in this.formData) {
+        this.formData[key] = '';
+      }
+      this.image = '';
+      this.imageFile = null;
+    },
+
+    getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    },
   },
-
-
-};
+}
 </script>
 <template>
   <section>
@@ -144,11 +189,11 @@ export default {
             </label>
             <div class="gender">
               <label for="gender_mr">
-                <input type="radio" id="gender_mr" name="gender" value="mr" v-model="formData.gender"/>
+                <input type="radio" id="gender_mr" name="gender" value="mr" v-model="formData.gender" />
                 <span>先生</span>
               </label>
               <label for="gender_ms">
-                <input type="radio" id="gender_ms" name="gender" value="ms" v-model="formData.gender"/>
+                <input type="radio" id="gender_ms" name="gender" value="ms" v-model="formData.gender" />
                 <span>小姐</span>
               </label>
             </div>
@@ -157,7 +202,7 @@ export default {
             <span>年齡</span>
             <div class="age">
               <label for="age">
-                <input type="radio" id="age" name="36-45" value="18-25" v-model="formData.age"/>
+                <input type="radio" id="age" name="36-45" value="18-25" v-model="formData.age" />
                 <span>18-25歲</span>
               </label>
               <label for="age1">
@@ -165,7 +210,7 @@ export default {
                 <span>26-35歲</span>
               </label>
               <label for="age2">
-                <input type="radio" id="age2" name="36-45" value="36-45" v-model="formData.age"/>
+                <input type="radio" id="age2" name="36-45" value="36-45" v-model="formData.age" />
                 <span>36-45歲</span>
               </label>
               <label for="age3">
@@ -177,11 +222,11 @@ export default {
           <div class="phone">
             <label for="">
               <span>連絡電話</span>
-              <input type="text" v-model="formData.phone"/>
+              <input type="text" v-model="formData.phone" />
             </label>
             <label for="">
               <span>電子信箱</span>
-              <input type="text" v-model="formData.email"/>
+              <input type="text" v-model="formData.email" />
             </label>
           </div>
 
@@ -195,7 +240,7 @@ export default {
           </div>
         </div>
       </div>
-      <div class="sendout" @click="sendEmail">
+      <div class="sendout" @click="submit">
         <button>提交</button>
       </div>
     </div>
