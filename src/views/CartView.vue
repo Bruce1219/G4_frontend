@@ -4,6 +4,10 @@ export default {
     return {
       carts: [],
       responseData: [],
+      selected: '', // selected 属性優惠券折扣
+      m_no: '',// 确保有 m_no 属性
+      coupon: '', // 添加 coupon 属性優惠券折扣
+      address: ''
     }
   },
   computed: {
@@ -13,8 +17,21 @@ export default {
         const price = this.cartItem[i].p_fee * this.cartItem[i].count;
         total += price
       }
-      return total;
+      // 應用優惠券折扣
+      if (this.selected == 'CCC8888') {
+        this.coupon = Math.floor(total * 0.2); // 8折
+      }
+      if (this.selected == 'CCC8585') {
+        this.coupon = Math.floor(total * 0.15); // 85折
+
+      }
+      if (this.selected == 'CCC9999') {
+        this.coupon = Math.floor(total * 0.1); // 9折
+      }
+      total = Math.ceil(total);
+      return total; // 返回總價
     },
+
     cartItem() {
       let cart = [];
       if (!this.responseData) {
@@ -94,7 +111,7 @@ export default {
 
         this.fetchData();
         // this.cartItem[index].isaddCart = false;
-        console.log(this.cartIten[index])
+        console.log(this.cartItem[index])
         // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
       } else {
         return this.cartItem[index].count = 1;
@@ -109,7 +126,9 @@ export default {
       let member = JSON.parse(account);
       if (member && member['m_no']) {
         this.m_no = member['m_no'];
-        console.log(this.m_no);
+        // console.log(this.m_no);
+        this.address = member['m_add'];
+        this.address = this.address.substring(3)
       } else {
         console.log('Member information is not available');
       }
@@ -181,9 +200,14 @@ export default {
         <div class="information">
           <div class="discount">
             <p>優惠券</p>
-            <label for="">
-              <input type="text" placeholder="請輸入優惠券碼">
-            </label>
+            <!-- <label for="">
+              <input type="select" placeholder="請輸入優惠券碼">
+            </label> -->
+            <select name="" id="" v-model="selected">請選擇優惠券
+              <option value="CCC8888">CCC8888</option>
+              <option value="CCC8585">CCC8585</option>
+              <option value="CCC9999">CCC9999</option>
+            </select>
           </div>
           <!-- 付款資訊 -->
           <div class="receive">
@@ -220,7 +244,7 @@ export default {
 
             <span>地址:</span>
             <label for="">
-              <input type="text" placeholder="請輸入地址">
+              <input type="text" placeholder="請輸入地址" :value="this.address">
             </label>
 
 
@@ -234,6 +258,10 @@ export default {
             <span>商品:</span>
             <span>NT.{{ totalprice }}</span>
           </div>
+          <div class="Product-name" v-if="this.coupon">
+            <span>優惠卷:</span>
+            <span>— NT.{{ this.coupon }}</span>
+          </div>
           <div class="freight">
             <span>運費:</span>
             <span>NT.60</span>
@@ -241,7 +269,7 @@ export default {
           </div>
           <div class="alltotal">
             <span>總計:</span>
-            <span>NT.{{ totalprice + 60 }}</span>
+            <span>NT.{{ totalprice - coupon + 60 }}</span>
           </div>
           <div class="Checkout">
             <button class="shopping">
@@ -439,6 +467,17 @@ section {
             width: 300px;
             height: 35px;
             padding: 0 10px;
+          }
+
+          select {
+            margin: 15px 0;
+            background-color: $bcgw;
+            width: 300px;
+            height: 35px;
+
+            option {
+              background-color: $bcgw;
+            }
           }
         }
 

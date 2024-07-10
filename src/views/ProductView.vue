@@ -18,7 +18,7 @@
               <i class="fa-solid fa-magnifying-glass"></i>
             </div>
             <label for="">
-              <input type="text" placeholder="搜尋商品" v-model="search"  />
+              <input type="text" placeholder="搜尋商品" v-model="search" />
               <button @click="clear">X</button>
             </label>
           </div>
@@ -40,7 +40,8 @@
       <div class="container">
         <div v-if="!loading">
           <div class="row list-product">
-            <div class="col-12 col-md-6 col-lg-3" v-for="(cardtItem, cardtIndex) in filterDataDisplay" :key="cardtIndex">
+            <div class="col-12 col-md-6 col-lg-3" v-for="(cardtItem, cardtIndex) in filterDataDisplay"
+              :key="cardtIndex">
               <div class="card-product">
                 <router-link :to='`/ProductPage/${cardtItem.p_no}`'>
                   <div class="img-product">
@@ -194,14 +195,21 @@ export default {
       const targetItem = this.responseData.find(v => v.id === id);
       targetItem.isaddCart = !targetItem.isaddCart;
       if (this.m_no !== '') {
-        this.fetchcart(targetItem.isaddCart, targetItem.p_no, targetItem.isImage1);
+        this.fetchcart(targetItem.isaddCart, targetItem.p_no);
+      } else {
+        Swal.fire({
+          icon: "warning",
+          title: "請先登入",
+          showConfirmButton: false,
+          timer: 1500
+        });
+        this.$router.push(`/user?page=${encodeURIComponent(this.$route.fullPath)}`); // 導向登入頁
       }
     },
-    async fetchcart(isaddCart, id, isImage1) {
+    async fetchcart(isaddCart, id) {
       let body = {
         isaddCart: isaddCart,
         userNo: this.m_no,
-        isImage1: isImage1,
         p_no: id
       };
       try {
@@ -216,22 +224,22 @@ export default {
     toggleImage(id) {
       let targetItem = this.responseData.find(v => v.id === id);
       targetItem.isImage1 = !targetItem.isImage1;
-      if (this.m_no !== 0) {
-        this.fetchFav(targetItem.isImage1, targetItem.p_no, targetItem.isaddCart);
+      if (this.m_no != 0) {
+        this.fetchFav(targetItem.isImage1, targetItem.p_no, targetItem.isaddCart)
       } else {
         Swal.fire({
           icon: "warning",
-          title: "請先登入會員",
+          title: "請先登入",
           showConfirmButton: false,
           timer: 1500
         });
+        this.$router.push(`/user?page=${encodeURIComponent(this.$route.fullPath)}`); // 導向登入頁
       }
     },
-    async fetchFav(isImage1, p_no, isaddCart) {
+    async fetchFav(isImage1, p_no) {
       let body = {
         isImage1: isImage1,
         userNo: this.m_no,
-        isaddCart: isaddCart,
         p_no: p_no
       };
       try {
@@ -296,10 +304,10 @@ export default {
   },
   watch: {
     search() {
-    console.log('Search term changed:', this.search); // 添加這行來檢查搜索詞是否更新
-    this.currentPage = 1;
-    this.fetchData();
-  },
+      console.log('Search term changed:', this.search); // 添加這行來檢查搜索詞是否更新
+      this.currentPage = 1;
+      this.fetchData();
+    },
     currentClass() {
       this.currentPage = 1;
       this.fetchData();
