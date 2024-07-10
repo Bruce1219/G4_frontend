@@ -40,6 +40,10 @@
       <div class="container">
         <div v-if="!loading">
           <div class="row list-product">
+            <div class="noEvent-field"  v-show="noEventSearch === true">
+            <img src="../assets/image/noEventImage.svg" alt="沒有商品" class="noEvent-img" />
+            <p>目前沒有此商品...</p>
+            </div>
             <div class="col-12 col-md-6 col-lg-3" v-for="(cardtItem, cardtIndex) in filterDataDisplay"
               :key="cardtIndex">
               <div class="card-product">
@@ -118,6 +122,7 @@ export default {
       m_no: '',
       searchResults: [],
       isSearchMode: false,
+      noEventSearch:false,
       // searchFields: ['p_name', 'f_name'],
     };
   },
@@ -128,6 +133,7 @@ export default {
       }
 
       return this.responseData;
+      
 
       // 应用搜索过滤
       // if (this.search) {
@@ -150,6 +156,7 @@ export default {
       // console.log("Filtered items:", filteredData.length);
       // return filteredData;
     },
+   
 
   },
 
@@ -179,6 +186,7 @@ export default {
         }));
         this.totalPages = json.data.totalPages || 1;
         this.isSearchMode = this.search !== '';
+        this.noEventSearch = this.responseData.length === 0 && (this.search !== '' || this.currentClass !== '0');
         console.log("Current page:", this.currentPage);
         console.log("Total pages:", this.totalPages);
         console.log("Items loaded:", this.responseData.length);
@@ -457,7 +465,25 @@ section {
       .list-product {
         width: 100%;
         margin: auto;
-
+    
+        .noEvent-field {
+                // width: 100%;
+                text-align: center;
+                // margin-top: 10%;
+                display: flex;
+                align-items: center;
+                position: relative;
+                top:-100px;
+                margin: auto;
+                img{
+                  width: 50%;
+                  // margin: auto
+                }
+                p {
+                  color:$darkGreen;
+                  // margin: -10%;
+                }
+              }
         // flex-wrap: nowrap;
         .card-product {
           border: 1px solid $darkGreen;
