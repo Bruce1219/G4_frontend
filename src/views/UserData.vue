@@ -1,6 +1,8 @@
 <script>
 import { useAdminStore } from '@/stores/userLogin.js'; // 引入 Pinia store
 import md5 from 'js-md5';
+import Swal from 'sweetalert2' //引用sweetalert2
+
 export default {
   data() {
     return {
@@ -41,30 +43,39 @@ export default {
         this.member = json['data'];
         this.name = this.member.m_name;
         this.account = this.member.m_account;
-        this.phone = this.member.m_phone;
+        this.phone = String(this.member.m_phone);
         this.m_birth = this.member.m_birth;
         this.m_add = this.member.m_add;
         this.password = this.member.m_password;
         console.log(json);
         console.log(this.member);
-        console.log(this.phone);
+        console.log('phone',this.phone);
         console.log("password",this.password)
       })
     },
     checkname() {
       if (this.name == "") {
-        alert("姓名不得為空值");
+        Swal.fire({
+          title: "姓名不得為空值",
+          icon: "warning",
+        });
       }
     },
     checkphone() {
       const phonerule = /09\d{8}/;
       if (!phonerule.test(this.phone)) {
-        alert("電話號碼格式錯誤");
+        Swal.fire({
+          title: "電話號碼格式錯誤",
+          icon: "warning",
+        });
       }
     },
     checkoldpsw() {
       if (md5(this.old_psw) != this.member.m_password) {
-        alert("舊密碼錯誤");
+        Swal.fire({
+          title: "舊密碼錯誤",
+          icon: "warning",
+        });
         return false;
       }else{
         return true;
@@ -72,7 +83,10 @@ export default {
     },
     checkNewpsw(){
       if (this.psw == this.old_psw) {
-        alert("新密碼不得與舊密碼相同")
+        Swal.fire({
+          title: "新密碼不得與舊密碼相同",
+          icon: "warning",
+        });
         return false;
       }else{
         return true;
@@ -80,7 +94,10 @@ export default {
     },
     dbcheckpsw() {
       if (this.psw !== this.dbpsw) {
-        alert("兩者密碼不相同，請重新輸入");
+        Swal.fire({
+          title: "兩者密碼不相同，請重新輸入",
+          icon: "warning",
+        });
         return false;
       }else{
         return true;
@@ -89,11 +106,17 @@ export default {
     submit() {
       if( this.old_psw != "" || this.psw != "" || this.dbpsw != ""){
         if (!this.checkoldpsw() || !this.checkNewpsw() || !this.dbcheckpsw() ) {
-          alert("資料錯誤");
+          Swal.fire({
+            title: "資料錯誤",
+            icon: "warning",
+          });
           return false;
         }
       }
-      alert("更新成功!")
+      Swal.fire({
+        title: "更新成功!",
+        icon: "success",
+      });
       const url = `http://localhost/php_G4/revise_member.php`
       let body = {
         "m_id": this.userData.m_id,
@@ -155,7 +178,7 @@ export default {
       </div>
       <div>
         <label for="phone">電話</label>
-        <input type="tel" v-model="phone" name="m_phone" @change="checkphone()">
+        <input type="text" v-model="phone" name="m_phone" @change="checkphone()">
       </div>
       <div class="birth">
         <label for="birth">生日</label>
@@ -168,15 +191,15 @@ export default {
       <hr style="color: #144433; width: 100%;">
       <div class="oldpsw">
         <label for="old_psw">舊密碼</label>
-        <input type="password" v-model="old_psw" @change="checkoldpsw()">
+        <input type="text" v-model="old_psw" @change="checkoldpsw()">
       </div>
       <div class="newpsw">
         <label for="new_psw">新密碼</label>
-        <input type="password" name="" v-model="psw" @change="checkNewpsw()">
+        <input type="text" name="" v-model="psw" @change="checkNewpsw()">
       </div>
       <div class="dbpsw">
         <label for="dbc_psw">確認新密碼</label>
-        <input type="password" name="" v-model="dbpsw" @change="dbcheckpsw()">
+        <input type="text" name="" v-model="dbpsw" @change="dbcheckpsw()">
       </div>
     </form>
   </div>
@@ -212,16 +235,20 @@ export default {
   h2 {
     text-align: center;
     color: #144433;
-    margin: 20px 0;
-    font-family: $pFont;
+    margin: 20px 0 10px;
+    padding-bottom: 20px;
+    font-family: $titleFont;
     font-size: 24px;
     font-weight: 500;
+    border-bottom:solid 1px $darkGreen;
 
     @include md() {
       font-size: 20px;
     }
   }
-
+  form{
+    margin-top:30px;
+  }
   div {
     width: 80%;
     margin: 0 auto 12px;
@@ -281,9 +308,9 @@ label {
 
 button {
   display: block;
-  margin: 0 auto;
+  margin: 20px auto 0;
   border-radius: 25px;
-  border: 1px solid #eee;
+  border: 1px solid $darkGreen;
   background-color: #144433;
   color: #fff;
   font-size: 1rem;
@@ -292,6 +319,7 @@ button {
   letter-spacing: 1px;
   cursor: pointer;
   transition: transform .1s ease-in;
+  transition:.5s;
 
   &:active {
     transform: scale(.9);
@@ -299,6 +327,12 @@ button {
 
   &:focus {
     outline: none;
+  }
+
+  &:hover{
+    background-color: #fff;
+    color: $darkGreen;
+  border: 1px solid $darkGreen;
   }
 
   @include md() {
