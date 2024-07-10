@@ -98,7 +98,7 @@ export default {
     },
     //fetch json檔
     fetchData () {
-      fetch(`http://localhost/php_G4/indexNewsList.php`,{
+      fetch(`http://localhost/php_G4/newsListFront.php`,{
         method:'POST'
       }
       )
