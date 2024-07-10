@@ -14,7 +14,6 @@ import { useRouter } from 'vue-router';
 import { onMounted, onUnmounted } from 'vue';
 import { useAdminStore } from '@/stores/userLogin.js'; // 引入 Pinia store
 import Swal from 'sweetalert2' //引用sweetalert2
-
 export default {
   data() {
     return {
@@ -26,7 +25,14 @@ export default {
       m_img: null,
       file: null,
       oldFileName: '',
-
+      adminStore: useAdminStore(),
+    }
+  },
+  watch: {
+    'adminStore.flag'(nVal) {
+      console.log(nVal)
+      // 當 triggerFetchMemberInfo 被調用時，這個函數會執行
+      this.fetchMemberInfo();
     }
   },
   methods: {
@@ -44,8 +50,10 @@ export default {
         .then((res) => res.json())
         .then((json) => {
           this.member = json['data'];
+          this.m_name = this.member.m_name
           // console.log(json);
           // console.log(this.member);
+          console.log("UserLayout fetchMemberInfo called");
         })
     },
     parsePic(file) {
@@ -136,7 +144,7 @@ export default {
     const store = useAdminStore() // 獲取 Pinia store
     this.m_name = store.currentAccount;
     const user = localStorage.getItem('currentUser');
-    // console.log(user);
+    console.log(user);
     if (user) {
       this.userData = JSON.parse(user);
       this.m_no = this.userData.m_no;
@@ -165,6 +173,11 @@ export default {
     onUnmounted(() => {
       window.removeEventListener('resize', handleResize);
     });
+    
+
+    return {
+      // ...
+    }
 
   }
 }
@@ -185,7 +198,7 @@ export default {
           <button class="edit" type="button" @click="triggerFileInput"><i
               class="fa-solid fa-pen-to-square"></i></button>
         </div>
-        <span class="member-name">{{ m_name }}</span>
+        <span class="member-name">{{ member.m_name }}</span>
         <div class="btn-selection">
           <router-link to="/userlayout/userdata"><button class="btn-info">個人資料</button></router-link>
           <router-link to="/userlayout/userfavorite"><button class="btn-like">收藏項目</button></router-link>
@@ -213,7 +226,7 @@ export default {
         <input type="file" ref="fileInput" @change="getfile($event)">
         <button class="edit" type="button" @click="triggerFileInput"><i class="fa-solid fa-pen-to-square"></i></button>
       </div>
-      <span class="member-name">{{ m_name }}</span>
+      <span class="member-name">{{ member.m_name }}</span>
       <div class="btn-selection">
         <router-link to="/userlayout/userdata"><button class="btn-info">個人資料</button></router-link>
         <router-link to="/userlayout/userfavorite"><button class="btn-like">收藏項目</button></router-link>

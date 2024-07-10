@@ -158,6 +158,8 @@ export default {
                 title: this.data["msg"],
                 icon: "success", // 根據需要調整圖示
               });
+              const store = useAdminStore();
+              store.triggerFetchMemberInfo(); // 觸發更新
             } else {
               Swal.fire({
                 title: "資料錯誤",
@@ -165,7 +167,7 @@ export default {
               });
             }
             this.fetchMemberInfo();
-              }
+          }
         );
     }
   },
