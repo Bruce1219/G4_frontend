@@ -9,7 +9,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAdminStore, ['currentAccount', 'currentUser']),
+    ...mapState(useAdminStore, ['currentAccount']),
     userIconRoute() {
       return this.currentAccount ? '/userlayout/userdata' : '/user';
     },

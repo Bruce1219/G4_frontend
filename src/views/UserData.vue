@@ -160,7 +160,7 @@ export default {
                 icon: "success", // 根據需要調整圖示
               });
               const store = useAdminStore();
-              store.setCurrentUser();
+              // store.setCurrentUser();
               store.triggerFetchMemberInfo(); // 觸發更新
             } else {
               Swal.fire({
