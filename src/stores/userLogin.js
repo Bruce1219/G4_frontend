@@ -3,7 +3,8 @@ import { defineStore } from 'pinia'
 export const useAdminStore = defineStore('admin', {
     state: () => ({
         currentUser: null,
-        currentAccount: null // 新增用來存儲當前用戶帳號的狀態
+        currentAccount: null, // 新增用來存儲當前用戶帳號的狀態
+        flag: Date.now(),
     }),
     actions: {
         setCurrentUser(user) {
@@ -33,5 +34,9 @@ export const useAdminStore = defineStore('admin', {
         isLoggedIn() {
             return !!this.currentUser;
         },
+        triggerFetchMemberInfo() {
+           this.flag = Date.now()
+           console.log(this.flag)
+        }
     }
 })
