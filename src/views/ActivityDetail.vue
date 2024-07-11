@@ -118,7 +118,9 @@ export default {
     },
     methods:{
         fetchData() {
-            fetch('http://localhost/php_g4/userActivityDetail.php', {
+            // const url = 'http://localhost/php_G4/userActivityDetail.php'//本地
+            const url = `${import.meta.env.VITE_API_URL}/userActivityDetail.php`//部屬
+            fetch(url, {
                 method: 'POST',
                 body: JSON.stringify({ 
                     m_no: this.m_no,
@@ -146,13 +148,17 @@ export default {
             }
         return dateTime.split(' ')[1]; 
         },
-        parsePic(file) {
-            return new URL(`../assets/image/${file}`, import.meta.url).href
+        // parsePic(file) {
+        //     return new URL(`../assets/image/${file}`, import.meta.url).href
+        // },//本地
+        parsePic(file) { //部屬圖片
+            return `${import.meta.env.VITE_FILE_URL}${file}`;
         },
         toggleStatus() {
             const newStatus = this.ao_status === 0;
             
-            const url = `http://localhost/php_g4/updateUserActivity.php`;
+            // const url = `http://localhost/php_g4/updateUserActivity.php`;//本地
+            const url = `${import.meta.env.VITE_API_URL}/updateUserActivity.php`//部屬
             const body = {
                 ao_no: this.ao_no,
                 ao_status: newStatus,

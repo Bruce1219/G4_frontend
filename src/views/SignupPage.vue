@@ -226,7 +226,9 @@ export default {
     methods: {
         ...mapActions(useAdminStore, ['loadCurrentUser']),
         fetchActivityInfo() {
-            fetch(`http://localhost/php_G4/activitiesList.php`, {
+            // const url = 'http://localhost/php_G4/activitiesList.php'//本地
+            const url = `${import.meta.env.VITE_API_URL}/activitiesList.php`//部屬
+            fetch(url, {
                 method: 'post'
             })
             .then((res) => res.json())
@@ -341,7 +343,8 @@ export default {
                 });
                 return false;
             }
-            const url = `http://localhost/php_G4/signupPage.php`
+            // const url = `http://localhost/php_G4/signupPage.php` //本地
+            const url = `${import.meta.env.VITE_API_URL}/signupPage.php`//部屬
             let body = {
                 "a_no": this.displayData.a_no,
                 "m_no": this.userData.m_no,

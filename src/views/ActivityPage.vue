@@ -177,7 +177,9 @@ export default {
     },
     methods: {
         fetchActivityInfo() {
-            fetch(`http://localhost/php_G4/activitiesList.php`, {
+            // const url = 'http://localhost/php_G4/activitiesList.php'//本地
+            const url = `${import.meta.env.VITE_API_URL}/activitiesList.php`//部屬
+            fetch( url, {
                 method: 'post'
             })
             .then((res) => res.json())
@@ -190,8 +192,11 @@ export default {
                 console.log( this.displayData);
             })
         },
-        parsePic(file) {
-            return new URL(`../assets/image/${file}`, import.meta.url).href
+        // parsePic(file) {
+        //     return new URL(`../assets/image/${file}`, import.meta.url).href
+        // }, //本地圖片
+        parsePic(file) { //部屬圖片
+            return `${import.meta.env.VITE_FILE_URL}${file}`;
         },
         formatTime(dateTime) {
             return dateTime.split(' ')[1]; // 提取時間部分
