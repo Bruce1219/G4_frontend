@@ -67,8 +67,8 @@ export default {
     updateImage() {
       let formData = new FormData();
       formData.append('m_img', this.file)//建立新的formdata
-      const url = `http://localhost/php_G4/addUserImg.php`
-      // const url = `../../php_G4/addEventImage.php`
+      // const url = `http://localhost/php_G4/addUserImg.php`//本地
+      const url = `${import.meta.env.VITE_API_URL}/addUserImg.php`//部屬
       fetch(url, {
         method: 'POST',
         body: formData,
@@ -79,11 +79,14 @@ export default {
         })
     },
     deleteImage() {
-      this.oldFileName = '../G4_frontend/src/assets/image/' + this.member.m_img
+      // this.oldFileName = '../G4_frontend/src/assets/image/' + this.member.m_img 本地
+      this.oldFileName = `${import.meta.env.VITE_FILE_URL}` + this.member.m_img //部屬
       let body = {
         oldFileName: this.oldFileName
       }
-      fetch(`http://localhost/php_G4/deleteUserImg.php`, {
+      // const url = 'http://localhost/php_G4/deleteUserImg.php'//本地
+      const url = `${import.meta.env.VITE_API_URL}/deleteUserImg.php`//部屬
+      fetch(url, {
         method: 'POST',
         body: JSON.stringify(body),
       })
