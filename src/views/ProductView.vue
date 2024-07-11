@@ -199,7 +199,7 @@ export default {
       }
     },
     parsePic(file) {
-      return `${import.meta.env.VITE_FILE_URL}${file}`
+      return `${import.meta.env.VITE_FILE_URL}assets/${file}`
     },
     addCart(id) {
       const targetItem = this.responseData.find(v => v.id === id);

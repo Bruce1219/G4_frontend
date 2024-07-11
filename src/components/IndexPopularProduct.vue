@@ -99,7 +99,7 @@ export default {
   methods: {
     // 解析圖片路徑
     parsePic(file) {
-      return `${import.meta.env.VITE_FILE_URL}${file}`;
+     return `${import.meta.env.VITE_FILE_URL}assets/${file}`
     },
     // 從後端獲取商品數據
     fetchData() {

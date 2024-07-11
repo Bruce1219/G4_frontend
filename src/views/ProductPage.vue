@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     parsePic(file) {//修改照片路徑
-       return `${import.meta.env.VITE_FILE_URL}${file}`
+      return `${import.meta.env.VITE_FILE_URL}assets/${file}`
     },
     add() {
       this.count += 1;
