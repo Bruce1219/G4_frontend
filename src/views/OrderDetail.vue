@@ -102,7 +102,9 @@ export default {
     },
     methods: {
         fetchData() {
-            fetch('http://localhost/php_g4/userProductDetail.php', {
+            // const url = 'http://localhost/php_G4/userProductDetail.php'//本地
+            const url = `${import.meta.env.VITE_API_URL}/userProductDetail.php`//部屬
+            fetch(url, {
                 method: 'POST',
                 body: JSON.stringify({ 
                     m_no: this.m_no,
@@ -118,8 +120,11 @@ export default {
                 console.log( this.displayData);
             })
         },
-        parsePic(file) {
-            return new URL(`../assets/image/${file}`, import.meta.url).href
+        // parsePic(file) {
+        //     return new URL(`../assets/image/${file}`, import.meta.url).href //本地圖片
+        // },
+        parsePic(file) { //部屬圖片
+            return `${import.meta.env.VITE_FILE_URL}${file}`;
         },
         formatDate(dateTime) {
             if (!dateTime) {
@@ -153,7 +158,8 @@ export default {
             }
 
             
-            const url = `http://localhost/php_g4/updateUserProduct.php`;
+            // const url = `http://localhost/php_g4/updateUserProduct.php`;//本地
+            const url = `http://localhost/php_g4/updateUserProduct.php`;//部屬
             const body = {
                 po_no: this.po_no,
                 po_status: newStatus,
