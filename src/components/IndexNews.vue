@@ -98,7 +98,7 @@ export default {
     },
     //fetch json檔
     fetchData () {
-      let url = `${import.meta.env.VITE_API_URL}//newsListFront.php`
+      let url = `${import.meta.env.VITE_API_URL}/newsListFront.php`
       fetch(url,{
         method:'POST'
       }
