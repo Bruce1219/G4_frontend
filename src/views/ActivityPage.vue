@@ -195,9 +195,9 @@ export default {
         // parsePic(file) {
         //     return new URL(`../assets/image/${file}`, import.meta.url).href
         // }, //本地圖片
-        parsePic(file) { //部屬圖片
-            return `${import.meta.env.VITE_FILE_URL}${file}`;
-        },
+        parsePic(file) {
+            return `${import.meta.env.VITE_FILE_URL}event-images/${file}`;
+        }, //部屬圖片
         formatTime(dateTime) {
             return dateTime.split(' ')[1]; // 提取時間部分
         }
