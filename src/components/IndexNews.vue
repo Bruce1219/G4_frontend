@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     parsePic(file) {
-      return `${import.meta.env.VITE_FILE_URL}${file}`;
+      return `${import.meta.env.VITE_FILE_URL}news-img/${file}`;
     },
     toggleShow(index) {
       this.responeData[index].isActive = !this.responeData[index].isActive

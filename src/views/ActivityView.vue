@@ -189,7 +189,7 @@ export default {
   },
   methods: {
     parsePic(file) {
-      return `${import.meta.env.VITE_FILE_URL}${file}`;
+      return `${import.meta.env.VITE_FILE_URL}event-images/${file}`;
     },
     eventClass() {
       let currentClassValue = document.querySelector('#event-class')
