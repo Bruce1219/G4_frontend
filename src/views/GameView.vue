@@ -131,7 +131,7 @@ export default {
     try {
         // 异步加载问题数据
         //const url = "http://localhost/php_g4/questions.php";
-        const url =`http://${import.meta.env.VITE_API_URL}/questions.php`;
+        const url =`${import.meta.env.VITE_API_URL}/questions.php`;
         const response = await fetch(url, {
             method: "POST",
             // body: JSON.stringify(body) // 如果需要请求体，请取消注释并提供适当的body
