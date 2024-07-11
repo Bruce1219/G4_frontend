@@ -93,11 +93,16 @@ export default {
     }
   },
   methods: {
-    parsePic(file) {
-      return new URL(`../assets/image/${file}`, import.meta.url).href
+    // parsePic(file) {
+    //   return new URL(`../assets/image/${file}`, import.meta.url).href
+    // },//本地
+    parsePic(file) { //部屬圖片
+      return `${import.meta.env.VITE_FILE_URL}${file}`;
     },
     fetchData() {
-      fetch(`http://localhost/php_g4/map.php`, {
+      // const url = 'http://localhost/php_G4/map.php'//本地
+      const url = `${import.meta.env.VITE_API_URL}/map.php`//部屬
+      fetch(url, {
         method: 'post'
       })
         .then((res) => res.json())
