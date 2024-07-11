@@ -24,7 +24,7 @@ export default {
         "p_noList": items,
         "type": 1 //取消收藏
       }
-      fetch(`${import.meta.env.VITE_API_URL}/userFavoriteUpdate`, {
+      fetch(`${import.meta.env.VITE_API_URL}/userFavoriteUpdate.php`, {
         method: "POST",
         body: JSON.stringify(body)
       })
@@ -45,7 +45,7 @@ export default {
         p_noList: selectedItems,
         type: 2 // 添加到購物車
       };
-      fetch(`${import.meta.env.VITE_API_URL}/userFavoriteUpdate`, {
+      fetch(`${import.meta.env.VITE_API_URL}/userFavoriteUpdate.php`, {
         method: "POST",
         body: JSON.stringify(body)
       })
@@ -61,7 +61,7 @@ export default {
         return;
       }
 
-      fetch(`${import.meta.env.VITE_API_URL}/userFavorite`, {
+      fetch(`${import.meta.env.VITE_API_URL}/userFavorite.php`, {
         method: 'POST',
         body: JSON.stringify({ m_no: this.m_no })
       })
