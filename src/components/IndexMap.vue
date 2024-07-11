@@ -4,80 +4,6 @@ export default {
     return {
       filter: "苗栗縣",
       responseData: [],
-      // placeData: [
-      //   {
-      //     tag: "miaoli_country",
-      //     f_loc: "苗栗市",
-      //     list: [
-      //       {
-      //         f_name: "禾新農庄",
-      //         f_intro: "你在吃水果？還是吃糖果？ 傳承40年「阿公ㄟ柑仔味」 堅持保留橘子酸甜～",
-      //         f_img: "farm1.png",
-      //         f_link: "https://google.com"
-      //       },
-      //       {
-      //         f_name: "薑麻園休閒農業",
-      //         f_intro: "位在<苗130線>三義和大湖交界，台灣百年的老薑故鄉。",
-      //         f_img: "farm2.png",
-      //         f_link: "https://130.org.tw/attractions_detail.php?sn=73"
-      //       },
-      //       {
-      //         f_name: "茅鄉炭坊",
-      //         f_intro: "茅鄉，是一種味道的鄉愁代表香茅的故鄉；炭坊則是一種黑色的記憶製作相思木炭的木炭窯。",
-      //         f_img: "farm3.png",
-      //         f_link: "https://www.31mstf.com/"
-      //       },
-      //       {
-      //         f_name: "萬烽養蜂場-苗栗養蜂人",
-      //         f_intro: "養蜂半世紀，傳統延續且融合創新，經驗傳承與科學管理，將大自然賦予的甘釀，純粹呈現。",
-      //         f_img: "farm4.png",
-      //         f_link: "https://google.com"
-      //       }
-      //     ],
-      //   },
-      //   {
-      //     tag: "hualien_country",
-      //     f_loc: "花蓮縣",
-      //     list: [
-      //       {
-      //         f_name: "黃嘉銘有機農場",
-      //         f_intro: "你在吃水果？還是吃糖果？ 傳承40年「阿公ㄟ柑仔味」 堅持保留橘子酸甜～",
-      //         f_img: "farm1.png",
-      //         f_link: "https://google.com"
-      //       }
-      //     ],
-      //   },
-      //   {
-      //     tag: "tainan_city",
-      //     f_loc: "臺南市",
-      //     list: [
-      //       {
-      //         f_name: "詠心有機農場",
-      //         f_intro: "無畏無懼的態度，秉持「用心」的信念對待這片養育我 們的土地、 作物和消費者，堅持以「無毒、健康」的原 則來種植。                                      【詠心農埸】便是農民黃充甫在這樣的心念下而生。",
-      //         f_img: "tainan1.png",
-      //         f_link: "https://nourii.co/zh-TW/brand/yong-xin-organic"
-      //       },
-      //       {
-      //         f_name: "幸福酪梨園",
-      //         f_intro: "踩著青翠草地踏進果園中，每棵酪梨樹都生長得健康壯碩，枝頭結實累累。再加上茂哥不使用除草劑和農藥，園區環境自然、生態豐富，穿梭其中感到神清氣爽。",
-      //         f_img: "tainan2.png",
-      //         f_link: "https://www.avocadolucky.com/"
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     tag: "yilan_country",
-      //     f_loc: "宜蘭縣",
-      //     list: [
-      //       {
-      //         f_name: "松輝有機",
-      //         f_intro: "不靠化學肥料，讓葉子長得漂亮。謝朝陽的茶樹一開始就用剪枝的方式讓一支根只長一支嫩芽，茶樹自然長得很粗壯。正因為能夠用來製作的茶葉只有嫩芽，相對產量就少很多，順應生態平衡，採用長多少收多少的種茶哲學。",
-      //         f_img: "yilan1.png",
-      //         f_link: "https://google.com"
-      //       }
-      //     ],
-      //   },
-      // ],
     }
   },
   computed: {
@@ -97,7 +23,7 @@ export default {
     //   return new URL(`../assets/image/${file}`, import.meta.url).href
     // },//本地
     parsePic(file) { //部屬圖片
-      return `${import.meta.env.VITE_FILE_URL}${file}`;
+      return `${import.meta.env.VITE_FILE_URL}farm-img/${file}`;
     },
     fetchData() {
       // const url = 'http://localhost/php_G4/map.php'//本地

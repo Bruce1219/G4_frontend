@@ -188,7 +188,7 @@ selectRandomQuestions(allQuestions, count) {
     parsePic(file) {
       // 解析圖片文件的URL
       //return new URL(`../assets/image/game-img/${file}`, import.meta.url).href
-      return new URL(`${import.meta.env.VITE_FILE_URL}${file}`, import.meta.url).href
+      return `${import.meta.env.VITE_FILE_URL}game-img/${file}`;
     }
   },
   created() {
