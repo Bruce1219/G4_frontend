@@ -108,11 +108,12 @@ export default {
   methods: {
     // 解析圖片路徑
     parsePic(file) {
-      return new URL(`../assets/image/${file}`, import.meta.url).href
+      return new URL(`${import.meta.env.VITE_FILE_URL}${file}`, import.meta.url).href
     },
     // 從後端獲取商品數據
     fetchData() {
-      fetch(`http://localhost/php_g4/product_popular.php`, {
+      // url='http://localhost/php_g4/product_popular.php'
+      fetch(`${import.meta.env.VITE_API_URL}/product_popular.php`, {
         method: 'post'
       })
         .then((res) => res.json())
