@@ -57,7 +57,7 @@ export default {
         })
     },
     parsePic(file) {
-      return `${import.meta.env.VITE_FILE_URL}${file}`;
+      return `${import.meta.env.VITE_FILE_URL}assets/${file}`;
     },
     getfile(event) {
       this.file = event.target.files[0]
