@@ -9,13 +9,14 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAdminStore, ['currentAccount']),
+    ...mapState(useAdminStore, ['currentAccount', 'currentUser']),
     userIconRoute() {
       return this.currentAccount ? '/userlayout/userdata' : '/user';
-    }
+    },
   },
   methods: {
     ...mapActions(useAdminStore, ['loadCurrentUser'])
+
   },
   created() {
     this.loadCurrentUser();
