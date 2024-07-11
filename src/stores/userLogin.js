@@ -1,42 +1,61 @@
-import { defineStore } from 'pinia'
+// src/stores/userLogin.js
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
+import mitt from 'mitt'; // 事件總線
 
-export const useAdminStore = defineStore('admin', {
-    state: () => ({
-        currentUser: null,
-        currentAccount: null, // 新增用來存儲當前用戶帳號的狀態
-        flag: Date.now(),
-    }),
-    actions: {
-        setCurrentUser(user) {
-            this.currentUser = user
-            if (user) {
-                this.currentAccount = user.m_name // 提取並儲存用戶帳號
-                localStorage.setItem('currentUser', JSON.stringify(user))
-            } else {
-                this.currentAccount = null // 清空帳號資料
-            }
-        },
-        clearCurrentUser() {
-            this.currentUser = null
-            this.currentAccount = null // 清空帳號資料
-            localStorage.removeItem('currentUser')
-            localStorage.removeItem('isLogin'),
-                localStorage.removeItem('user_member')
-        },
-        loadCurrentUser() {
-            const user = localStorage.getItem('currentUser')
-            if (user) {
-                const parsedUser = JSON.parse(user)
-                this.currentUser = parsedUser
-                this.currentAccount = parsedUser.m_name
-            }
-        },
-        isLoggedIn() {
-            return !!this.currentUser;
-        },
-        triggerFetchMemberInfo() {
-           this.flag = Date.now()
-           console.log(this.flag)
+const emitter = mitt();
+
+export const useAdminStore = defineStore('admin', () => {
+    const currentUser = ref(null);
+    const currentAccount = ref(null);
+    const flag = ref(Date.now());
+
+    function setCurrentUser(user) {
+        currentUser.value = user;
+        if (user) {
+            currentAccount.value = user.m_name;
+            localStorage.setItem('currentUser', JSON.stringify(user));
+        } else {
+            currentAccount.value = null;
         }
     }
-})
+
+    function clearCurrentUser() {
+        currentUser.value = null;
+        currentAccount.value = null;
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('isLogin');
+        localStorage.removeItem('user_member');
+    }
+
+    function loadCurrentUser() {
+        const user = localStorage.getItem('currentUser');
+        if (user) {
+            const parsedUser = JSON.parse(user);
+            currentUser.value = parsedUser;
+            currentAccount.value = parsedUser.m_name;
+        }
+    }
+
+    function isLoggedIn() {
+        return !!currentUser.value;
+    }
+
+    function triggerFetchMemberInfo() {
+        flag.value = Date.now();
+        emitter.emit('memberInfoUpdated');
+    }
+
+    return {
+        currentUser,
+        currentAccount,
+        flag,
+        setCurrentUser,
+        clearCurrentUser,
+        loadCurrentUser,
+        isLoggedIn,
+        triggerFetchMemberInfo
+    };
+});
+
+export { emitter };

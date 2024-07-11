@@ -1,6 +1,6 @@
 <script>
-import { useAdminStore } from '@/stores/userLogin.js'; // 引入 Pinia store
-import { mapState, mapActions } from 'pinia'
+import { useAdminStore, emitter } from '@/stores/userLogin.js';
+import { mapState, mapActions } from 'pinia';
 
 export default {
   data() {
@@ -16,11 +16,14 @@ export default {
   },
   methods: {
     ...mapActions(useAdminStore, ['loadCurrentUser'])
-
   },
   created() {
     this.loadCurrentUser();
+    emitter.on('memberInfoUpdated', this.loadCurrentUser);
   },
+  beforeUnmount() {
+    emitter.off('memberInfoUpdated', this.loadCurrentUser);
+  }
 }
 </script>
 
