@@ -53,7 +53,7 @@
       </div>
       <div class="wrap">
         <div class="card" v-for="item in list" :key="item" :data-aos="getAosEffect(item.aos)" data-aos-duration="1000"
-          data-aos-once="true" data-aos-delay="3000">
+          data-aos-once="true" data-aos-delay="2000">
           <div class="content-card">
             <h3>{{ item.title }}</h3>
             <p>{{ item.content }}</p>
@@ -61,7 +61,7 @@
         </div>
       </div>
       <div class="moreBtn">
-        <RouterLink to="/">閱讀更多</RouterLink>
+        <RouterLink to="/aboutus">閱讀更多</RouterLink>
         <!-- 要連結到關於我們頁面 -->
       </div>
     </div>
