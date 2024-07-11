@@ -61,7 +61,7 @@ export default {
         return;
       }
 
-      fetch(`${import.meta.env.VITE_API_URL}userFavorite`, {
+      fetch(`${import.meta.env.VITE_API_URL}/userFavorite`, {
         method: 'POST',
         body: JSON.stringify({ m_no: this.m_no })
       })
