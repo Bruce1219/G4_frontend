@@ -3,9 +3,9 @@ export default {
   data() {
     return {
       orders: [],
-      userData:'',
-      m_no:'',
-      po_no:''
+      userData: '',
+      m_no: '',
+      po_no: ''
     }
   },
   methods: {
@@ -15,17 +15,17 @@ export default {
         console.error("m_no is not available");
         return;
       }
-      
-      fetch('http://localhost/php_g4/userProduct.php', {
+
+      fetch(`${import.meta.env.VITE_API_URL}/userProduct.php`, {
         method: 'POST',
         body: JSON.stringify({ m_no: this.m_no }) // 將 m_no 作為字串發送
       })
-      .then((res) => res.json())
-      .then((json) => {
-        this.orders = json['data']['list'];
-        // console.log(json);
-        console.log(this.orders);
-      })
+        .then((res) => res.json())
+        .then((json) => {
+          this.orders = json['data']['list'];
+          // console.log(json);
+          console.log(this.orders);
+        })
     },
     formatTime(dateTime) {
       return dateTime.split(' ')[0]; // 提取時間部分
@@ -87,12 +87,11 @@ export default {
             <span class="status-cancel" v-if="order.po_status == 4">已註銷</span>
           </td>
           <td>
-            <router-link 
-            :to="{ name: 'OrderDetail', 
-            params: { orderId: order.po_no } }"
-            >
-              <button class="detail" 
-              @click="setAoNo(order.po_no)">
+            <router-link :to="{
+              name: 'OrderDetail',
+              params: { orderId: order.po_no }
+            }">
+              <button class="detail" @click="setAoNo(order.po_no)">
                 查看
               </button>
             </router-link>
@@ -142,26 +141,32 @@ export default {
 
   table {
     display: grid;
+
     thead {
       border-top: 1px solid #144433;
       border-bottom: 1px solid #144433;
     }
-    tbody{
+
+    tbody {
       overflow-y: scroll;
       height: 450px;
-      &::-webkit-scrollbar{
+
+      &::-webkit-scrollbar {
         width: 1px;
       }
     }
+
     tr {
       line-height: 3;
       text-align: center;
       display: grid;
-      grid-template-columns:  1fr  1fr .8fr 1fr;
+      grid-template-columns: 1fr 1fr .8fr 1fr;
       align-items: center;
-      @include md(){
+
+      @include md() {
         line-height: 3;
       }
+
       th {
         color: #144433;
         font-size: 16px;
@@ -177,17 +182,21 @@ export default {
         font-size: 16px;
         margin: 0 3px;
         text-align: center;
+
         @include md() {
           font-size: 12px;
           line-height: 3;
         }
-        .status-cancel{
+
+        .status-cancel {
           color: $red;
         }
-        .green{
+
+        .green {
           color: $lightGreen;
         }
-        .orange{
+
+        .orange {
           color: #E76900;
         }
       }
@@ -219,7 +228,7 @@ button {
     outline: none;
   }
 
-  &:hover{
+  &:hover {
     background-color: $red;
     color: #fff;
   }
@@ -229,16 +238,19 @@ button {
     padding: 1px 6px;
   }
 }
-.back-btn{
+
+.back-btn {
   border: 1px solid $darkGreen;
   background-color: #fff;
   color: $darkGreen;
-  &:hover{
+
+  &:hover {
     background-color: $darkGreen;
     color: #fff;
   }
 }
-.detail{
+
+.detail {
   display: block;
   margin: 0 auto;
   border-radius: 25px;
@@ -260,7 +272,7 @@ button {
     outline: none;
   }
 
-  &:hover{
+  &:hover {
     background-color: $darkGreen;
     color: #fff;
   }
@@ -270,7 +282,8 @@ button {
     padding: 1px 6px;
   }
 }
-a{
+
+a {
   text-decoration: none;
 }
 </style>

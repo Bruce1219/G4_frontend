@@ -11,7 +11,7 @@ export default {
   },
   methods: {
     parsePic(file) {
-      return new URL(`../assets/image/${file}`, import.meta.url).href
+      return `${import.meta.env.VITE_FILE_URL}${file}`
     },
     deleteitem(index) {
       // console.log(this.productlist);
@@ -24,7 +24,7 @@ export default {
         "p_noList": items,
         "type": 1 //取消收藏
       }
-      fetch(`http://localhost/php_g4/userFavoriteUpdate`, {
+      fetch(`${import.meta.env.VITE_API_URL}/userFavoriteUpdate`, {
         method: "POST",
         body: JSON.stringify(body)
       })

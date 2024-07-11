@@ -43,7 +43,7 @@ export default {
         return;
       }
 
-      fetch('http://localhost/php_g4/userInfo.php', {
+      fetch(`${import.meta.env.VITE_API_URL}/userInfo.php`, {
         method: 'POST',
         body: JSON.stringify({ m_no: this.m_no }) // 將 m_no 作為字串發送
       })
@@ -57,7 +57,7 @@ export default {
         })
     },
     parsePic(file) {
-      return new URL(`../assets/image/${file}`, import.meta.url).href
+      return `${import.meta.env.VITE_FILE_URL}${file}`;
     },
     getfile(event) {
       this.file = event.target.files[0]
@@ -95,7 +95,7 @@ export default {
     editConfirm() {
       this.updateImage()
       this.deleteImage()
-      const url = `http://localhost/php_G4/editUserImg.php`
+      const url = `${import.meta.env.VITE_API_URL}/editUserImg.php`
       let body = {
         m_no: this.m_no,
         m_img: this.m_img,
@@ -173,7 +173,7 @@ export default {
     onUnmounted(() => {
       window.removeEventListener('resize', handleResize);
     });
-    
+
 
     return {
       // ...

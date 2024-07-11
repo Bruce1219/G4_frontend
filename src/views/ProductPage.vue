@@ -105,8 +105,8 @@ export default {
         "userNo": this.m_no,
         "p_no": id
       }
-      // url='http://localhost/php_G4/addcartandfavorite.php'
-      url = `${import.meta.env.VITE_API_URL}/addcartandfavorite.php`
+      // const url='http://localhost/php_G4/addcartandfavorite.php'
+      const url = `${import.meta.env.VITE_API_URL}/addcartandfavorite.php`
       fetch(url, {
         method: 'POST',
         body: JSON.stringify(body)
@@ -548,9 +548,7 @@ section {
             }
 
           }
-        }
-
-      }
+        }     }
 
 
     }
