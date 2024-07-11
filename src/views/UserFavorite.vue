@@ -45,7 +45,7 @@ export default {
         p_noList: selectedItems,
         type: 2 // 添加到購物車
       };
-      fetch(`http://localhost/php_g4/userFavoriteUpdate`, {
+      fetch(`${import.meta.env.VITE_API_URL}/userFavoriteUpdate`, {
         method: "POST",
         body: JSON.stringify(body)
       })
@@ -61,7 +61,7 @@ export default {
         return;
       }
 
-      fetch('http://localhost/php_G4/userFavorite.php', {
+      fetch(`${import.meta.env.VITE_API_URL}userFavorite`, {
         method: 'POST',
         body: JSON.stringify({ m_no: this.m_no })
       })
