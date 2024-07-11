@@ -29,12 +29,16 @@
             <label for="ao_count">報名人數 : </label>
             <input
                 v-model.number="ao_count"
-                type="number"
+                type="text"
                 id="ao_count"
                 name="ao_count"
+                required
+                maxlength="2"
+                pattern="\d{2}"
                 :min="1"
                 :max = "numMax"
                 v-on:change="totalFee()"
+                @keyup="handleKeyUp($event)"
             />
             </div>
             <div>
