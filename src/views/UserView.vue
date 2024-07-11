@@ -79,7 +79,8 @@ export default {
       if (!this.checkname() || !this.checkemail() || !this.checkpsw() || !this.dbcheckpsw()) {
         return false;
       }
-      const url = `http://localhost/php_G4/register.php`
+      // const url = `http://localhost/php_G4/register.php`
+      const url = `${import.meta.env.VITE_API_URL}/register.php`
       let body = {
         "name": this.name,
         "email": this.email,
@@ -126,7 +127,8 @@ export default {
       try {
         const store = useAdminStore() // 獲取 Pinia store 的實例
 
-        const url = `http://localhost/php_G4/login.php`
+        // const url = `http://localhost/php_G4/login.php`
+        const url = `${import.meta.env.VITE_API_URL}/login.php`
         let body = {
           "acc": this.acc,
           "lpsw": this.lpsw,

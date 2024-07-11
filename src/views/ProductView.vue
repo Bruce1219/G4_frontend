@@ -173,7 +173,9 @@ export default {
       };
 
       try {
-        const response = await fetch('http://localhost/php_G4/product.php', {
+        // url='http://localhost/php_G4/product.php';
+        const url=`${import.meta.env.VITE_API_URL}/product.php`;
+        const response = await fetch(url, {
           method: 'POST',
           body: JSON.stringify(body)
         });
@@ -197,7 +199,7 @@ export default {
       }
     },
     parsePic(file) {
-      return new URL(`../assets/image/${file}`, import.meta.url).href;
+      return new URL(`${import.meta.env.VITE_FILE_URL}${file}`, import.meta.url).href;
     },
     addCart(id) {
       const targetItem = this.responseData.find(v => v.id === id);
@@ -221,7 +223,9 @@ export default {
         p_no: id
       };
       try {
-        await fetch('http://localhost/php_G4/addcartandfavorite.php', {
+        // url='http://localhost/php_G4/addcartandfavorite.php'
+        const url= `${import.meta.env.VITE_API_URL}/addcartandfavorite.php`
+        await fetch(url, {
           method: 'POST',
           body: JSON.stringify(body)
         });
@@ -251,7 +255,8 @@ export default {
         p_no: p_no
       };
       try {
-        await fetch('http://localhost/php_G4/addcartandfavorite.php', {
+        const url= `${import.meta.env.VITE_API_URL}/addcartandfavorite.php`
+        await fetch(url, {
           method: 'POST',
           body: JSON.stringify(body)
         });

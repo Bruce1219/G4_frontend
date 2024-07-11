@@ -48,7 +48,8 @@ export default {
       let body = {
         "userNo": this.m_no,
       }
-      fetch(`http://localhost/php_g4/cartView.php`, {
+      // url='http://localhost/php_g4/cartView.php'
+      fetch(`${import.meta.env.VITE_API_URL}/cartView.php`, {
         method: 'post',
         body: JSON.stringify(body)
 
@@ -75,7 +76,7 @@ export default {
         })
     },
     parsePic(file) {
-      return new URL(`../assets/image/${file}`, import.meta.url).href
+      return new URL(`${import.meta.env.VITE_FILE_URL}${file}`, import.meta.url).href
     },
     add(index) {
       this.cartItem[index].count = parseInt(this.cartItem[index].count) + 1;
@@ -100,7 +101,8 @@ export default {
           "userNo": this.m_no,
           "p_no": this.cartItem[index].p_no
         }
-        fetch('http://localhost/php_G4/addcartandfavorite.php', {
+        // url=''http://localhost/php_G4/addcartandfavorite.php'
+        fetch(`${import.meta.env.VITE_API_URL}/addcartandfavorite.php`, {
           method: 'POST',
           body: JSON.stringify(body)
         })

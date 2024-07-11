@@ -11,23 +11,14 @@
       <div v-if="responseData.length" class="product">
         <div class="product-list">
           <!-- Swiper 輪播 -->
-          <swiper
-            :loop="true"
-            :navigation="{
-              nextEl: '.swiper-button-next',
-              prevEl: '.swiper-button-prev'
-            }"
-            :modules="modules"
-            :pagination="{
+          <swiper :loop="true" :navigation="{
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev'
+          }" :modules="modules" :pagination="{
               type: 'fraction',
               el: '.pagination'
-            }"
-            :space-between="10"
-            @slideChange="onSlideChange"
-            class="mySwiper"
-            slides-per-view="auto"
-            :centeredSlides="true"
-          >
+            }" :space-between="10" @slideChange="onSlideChange" class="mySwiper" slides-per-view="auto"
+            :centeredSlides="true">
             <!-- 單個 Swiper 輪播項目 -->
             <swiper-slide v-for="(cartItem, cartIndex) in responseData" :key="cartIndex">
               <RouterLink :to="`/ProductPage/${cartItem.p_no}`" class="card-product-list">
@@ -108,11 +99,12 @@ export default {
   methods: {
     // 解析圖片路徑
     parsePic(file) {
-      return new URL(`../assets/image/${file}`, import.meta.url).href
+      return `${import.meta.env.VITE_FILE_URL}${file}`;
     },
     // 從後端獲取商品數據
     fetchData() {
-      fetch(`http://localhost/php_g4/product_popular.php`, {
+      // url='http://localhost/php_g4/product_popular.php'
+      fetch(`${import.meta.env.VITE_API_URL}/product_popular.php`, {
         method: 'post'
       })
         .then((res) => res.json())
@@ -127,7 +119,7 @@ export default {
   },
   setup() {
     // 當輪播滑動時的事件處理函數
-    const onSlideChange = () => {}
+    const onSlideChange = () => { }
     return {
       onSlideChange,
       modules: [Autoplay, Navigation, Pagination] // 使用的 Swiper 模組
@@ -149,15 +141,16 @@ export default {
 section {
   font-size: 16px;
   padding: 3rem 0;
+
   .container {
-    max-width: 1200px; 
+    max-width: 1200px;
     box-sizing: border-box;
     flex-direction: column;
     margin: 0 auto;
     overflow: hidden;
 
-    
-  
+
+
     .title-container {
       position: relative;
       display: flex;
@@ -169,15 +162,15 @@ section {
       .section-title {
         font-size: 2rem;
         text-align: center;
-        color: #144433; 
+        color: #144433;
       }
 
-   
+
       .title-bgi {
         position: absolute;
         top: 0;
         width: 100%;
-        height: 100%; 
+        height: 100%;
         max-width: 900px;
       }
     }
@@ -185,76 +178,79 @@ section {
     .product {
       overflow: hidden;
       position: relative;
-      width: 100%; 
+      width: 100%;
       height: auto;
+
       .product-list {
         text-align: center;
         align-items: center;
         justify-content: center;
-        gap: 1%; 
+        gap: 1%;
         height: auto;
+
         .swiper-slide {
           display: flex;
           justify-content: center;
-          width: auto; 
+          width: auto;
         }
+
         .card-product-list {
           margin: auto;
-          width: 100%; 
+          width: 100%;
           max-width: 380px;
           cursor: pointer;
           text-decoration: none;
         }
 
         .img-product-list {
-          width: 380px; 
-          height: 250px; 
+          width: 380px;
+          height: 250px;
 
-          
+
           img {
-            width: 100%; 
-            aspect-ratio: 1/0.67; 
-            object-fit: cover; 
+            width: 100%;
+            aspect-ratio: 1/0.67;
+            object-fit: cover;
           }
         }
 
-      
+
         .into-product-list {
           padding: 25px;
 
           .title-product-list {
             padding: 27px;
             font-size: 1.2rem;
-            color: #144433; 
-          
+            color: #144433;
+
           }
 
-          
+
           .member-product-list {
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 1rem;
-            color: #144433; 
-      
+            color: #144433;
 
-     
+
+
             .car-member-product-list {
-           
+
               .cart-shopping {
                 display: flex;
                 gap: 6px;
                 padding: 7px;
-                color: #fff; 
+                color: #fff;
                 background-color: #144433;
-                border-radius: 20px; 
-                border: 1px solid #000; 
+                border-radius: 20px;
+                border: 1px solid #000;
 
-               
+
                 &:hover {
                   background-color: #86c232;
-                  border: 1px solid #144433; 
-                  cursor: pointer; 
+                  border: 1px solid #144433;
+                  cursor: pointer;
                 }
               }
             }
@@ -263,54 +259,55 @@ section {
       }
     }
 
- 
+
     .carousel {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 40px 0; 
+      margin: 40px 0;
 
-     
+
       .slidebutton {
         display: flex;
-        width: 50%; 
+        width: 50%;
         justify-content: space-evenly;
+
         @include md() {
-          width:70%;
+          width: 70%;
         }
 
 
         .swiper-button-prev,
         .swiper-button-next {
           position: relative;
-          margin: 0 1rem; 
+          margin: 0 1rem;
         }
 
-   
+
         .pagination {
-          width: 50%; 
+          width: 50%;
           text-align: center;
           display: flex;
           align-items: center;
           justify-content: center;
         }
 
-      
+
         .number-slidebutton {
           display: flex;
           align-items: center;
           justify-content: space-evenly;
           flex-grow: 1;
 
-         
+
           .number {
-            font-size: 1rem; 
+            font-size: 1rem;
           }
 
-         
+
           .border {
-            width: 20px; 
-            height: 0; 
+            width: 20px;
+            height: 0;
             border: 1px solid #144433;
           }
         }
@@ -320,41 +317,41 @@ section {
 
     .moreBtn {
       max-width: 100px;
-      border: solid 1px #144433; 
-      padding: 12px 39px; 
-      margin: auto; 
+      border: solid 1px #144433;
+      padding: 12px 39px;
+      margin: auto;
       text-align: center;
 
-      
+
       @include md() {
-        width: 100%; 
-        max-width: none; 
+        width: 100%;
+        max-width: none;
         margin: 0;
-        border: none; 
+        border: none;
         display: flex;
         justify-content: flex-end;
       }
 
-    
-      a {
-        color: #144433; 
-        text-decoration: none; 
-        font-size: 1rem; 
-        
 
-    
+      a {
+        color: #144433;
+        text-decoration: none;
+        font-size: 1rem;
+
+
+
         @include md() {
           &::after {
-            content: ''; 
-            background-image: url('../assets/image/arrow.png'); 
-            width: 25px; 
-            height: 25px; 
-            transform: translateY(30%); 
-            background-size: contain; 
-            background-position: center; 
-            background-repeat: no-repeat; 
-            margin-right: 55px; 
-            display: inline-block; 
+            content: '';
+            background-image: url('../assets/image/arrow.png');
+            width: 25px;
+            height: 25px;
+            transform: translateY(30%);
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin-right: 55px;
+            display: inline-block;
           }
         }
       }
