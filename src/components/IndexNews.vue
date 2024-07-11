@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     parsePic(file) {
-      return new URL(`../assets/image/${file}`, import.meta.url).href
+      return `${import.meta.env.VITE_FILE_URL}${file}`;
     },
     toggleShow(index) {
       this.responeData[index].isActive = !this.responeData[index].isActive
@@ -98,7 +98,8 @@ export default {
     },
     //fetch json檔
     fetchData () {
-      fetch(`http://localhost/php_G4/newsListFront.php`,{
+      let url = `${import.meta.env.VITE_API_URL}//newsListFront.php`
+      fetch(url,{
         method:'POST'
       }
       )

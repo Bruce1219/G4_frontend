@@ -189,7 +189,7 @@ export default {
   },
   methods: {
     parsePic(file) {
-      return new URL(`../assets/image/${file}`, import.meta.url).href
+      return `${import.meta.env.VITE_FILE_URL}${file}`;
     },
     eventClass() {
       let currentClassValue = document.querySelector('#event-class')
@@ -227,7 +227,8 @@ export default {
     },
     //fetch json檔活動資料
     fetchData() {
-      fetch(`http://localhost/php_G4/activitiesListFront.php`, {
+     let url = `${import.meta.env.VITE_API_URL}/activitiesListFront.php`
+      fetch(url, {
         method: 'post'
       })
         .then((res) => res.json())
