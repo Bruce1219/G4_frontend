@@ -207,7 +207,8 @@ export default {
             let body = {
                 "userNo": this.userData.m_no,
             }
-            fetch(`http://localhost/php_g4/cartView.php`, {
+            // url='http://localhost/php_g4/cartView.php'
+            fetch(`${import.meta.env.VITE_API_URL}/cartView.php`, {
                 method: 'post',
                 body: JSON.stringify(body)
 
@@ -230,7 +231,8 @@ export default {
                 })
         },
         fetchActivityInfo() {
-            fetch(`http://localhost/php_g4/product_detail.php`, {
+            // url='`http://localhost/php_g4/product_detail.php'
+            fetch(`${import.meta.env.VITE_API_URL}/product_detail.php`, {
                 method: 'post'
             })
                 .then((res) => res.json())
@@ -333,7 +335,8 @@ export default {
                 });
                 return false;
             }
-            const url = `http://localhost/php_g4/shoppingcart.php`
+            //  url = `http://localhost/php_g4/shoppingcart.php`
+            const url = `${import.meta.env.VITE_API_URL}/shoppingcart.php`
             let body = {
                 "m_no": this.userData.m_no,
                 "po_name": this.name,
