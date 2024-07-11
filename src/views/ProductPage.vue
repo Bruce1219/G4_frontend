@@ -30,15 +30,10 @@ export default {
   },
   methods: {
     parsePic(file) {//修改照片路徑
-      // return new URL(`../assets/image/${file}`, import.meta.url).href
       return `${import.meta.env.VITE_FILE_URL}${file}`;
     },
     add() {
       this.count += 1;
-      // this.cartcount = this.count;
-      // this.cart(this.cartcount);
-
-      // localStorage.setItem(, JSON.stringify(this.displayData.Count))
       if (this.m_no != 0) {
         localStorage.setItem(this.m_no + `product` + this.displayData.p_no, this.count);
         console.log(this.count)
@@ -49,17 +44,10 @@ export default {
         return
       };
       this.count -= 1;
-      // this.cartcount = this.count;
-      // this.cartcount[this.displayData.p_no] = this.count
-      // this.cart.push(this.cartcount);
       if (this.m_no != 0) {
         localStorage.setItem(this.m_no + `product` + this.displayData.p_no, this.count);
         console.log(this.count)
       }
-
-
-      // localStorage.setItem(`user1`, JSON.stringify(this.responseData))
-
     },
     async fetchData() {
       let body = {
@@ -73,46 +61,19 @@ export default {
         });
         const json = await response.json();
         this.responseData = json["data"]["list"]
-        // if (this.m_no != '') {
         this.displayData = this.responseData.find((item) => item.p_no == this.userId);
         console.log(this.displayData);
         this.mainImage = this.parsePic(this.displayData.p_img[0]);
-        // this.displayData['count'] = 1;
         let elementcount = parseInt(0);
         elementcount = localStorage.getItem(this.m_no + 'product' + this.displayData.p_no)
         if (elementcount != null) {
           this.count = parseInt(elementcount);
           console.log(this.displayData)
         }
-
-        // }
-        // else {
-        //   this.displayData = this.responseData.find((item) => item.p_no == this.userId);
-        //   console.log(this.displayData);
-        //   let unlogindata = localStorage.getItem('user1');
-        //   this.cart = JSON.parse(unlogindata);
-        //   this.displayData = this.cart;
-        //   // this.displayData = this.cart[0];
-        //   this.mainImage = this.parsePic(this.displayData.p_img[0])
-
-        // }
-
       } catch (error) {
         console.error("Error fetching data:", error);
         return [];
       }
-      // //  fetch data from API
-      // return await fetch(`${import.meta.env.BASE_URL}productList.json`)
-      //   .then((response) => response.json())
-      //   .then((json) => {
-      //     console.log(json)
-      //   this.responseData = json
-      //   console.log(this.responseData)
-      //   }
-
-      // );
-
-
     },
     imAddCart() {
       this.fetchcart(true, this.displayData.p_no)
@@ -144,7 +105,9 @@ export default {
         "userNo": this.m_no,
         "p_no": id
       }
-      fetch('http://localhost/php_G4/addcartandfavorite.php', {
+      // url='http://localhost/php_G4/addcartandfavorite.php'
+      url = `${import.meta.env.VITE_API_URL}/addcartandfavorite.php`
+      fetch(url, {
         method: 'POST',
         body: JSON.stringify(body)
       })
@@ -159,18 +122,9 @@ export default {
       console.log(product);
       const selectedIndex = product.p_img.findIndex(img => img === this.filteredImages[imgIndex]);
       this.mainImage = this.parsePic(product.p_img[selectedIndex]);
-      // this.parsePic(this.mainImage);
     }
   },
   created() {
-
-
-    // if (localStorage.getItem('user1') != null) {
-    //   let responseDatas = localStorage.getItem('user1');
-    //   this.responseData = JSON.parse(responseDatas);
-
-
-    // }
 
   },
   mounted() {
@@ -214,8 +168,6 @@ export default {
             <div class="second-pic">
               <img v-for="(img, index) in filteredImages" :key="index" :src="parsePic(img)"
                 @click="changeMainImage(index)" alt="Secondary Image">
-              <!-- <img :src="userInfo[userId - 1].p_img[2]" alt="">
-              <img :src= "userInfo[userId - 1].p_img[3]" alt=""> -->
             </div>
 
           </div>
@@ -234,9 +186,6 @@ export default {
               <div class="txt">
                 <p>{{ displayData.p_info }}</p>
 
-                <!-- <li>堅持選用無帶病的組培苗再移植培養雖然成本高時效短，且需不斷放入新的草鈴幼蟲</li>
-
-                <li>得以控制小型昆蟲，堅持有機無毒的種植方式!</li> -->
 
               </div>
             </div>
@@ -287,8 +236,6 @@ export default {
 
 section {
   .container {
-    // overflow: hidden;
-
 
     .crumbs-product {
       font-family: $pFont;
@@ -317,7 +264,6 @@ section {
     .row {
       margin: auto;
       width: 100%;
-      // width: 1200px;
 
       @include s2bmd() {
         display: flex;
@@ -339,15 +285,11 @@ section {
           align-items: center;
           margin: auto;
           padding: 60px;
-          // width: 100vw;
           box-sizing: border-box;
-          // overflow: hidden;
-
 
           @include s2bmd() {
             flex-direction: row;
             width: 50vw;
-            // height: 445px;
             justify-content: center;
             align-items: center;
             padding: 0;
@@ -365,12 +307,7 @@ section {
 
             @include s2bmd() {
               order: 2;
-              // aspect-ratio:1/1;
-              // object-fit: cover;
-              max-width: 700px; //
-              // height: 380px;//
-
-
+              max-width: 700px;
             }
 
             img {
@@ -381,8 +318,6 @@ section {
               @include s2bmd() {
                 height: 100%;
                 object-fit: cover;
-                // width: 421.3333px;
-                // height: 305.3333px;
 
               }
 
@@ -405,8 +340,6 @@ section {
               width: auto;
               height: 100%;
               padding: 0% 4%;
-              // width: 209px;
-              // height: 124px;
             }
 
             img {
@@ -416,9 +349,7 @@ section {
               object-fit: cover;
 
               @include s2bmd() {
-                // max-width: 100%;
                 padding: 10% 0;
-                // width: 100%;
                 width: 103.3333px;
                 height: 97px;
                 object-fit: cover;
@@ -488,17 +419,6 @@ section {
                 font-family: $pFont;
                 line-height: $lineheight;
                 margin: 8px 0;
-
-                // &::before {
-                //   content: '';
-                //   position: absolute;
-                //   left: 0;
-                //   top: 10%;
-                //   width: 5px;
-                //   height: 5px;
-                //   background-color: $darkGreen;
-                //   border-radius: 50%;
-                // }
 
               }
             }
@@ -570,7 +490,6 @@ section {
               margin: auto;
 
               @include s2bmd() {
-                // justify-content: start;
                 padding: 24px 10px;
                 align-items: center;
                 margin: auto;
