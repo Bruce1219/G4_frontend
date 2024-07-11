@@ -130,7 +130,8 @@ export default {
     async loadQuestions() {
     try {
         // 异步加载问题数据
-        const url = "http://localhost/php_g4/questions.php";
+        //const url = "http://localhost/php_g4/questions.php";
+        const url =`http://${import.meta.env.VITE_API_URL}/questions.php`;
         const response = await fetch(url, {
             method: "POST",
             // body: JSON.stringify(body) // 如果需要请求体，请取消注释并提供适当的body
@@ -186,7 +187,8 @@ selectRandomQuestions(allQuestions, count) {
     },
     parsePic(file) {
       // 解析圖片文件的URL
-      return new URL(`../assets/image/game-img/${file}`, import.meta.url).href
+      //return new URL(`../assets/image/game-img/${file}`, import.meta.url).href
+      return new URL(`${import.meta.env.VITE_FILE_URL}${file}`, import.meta.url).href
     }
   },
   created() {
