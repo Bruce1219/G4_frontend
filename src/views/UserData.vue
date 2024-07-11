@@ -33,7 +33,7 @@ export default {
         return;
       }
 
-      fetch('http://localhost/php_g4/userInfo.php', {
+      fetch(`${import.meta.env.VITE_API_URL}/userInfo.php`, {
         method: 'POST',
         body: JSON.stringify({ m_no: this.m_no }) // 將 m_no 作為字串發送
       })
@@ -130,7 +130,8 @@ export default {
         }
       }
 
-      const url = `http://localhost/php_G4/revise_member.php`
+      // const url = `http://localhost/php_G4/revise_member.php`
+      const url = `${import.meta.env.VITE_API_URL}/revise_member.php`
 
       let body = {
         "m_id": this.userData.m_id,
@@ -274,7 +275,7 @@ export default {
     }
   }
 
-  form{
+  form {
     margin-top: 30px;
   }
 
@@ -358,7 +359,7 @@ button {
     outline: none;
   }
 
-  &:hover{
+  &:hover {
     background-color: #fff;
     color: $darkGreen;
     border: 1px solid $darkGreen;
