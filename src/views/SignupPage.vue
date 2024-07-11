@@ -29,7 +29,7 @@
             <label for="ao_count">報名人數 : </label>
             <input
                 v-model.number="ao_count"
-                type="text"
+                type="number"
                 id="ao_count"
                 name="ao_count"
                 required
