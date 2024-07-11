@@ -159,7 +159,7 @@ export default {
 
             
             // const url = `http://localhost/php_g4/updateUserProduct.php`;//本地
-            const url = `http://localhost/php_g4/updateUserProduct.php`;//部屬
+            const url = `${import.meta.env.VITE_API_URL}/updateUserProduct.php`//部屬
             const body = {
                 po_no: this.po_no,
                 po_status: newStatus,
