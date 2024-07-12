@@ -12,7 +12,7 @@
                     <span>{{ displayData.po_no }}</span>
                     <p v-if="displayData.po_status != 4">出貨日期:</p> 
                     <span v-if="displayData.po_status == 0 || displayData.po_status == 3">{{ addSevenDays(displayData.po_time) }}前</span>
-                    <span v-if="displayData.po_status == 1 || displayData.po_status == 2">{{ formatTime(displayData.po_deliverdate) }}</span>
+                    <span v-if="displayData.po_status == 1 || displayData.po_status == 2">{{ formatDate(displayData.po_deliverdate) }}</span>
                     <p>訂單狀態:</p> 
                     <span v-if="displayData.po_status == 0">待配送</span>
                     <span v-if="displayData.po_status == 1">配送中</span>
