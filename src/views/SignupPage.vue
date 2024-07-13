@@ -89,7 +89,7 @@
                 maxlength="4"
                 pattern="\d{4}"
                 @keydown="handleKeyDown($event)"
-                @keyup="handleKeyUp($event)"
+                @keyup="handleKeyUp($event, 'card1')"
                 v-model="card1"
                 />
                 <span>-</span>
@@ -100,7 +100,7 @@
                 maxlength="4"
                 pattern="\d{4}"
                 @keydown="handleKeyDown($event)"
-                @keyup="handleKeyUp($event)"
+                @keyup="handleKeyUp($event, 'card2')"
                 v-model="card2"
                 />
                 <span>-</span>
@@ -111,7 +111,7 @@
                 maxlength="4"
                 pattern="\d{4}"
                 @keydown="handleKeyDown($event)"
-                @keyup="handleKeyUp($event)"
+                @keyup="handleKeyUp($event, 'card3')"
                 v-model="card3"
                 />
                 <span>-</span>
@@ -122,7 +122,7 @@
                 maxlength="4"
                 pattern="\d{4}"
                 @keydown="handleKeyDown($event)"
-                @keyup="handleKeyUp($event)"
+                @keyup="handleKeyUp($event, 'card4')"
                 v-model="card4"
                 />
             </div>
@@ -387,13 +387,18 @@ export default {
                 value = '12';
                 }
             } else if (field === 'year') {
-                if (parseInt(value) < this.currentYear) {
+                // 年份小於今年才調整
+                if (parseInt(value) < this.currentYear && value.length === 2) {
                 value = this.currentYear.toString().padStart(2, '0');
+                }
+            } else {
+                if (value.length > maxLength) {
+                value = value.slice(0, maxLength);
                 }
             }
 
             target.value = value;
-            this[field === 'month' ? 'mm' : 'yy'] = value;
+            this[field] = value;
 
             if (value.length >= maxLength) {
                 const next = target.nextElementSibling?.nextElementSibling;
@@ -402,6 +407,7 @@ export default {
                 }
             }
         },
+
         submit() {
             if (!this.checkname() || !this.checkemail() || !this.checkphone() || !this.checkCard()) {
                 Swal.fire({
