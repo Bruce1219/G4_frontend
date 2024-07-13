@@ -335,9 +335,6 @@ hr {
   border-radius: 20px;
   max-width: 450px;
   margin: auto;
-  justify-content: center;
-  align-items: center;
-
   h2,
   h4,
   h5 {
@@ -403,6 +400,7 @@ img {
   width: 80px;
   height: 80px;
   text-align: center;
+  border-radius: 50%;
 }
 
 button {
