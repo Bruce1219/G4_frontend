@@ -164,6 +164,7 @@ section {
         @include sm() {
           width: 70%;
           margin: 5%;
+          padding: 5%;
         }
         
         p, .txt ul {
@@ -186,6 +187,9 @@ section {
         .txt ul {
           list-style: disc;
           padding-left: 20px;
+        }
+        li{
+          width: 110%;
         }
       }
       
@@ -300,7 +304,6 @@ section {
     width: 93%;
     display: flex;
     justify-content: center;
-    align-items: center;
     margin-bottom: 20px;
    
     .btn {
