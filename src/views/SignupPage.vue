@@ -29,7 +29,7 @@
             <label for="ao_count">報名人數 : </label>
             <input
                 v-model.number="ao_count"
-                type="text"
+                type="number"
                 id="ao_count"
                 name="ao_count"
                 required
@@ -89,7 +89,7 @@
                 maxlength="4"
                 pattern="\d{4}"
                 @keydown="handleKeyDown($event)"
-                @keyup="handleKeyUp($event)"
+                @keyup="handleKeyUp($event, 'card1')"
                 v-model="card1"
                 />
                 <span>-</span>
@@ -100,7 +100,7 @@
                 maxlength="4"
                 pattern="\d{4}"
                 @keydown="handleKeyDown($event)"
-                @keyup="handleKeyUp($event)"
+                @keyup="handleKeyUp($event, 'card2')"
                 v-model="card2"
                 />
                 <span>-</span>
@@ -111,7 +111,7 @@
                 maxlength="4"
                 pattern="\d{4}"
                 @keydown="handleKeyDown($event)"
-                @keyup="handleKeyUp($event)"
+                @keyup="handleKeyUp($event, 'card3')"
                 v-model="card3"
                 />
                 <span>-</span>
@@ -122,39 +122,62 @@
                 maxlength="4"
                 pattern="\d{4}"
                 @keydown="handleKeyDown($event)"
-                @keyup="handleKeyUp($event)"
+                @keyup="handleKeyUp($event, 'card4')"
                 v-model="card4"
                 />
             </div>
             </div>
             <div class="deadline">
-            <span>*</span>
-            <label>有效期限 : </label>
-            <div>
-                <input
-                type="text"
-                inputmode="numeric"
-                required
-                maxlength="2"
-                pattern="\d{2}"
-                @keydown="handleKeyDown($event)"
-                @keyup="handleKeyUp($event)"
-                placeholder="MM"
-                v-model="mm"
-                />
-                <span>-</span>
-                <input
-                type="text"
-                inputmode="numeric"
-                required
-                maxlength="2"
-                pattern="\d{2}"
-                @keydown="handleKeyDown($event)"
-                @keyup="handleKeyUp($event)"
-                placeholder="YY"
-                v-model="yy"
-                />
-            </div>
+                <span>*</span>
+                <label>有效期限 : </label>
+                <div>
+                    <!-- <input
+                    type="text"
+                    inputmode="numeric"
+                    required
+                    maxlength="2"
+                    pattern="\d{2}"
+                    @keydown="handleKeyDown($event)"
+                    @keyup="handleKeyUp($event)"
+                    placeholder="MM"
+                    v-model="mm"
+                    />
+                    <span>-</span> -->
+                    <input
+                    type="text"
+                    inputmode="numeric"
+                    required
+                    maxlength="2"
+                    pattern="\d{2}"
+                    @keydown="handleKeyDown"
+                    @keyup="handleKeyUp($event, 'month')"
+                    placeholder="MM"
+                    v-model="mm"
+                    />
+                    <span>-</span>
+                    <!-- <input
+                    type="text"
+                    inputmode="numeric"
+                    required
+                    maxlength="2"
+                    pattern="\d{2}"
+                    @keydown="handleKeyDown($event)"
+                    @keyup="handleKeyUp($event)"
+                    placeholder="YY"
+                    v-model="yy"
+                    /> -->
+                    <input
+                    type="text"
+                    inputmode="numeric"
+                    required
+                    maxlength="2"
+                    pattern="\d{2}"
+                    @keydown="handleKeyDown"
+                    @keyup="handleKeyUp($event, 'year')"
+                    placeholder="YY"
+                    v-model="yy"
+                    />
+                </div>
             </div>
             <div class="code">
             <span>*</span>
@@ -216,7 +239,11 @@ export default {
         totalFees() {
         return this.displayData.a_fee * this.ao_count
         },
+        currentYear() {
+            return new Date().getFullYear() % 100; // 獲取今年後兩位
+        },
         ...mapState(useAdminStore, ['currentUser'])
+        
     },
     watch: {
         activityId: function () {
@@ -306,35 +333,81 @@ export default {
             
         },
         //信用卡自動換格
+        // handleKeyDown(event) {
+        //     const target = event.target
+        //     const value = target.value
+
+        //     if ((event.which >= 48 && event.which <= 57) || event.which === 8) {
+        //         if (value.length === 0 && event.which === 8) {
+        //             const previous = target.previousElementSibling?.previousElementSibling
+        //             if (previous && previous.tagName === 'INPUT') {
+        //                 previous.focus()
+        //             }
+        //         }
+        //     } else {
+        //         event.preventDefault()
+        //     }
+        // },
         handleKeyDown(event) {
-            const target = event.target
-            const value = target.value
+            const target = event.target;
+            const value = target.value;
 
             if ((event.which >= 48 && event.which <= 57) || event.which === 8) {
                 if (value.length === 0 && event.which === 8) {
-                    const previous = target.previousElementSibling?.previousElementSibling
-                    if (previous && previous.tagName === 'INPUT') {
-                        previous.focus()
-                    }
+                    const previous = target.previousElementSibling?.previousElementSibling;
+                if (previous && previous.tagName === 'INPUT') {
+                    previous.focus();
+                }
                 }
             } else {
-                event.preventDefault()
+                event.preventDefault();
             }
         },
         //信用卡自動換格
-        handleKeyUp(event) {
-            const target = event.target
-            let value = target.value.replace(/\D/g, '')
-            target.value = value
-            const maxLength = target.getAttribute('maxlength')
+        // handleKeyUp(event) {
+        //     const target = event.target
+        //     let value = target.value.replace(/\D/g, '')
+        //     target.value = value
+        //     const maxLength = target.getAttribute('maxlength')
+
+        //     if (value.length >= maxLength) {
+        //         const next = target.nextElementSibling?.nextElementSibling
+        //         if (next && next.tagName === 'INPUT') {
+        //             next.focus()
+        //         }
+        //     }
+        // },
+        handleKeyUp(event, field) {
+            const target = event.target;
+            let value = target.value.replace(/\D/g, '');
+            const maxLength = target.getAttribute('maxlength');
+
+            if (field === 'month') {
+                if (parseInt(value) > 12) {
+                value = '12';
+                }
+            } else if (field === 'year') {
+                // 年份小於今年才調整
+                if (parseInt(value) < this.currentYear && value.length === 2) {
+                value = this.currentYear.toString().padStart(2, '0');
+                }
+            } else {
+                if (value.length > maxLength) {
+                value = value.slice(0, maxLength);
+                }
+            }
+
+            target.value = value;
+            this[field] = value;
 
             if (value.length >= maxLength) {
-                const next = target.nextElementSibling?.nextElementSibling
+                const next = target.nextElementSibling?.nextElementSibling;
                 if (next && next.tagName === 'INPUT') {
-                    next.focus()
+                next.focus();
                 }
             }
         },
+
         submit() {
             if (!this.checkname() || !this.checkemail() || !this.checkphone() || !this.checkCard()) {
                 Swal.fire({

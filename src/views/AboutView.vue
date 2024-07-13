@@ -168,8 +168,8 @@ section {
         }
         
         p, .txt ul {
-          width: 85%;
-          font-size: 1.25em;
+          width: 95%;
+          font-size: 1.1em;
           line-height: 2;
           color: #ffffff;
           text-align: left;
@@ -178,9 +178,6 @@ section {
           }
           @include md() {
             font-size: 0.8em;
-          }
-          @include sm() {
-            font-size: 1em;
           }
         }
         
@@ -410,7 +407,7 @@ section {
 
         p {
           color: #144433;
-          text-align: center;
+          text-align: left;
           line-height: 1.6;
           
           @include lg() {

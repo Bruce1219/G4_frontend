@@ -50,14 +50,15 @@ export default {
         .then((res) => res.json())
         .then((json) => {
           this.member = json['data'];
-          this.m_name = this.member.m_name
+          this.m_name = this.member.m_name;
+          this.parsePic(this.member.m_img);
           // console.log(json);
           // console.log(this.member);
           console.log("UserLayout fetchMemberInfo called");
         })
     },
     parsePic(file) {
-      return `${import.meta.env.VITE_FILE_URL}${file}`;
+      return `${import.meta.env.VITE_FILE_URL}assets/${file}`;
     },
     getfile(event) {
       this.file = event.target.files[0]
@@ -75,7 +76,7 @@ export default {
       })
         .then((res) => res.json)
         .then((json) => {
-          this.member = json;
+          // this.member = json;
         })
     },
     deleteImage() {

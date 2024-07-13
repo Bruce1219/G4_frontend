@@ -151,9 +151,9 @@ export default {
         // parsePic(file) {
         //     return new URL(`../assets/image/${file}`, import.meta.url).href
         // },//本地
-        parsePic(file) { //部屬圖片
-            return `${import.meta.env.VITE_FILE_URL}${file}`;
-        },
+        parsePic(file) {
+            return `${import.meta.env.VITE_FILE_URL}event-images/${file}`;
+        }, //部屬圖片
         toggleStatus() {
             const newStatus = this.ao_status === 0;
             

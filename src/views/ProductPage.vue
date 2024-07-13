@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     parsePic(file) {//修改照片路徑
-      return `${import.meta.env.VITE_FILE_URL}${file}`;
+      return `${import.meta.env.VITE_FILE_URL}${file}`
     },
     add() {
       this.count += 1;
@@ -112,7 +112,7 @@ export default {
         body: JSON.stringify(body)
       })
         .then(response => response.json())
-        .then(data => {
+        .then((data) => {
         });
     },
 

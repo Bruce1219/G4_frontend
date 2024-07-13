@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     parsePic(file) {
-      return `${import.meta.env.VITE_FILE_URL}${file}`;
+      return `${import.meta.env.VITE_FILE_URL}news-img/${file}`;
     },
     toggleShow(index) {
       this.responeData[index].isActive = !this.responeData[index].isActive
@@ -98,7 +98,7 @@ export default {
     },
     //fetch json檔
     fetchData () {
-      let url = `${import.meta.env.VITE_API_URL}//newsListFront.php`
+      let url = `${import.meta.env.VITE_API_URL}/newsListFront.php`
       fetch(url,{
         method:'POST'
       }

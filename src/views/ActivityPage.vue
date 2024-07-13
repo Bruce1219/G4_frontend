@@ -8,7 +8,7 @@
                             <h1>{{ displayData.c_no }}</h1>
                         </div>
                         <div class="main-title">
-                            <h2>{{  displayData.a_name }}</h2>
+                            <h2>{{ displayData.a_name }}</h2>
                         </div>
                     </div>
                     <div class="wrap-info">
@@ -20,7 +20,7 @@
                                 <li>
                                     <RouterLink to="/activity">活動</RouterLink>
                                 </li>
-                                <li class="current"><em aria-current="page">{{  displayData.c_no }}</em></li>
+                                <li class="current"><em aria-current="page">{{ displayData.c_no }}</em></li>
                             </ul>
                         </nav>
                         <hr>
@@ -29,33 +29,33 @@
                 <div class="content">
                     <div class="pic-content">
                         <!-- <img :src="activityInfo.a_img" alt="act1"> -->
-                        <img :src="parsePic( displayData.a_img)" alt="act1">
+                        <img :src="parsePic(displayData.a_img)" alt="act1">
                     </div>
                     <div class="info-content">
                         <div class="loc">
                             <span><i class="fa-solid fa-location-dot"></i></span>
-                            <span>{{  displayData.a_loc }}</span>
+                            <span>{{ displayData.a_loc }}</span>
                         </div>
                         <hr>
                         <div class="date">
                             <span :class="dateClass">日 期 : </span>
                             <span class="oneday" v-if="displayData.a_start_date === displayData.a_end_date">
-                                {{  displayData.a_start_date }}
+                                {{ displayData.a_start_date }}
                             </span>
                             <span class="multiday" v-if="displayData.a_start_date !== displayData.a_end_date">
-                                {{  displayData.a_start_date }}~{{  displayData.a_end_date }}
+                                {{ displayData.a_start_date }}~{{ displayData.a_end_date }}
                             </span>
                         </div>
-                        <div class="time" v-if=" displayData.a_time">
+                        <div class="time" v-if="displayData.a_time">
                             <span>時 間 : </span>
                             <span>
                                 {{ formatTime(displayData.a_time) }}
                             </span>
                         </div>
-                        <div class="teacher" v-if=" displayData.a_teacher !== '無'">
+                        <div class="teacher" v-if="displayData.a_teacher !== '無'">
                             <span>講 師 : </span>
                             <span>
-                                {{  displayData.a_teacher }}
+                                {{ displayData.a_teacher }}
                             </span>
                         </div>
                         <hr>
@@ -65,16 +65,16 @@
                             <h3>活動介紹</h3>
                         </div>
                         <div>
-                            <p>{{  displayData.a_info }}</p>
+                            <p>{{ displayData.a_info }}</p>
                             <ul>
-                                <li v-if=" displayData.a_info1">
-                                    {{  displayData.a_info1 }}
+                                <li v-if="displayData.a_info1">
+                                    {{ displayData.a_info1 }}
                                 </li>
-                                <li v-if=" displayData.a_info2">
-                                    {{  displayData.a_info2 }}
+                                <li v-if="displayData.a_info2">
+                                    {{ displayData.a_info2 }}
                                 </li>
-                                <li v-if=" displayData.a_info3">
-                                    {{  displayData.a_info3 }}
+                                <li v-if="displayData.a_info3">
+                                    {{ displayData.a_info3 }}
                                 </li>
 
                             </ul>
@@ -84,46 +84,46 @@
                         <div class="title-rules">
                             <h3>活動須知</h3>
                         </div>
-                        <div class="item-rules" v-if=" displayData.a_signupe !== '0000-00-00'">
+                        <div class="item-rules" v-if="displayData.a_signupe !== '0000-00-00'">
                             <p>報名截止日期</p>
                             <ul>
-                                <li>{{  displayData.a_signupe }}</li>
+                                <li>{{ displayData.a_signupe }}</li>
                             </ul>
                         </div>
                         <div class="item-rules">
                             <p>報名費用</p>
                             <ul>
-                                <li v-if=" displayData.a_fee != 0">
-                                    NT$ {{  displayData.a_fee }}
+                                <li v-if="displayData.a_fee != 0">
+                                    NT$ {{ displayData.a_fee }}
                                 </li>
                                 <li v-else>
                                     免費
                                 </li>
                             </ul>
                         </div>
-                        <div class="item-rules" v-if=" displayData.a_max != 999">
+                        <div class="item-rules" v-if="displayData.a_max != 999">
                             <p>報名人數上限</p>
                             <ul>
-                                <li>{{  displayData.a_max }}人</li>
+                                <li>{{ displayData.a_max }}人</li>
                             </ul>
                         </div>
-                        <div class="item-rules" v-if=" displayData.a_max != 999">
+                        <div class="item-rules" v-if="displayData.a_max != 999">
                             <p>已報名人數</p>
                             <ul>
-                                <li>{{  displayData.a_attendee }}人</li>
+                                <li>{{ displayData.a_attendee }}人</li>
                             </ul>
                         </div>
                         <div class="item-rules">
                             <p>當日注意事項</p>
                             <ul>
-                                <li v-if=" displayData.a_rules1">
-                                    {{  displayData.a_rules1 }}
+                                <li v-if="displayData.a_rules1">
+                                    {{ displayData.a_rules1 }}
                                 </li>
-                                <li v-if=" displayData.a_rules2">
-                                    {{  displayData.a_rules2 }}
+                                <li v-if="displayData.a_rules2">
+                                    {{ displayData.a_rules2 }}
                                 </li>
-                                <li v-if=" displayData.a_rules3">
-                                    {{  displayData.a_rules3 }}
+                                <li v-if="displayData.a_rules3">
+                                    {{ displayData.a_rules3 }}
                                 </li>
                             </ul>
                         </div>
@@ -139,10 +139,13 @@
                             <p>我們期待您的參與，共同探討有機農業的未來發展與挑戰。如果您有任何疑問或需要更多資訊，請隨時與我們聯繫。</p>
                         </div>
                     </div>
-                    <div class="signup" v-if="displayData.a_attendee < displayData.a_max ">
+                    <!-- <div class="signup" v-show="displayData.a_attendee < displayData.a_max && displayData.a_signupe">
+                        <router-link :to="`/signuppage/${activityId}`">立即報名</router-link>
+                    </div> -->
+                    <div class="signup" v-show="shouldShowSignup">
                         <router-link :to="`/signuppage/${activityId}`">立即報名</router-link>
                     </div>
-                    <div class="signup" v-if="displayData.a_attendee == displayData.a_max ">
+                    <div class="signup" v-show="displayData.a_attendee == displayData.a_max">
                         <router-link class="full">已額滿</router-link>
                     </div>
                 </div>
@@ -156,7 +159,7 @@ export default {
     data() {
         return {
             activityInfo: [],
-            displayData:[],
+            displayData: [],
         }
     },
     computed: {
@@ -168,6 +171,11 @@ export default {
                 'onedate': this.displayData.a_start_date === this.displayData.a_end_date,
                 'multidate': this.displayData.a_start_date !== this.displayData.a_end_date
             }
+        },
+        shouldShowSignup() {
+            const currentDate = new Date();
+            const signupEndDate = new Date(this.displayData.a_signupe);
+            return this.displayData.a_attendee < this.displayData.a_max && currentDate <= signupEndDate;
         }
     },
     watch: {
@@ -179,25 +187,27 @@ export default {
         fetchActivityInfo() {
             // const url = 'http://localhost/php_G4/activitiesList.php'//本地
             const url = `${import.meta.env.VITE_API_URL}/activitiesList.php`//部屬
-            fetch( url, {
+            fetch(url, {
                 method: 'post'
             })
-            .then((res) => res.json())
-            .then((json) => {
-                console.log(json)
-                this.activityInfo = json['data']['list']
-                console.log(this.activityInfo);
-                console.log(this.activityId)
-                this.displayData = this.activityInfo.find((item) => item.a_no == this.activityId )
-                console.log( this.displayData);
-            })
+                .then((res) => res.json())
+                .then((json) => {
+                    console.log(json)
+                    this.activityInfo = json['data']['list']
+                    console.log(this.activityInfo);
+                    console.log(this.activityId)
+                    this.displayData = this.activityInfo.find((item) => item.a_no == this.activityId)
+                    console.log(this.displayData);
+                    console.log(this.displayData.a_attendee);
+                    console.log(this.displayData.a_max);
+                })
         },
         // parsePic(file) {
         //     return new URL(`../assets/image/${file}`, import.meta.url).href
         // }, //本地圖片
-        parsePic(file) { //部屬圖片
-            return `${import.meta.env.VITE_FILE_URL}${file}`;
-        },
+        parsePic(file) {
+            return `${import.meta.env.VITE_FILE_URL}event-images/${file}`;
+        }, //部屬圖片
         formatTime(dateTime) {
             return dateTime.split(' ')[1]; // 提取時間部分
         }
@@ -404,35 +414,44 @@ section {
                     @include sm() {
                         margin: 10px 15px;
                     }
-                    .onedate{
+
+                    .onedate {
                         margin: 0 15px 0 10px;
                         display: inline-block;
                         line-height: 1.5;
-                        @include sm(){
+
+                        @include sm() {
                             // display: block;
                         }
                     }
-                    .multidate{
+
+                    .multidate {
                         margin: 0 15px 0 10px;
                         display: inline-block;
                         line-height: 1.5;
-                        @include sm(){
+
+                        @include sm() {
                             // display: block;
                         }
                     }
-                    .oneday{
+
+                    .oneday {
                         margin-left: 5px;
                     }
-                    .multiday{
+
+                    .multiday {
                         margin-left: 7px;
+
                         @include sm() {
                             margin-left: 5px;
                         }
+
                         @include bp(435px) {
                             margin-left: 10px;
                         }
                     }
-                    span{
+
+                    span {
                         display: inline-block;
                         line-height: 1.5;
                     }
@@ -597,8 +616,10 @@ section {
                         // box-sizing: border-box;
                     }
                 }
-                .full{
+
+                .full {
                     background-color: $red;
+
                     &:hover {
                         color: #fff;
                         background-color: $red;

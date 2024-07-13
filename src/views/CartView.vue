@@ -128,10 +128,10 @@ export default {
       let member = JSON.parse(account);
       if (member && member['m_no']) {
         this.m_no = member['m_no'];
-        if (member['m_add'] != '') {
-          this.address = member['m_add'];
-          this.address = this.address.substring(3);
-        }
+        // if (member['m_add'] != '') {
+        //   this.address = member['m_add'];
+        //   this.address = this.address.substring(3);
+        // }
       } else {
         console.log('Member information is not available');
       }
