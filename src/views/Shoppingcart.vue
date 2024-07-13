@@ -194,7 +194,10 @@ export default {
             }
             console.log(cart);
             return cart;
-        }
+        },
+        currentYear() {
+            return new Date().getFullYear() % 100; // 獲取今年後兩位
+        },
     },
     watch: {
         userId: async function (val) {
