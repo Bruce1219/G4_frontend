@@ -342,7 +342,7 @@ let data = ref(null)
 let eventsData = ref([])
 let activedEvents = ref([])
 const fetchData = async () => {
-  const response = await fetch(`http://localhost/php_G4/activitiesList.php` ,{method:'POST'})
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/activitiesListFront.php` ,{method:'POST'})
   const result = await response.json()
   console.log(result)
   data.value = result['data']['list'] //json檔
