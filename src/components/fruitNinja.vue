@@ -177,7 +177,7 @@ export default {
   font-family: $pFont;
   text-align: center;
   color: #2c3e50;
-  margin: 80px auto 0;
+  margin: 120px auto 0;
   .container {
     max-width: 750px;
     width: 90%;
