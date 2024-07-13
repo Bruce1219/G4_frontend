@@ -334,6 +334,7 @@ hr {
   background-color: #144433;
   border-radius: 20px;
   max-width: 450px;
+  margin: auto;
   justify-content: center;
   align-items: center;
 
