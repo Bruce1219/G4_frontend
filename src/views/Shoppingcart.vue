@@ -96,16 +96,16 @@
                     <label>信用卡號 : </label>
                     <div>
                         <input class="card1" type="text" required maxlength="4" pattern="\d{4}"
-                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" v-model="card1">
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event, 'card1')" v-model="card1">
                         <span>-</span>
                         <input class="card2" type="text" required maxlength="4" pattern="\d{4}"
-                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" v-model="card2">
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event, 'card2')" v-model="card2">
                         <span>-</span>
                         <input class="card3" type="text" required maxlength="4" pattern="\d{4}"
-                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" v-model="card3">
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event, 'card3')" v-model="card3">
                         <span>-</span>
                         <input class="card4" type="text" required maxlength="4" pattern="\d{4}"
-                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" v-model="card4">
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event, 'card4')" v-model="card4">
                     </div>
                 </div>
                 <div class="deadline">
@@ -113,10 +113,10 @@
                     <label>有效期限 : </label>
                     <div>
                         <input type="text" inputmode="numeric" required maxlength="2" pattern="\d{2}"
-                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" placeholder="MM" v-model="mm">
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event, 'month')" placeholder="MM" v-model="mm">
                         <span>-</span>
                         <input type="text" inputmode="numeric" required maxlength="2" pattern="\d{2}"
-                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event)" placeholder="YY" v-model="yy">
+                            @keydown="handleKeyDown($event)" @keyup="handleKeyUp($event, 'year')" placeholder="YY" v-model="yy">
 
                     </div>
                 </div>
@@ -194,7 +194,10 @@ export default {
             }
             console.log(cart);
             return cart;
-        }
+        },
+        currentYear() {
+            return new Date().getFullYear() % 100; // 獲取今年後兩位
+        },
     },
     watch: {
         userId: async function (val) {
@@ -306,24 +309,42 @@ export default {
             if ((event.which >= 48 && event.which <= 57) || event.which === 8) {
                 if (value.length === 0 && event.which === 8) {
                     const previous = target.previousElementSibling?.previousElementSibling;
-                    if (previous && previous.tagName === 'INPUT') {
-                        previous.focus();
-                    }
+                if (previous && previous.tagName === 'INPUT') {
+                    previous.focus();
+                }
                 }
             } else {
                 event.preventDefault();
             }
         },
-        handleKeyUp(event) {
+        handleKeyUp(event, field) {
             const target = event.target;
             let value = target.value.replace(/\D/g, '');
-            target.value = value;
             const maxLength = target.getAttribute('maxlength');
+
+            if (field === 'month') {
+                if (parseInt(value) > 12) {
+                this.mm = "12";
+                // value = '12';
+                }
+            } else if (field === 'year') {
+                // 年份小於今年才調整
+                if (parseInt(value) < this.currentYear && value.length === 2) {
+                value = this.currentYear.toString().padStart(2, '0');
+                }
+            } else {
+                if (value.length > maxLength) {
+                value = value.slice(0, maxLength);
+                }
+            }
+
+            target.value = value;
+            this[field] = value;
 
             if (value.length >= maxLength) {
                 const next = target.nextElementSibling?.nextElementSibling;
                 if (next && next.tagName === 'INPUT') {
-                    next.focus();
+                next.focus();
                 }
             }
         },

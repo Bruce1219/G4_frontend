@@ -131,18 +131,6 @@
                 <span>*</span>
                 <label>有效期限 : </label>
                 <div>
-                    <!-- <input
-                    type="text"
-                    inputmode="numeric"
-                    required
-                    maxlength="2"
-                    pattern="\d{2}"
-                    @keydown="handleKeyDown($event)"
-                    @keyup="handleKeyUp($event)"
-                    placeholder="MM"
-                    v-model="mm"
-                    />
-                    <span>-</span> -->
                     <input
                     type="text"
                     inputmode="numeric"
@@ -155,17 +143,6 @@
                     v-model="mm"
                     />
                     <span>-</span>
-                    <!-- <input
-                    type="text"
-                    inputmode="numeric"
-                    required
-                    maxlength="2"
-                    pattern="\d{2}"
-                    @keydown="handleKeyDown($event)"
-                    @keyup="handleKeyUp($event)"
-                    placeholder="YY"
-                    v-model="yy"
-                    /> -->
                     <input
                     type="text"
                     inputmode="numeric"
@@ -332,22 +309,6 @@ export default {
             }
             
         },
-        //信用卡自動換格
-        // handleKeyDown(event) {
-        //     const target = event.target
-        //     const value = target.value
-
-        //     if ((event.which >= 48 && event.which <= 57) || event.which === 8) {
-        //         if (value.length === 0 && event.which === 8) {
-        //             const previous = target.previousElementSibling?.previousElementSibling
-        //             if (previous && previous.tagName === 'INPUT') {
-        //                 previous.focus()
-        //             }
-        //         }
-        //     } else {
-        //         event.preventDefault()
-        //     }
-        // },
         handleKeyDown(event) {
             const target = event.target;
             const value = target.value;
@@ -363,20 +324,6 @@ export default {
                 event.preventDefault();
             }
         },
-        //信用卡自動換格
-        // handleKeyUp(event) {
-        //     const target = event.target
-        //     let value = target.value.replace(/\D/g, '')
-        //     target.value = value
-        //     const maxLength = target.getAttribute('maxlength')
-
-        //     if (value.length >= maxLength) {
-        //         const next = target.nextElementSibling?.nextElementSibling
-        //         if (next && next.tagName === 'INPUT') {
-        //             next.focus()
-        //         }
-        //     }
-        // },
         handleKeyUp(event, field) {
             const target = event.target;
             let value = target.value.replace(/\D/g, '');
@@ -384,7 +331,8 @@ export default {
 
             if (field === 'month') {
                 if (parseInt(value) > 12) {
-                value = '12';
+                this.mm = "12";
+                // value = '12';
                 }
             } else if (field === 'year') {
                 // 年份小於今年才調整
