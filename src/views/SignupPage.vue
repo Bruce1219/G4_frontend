@@ -331,7 +331,8 @@ export default {
 
             if (field === 'month') {
                 if (parseInt(value) > 12) {
-                value = '12';
+                this.mm = "12";
+                // value = '12';
                 }
             } else if (field === 'year') {
                 // 年份小於今年才調整
