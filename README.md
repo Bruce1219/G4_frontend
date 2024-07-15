@@ -5,10 +5,8 @@
 本專案前後端分離，並有前台和後台兩個網站。
 * [果籽-前台](https://tibamef2e.com/cid101/g4/front/)
 * [果籽-後台](https://tibamef2e.com/cid101/g4/admin/) 測試帳號:admin002 密碼:002
-* [簡報](
-https://drive.google.com/file/d/1C1k3sDOqOyIEzS0rpjOansVMceRwSDg-/view?usp=sharing)
-* [文件](
-https://drive.google.com/file/d/1-E0QKWCi0OUxWqj_PAfAUTg8nipYifVQ/view?usp=sharing)
+* [簡報](https://drive.google.com/file/d/1C1k3sDOqOyIEzS0rpjOansVMceRwSDg-/view?usp=sharing)
+* [文件](https://drive.google.com/file/d/1-E0QKWCi0OUxWqj_PAfAUTg8nipYifVQ/view?usp=sharing)
 * [前台GitHub](https://github.com/elaine0623/G4_frontend)
 * [後台GitHub](https://github.com/elaine0623/G4_backend)
 * [PHP GitHub](https://github.com/elaine0623/G4_php)
