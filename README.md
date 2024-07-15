@@ -29,7 +29,7 @@ https://drive.google.com/file/d/1-E0QKWCi0OUxWqj_PAfAUTg8nipYifVQ/view?usp=shari
 
 ```sh
 git clone https://github.com/elaine0623/G4_frontend.git
-cd healthy-food
+cd G4_frontend
 npm install
 npm run dev
 ```
