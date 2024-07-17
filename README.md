@@ -3,10 +3,10 @@
 食安問題層出不窮，果籽團隊架設果籽網站，期望能讓民眾重視食品安全，宣導購買原型食物及有機耕種的觀念，同時支持在地小農。以友善土地的方式耕種，讓民眾吃得健康，土地得以永續。
 
 本專案前後端分離，並有前台和後台兩個網站。
-* [果籽-前台](https://tibamef2e.com/cid101/g4/front/)
+* [果籽-前台](https://tibamef2e.com/cid101/g4/front/) 
 * [果籽-後台](https://tibamef2e.com/cid101/g4/admin/) 測試帳號:admin002 密碼:002
-* [簡報](https://drive.google.com/file/d/1C1k3sDOqOyIEzS0rpjOansVMceRwSDg-/view?usp=sharing)
-* [文件](https://drive.google.com/file/d/1-E0QKWCi0OUxWqj_PAfAUTg8nipYifVQ/view?usp=sharing)
+* [文件](https://drive.google.com/file/d/1C1k3sDOqOyIEzS0rpjOansVMceRwSDg-/view?usp=sharing)
+* [簡報](https://drive.google.com/file/d/1-E0QKWCi0OUxWqj_PAfAUTg8nipYifVQ/view?usp=sharing)
 * [前台GitHub](https://github.com/elaine0623/G4_frontend)
 * [後台GitHub](https://github.com/elaine0623/G4_backend)
 * [PHP GitHub](https://github.com/elaine0623/G4_php)
@@ -17,7 +17,7 @@
 |  ----  | ----  |
 | 前端  | CSS、HTML、JS、AJAX、Vue.js、pinia、GSAP、SASS |
 | 後端  | PHP、MySQL、Bootstrap |
-| 工具與服務 | Figma、 git 、 MySQL 、 Notion, SourceTree |
+| 工具與服務 | Figma、 git 、 MySQL 、 Notion、SourceTree |
 
 ## 網站架構圖
 
