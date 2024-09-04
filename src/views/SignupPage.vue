@@ -418,7 +418,7 @@ export default {
                                     top: 0,
                                     behavior: 'smooth'
                                 })
-                                }, 280) //解決sweetalert硬控問題
+                                }, 280) //解決sweetalert硬控的問題
                             } else if (result.dismiss === Swal.DismissReason.cancel) {
                                 this.$router.push('/userlayout/useractivity')
                                 await this.$nextTick()
@@ -428,7 +428,7 @@ export default {
                                     top: 0,
                                     behavior: 'smooth'
                                 })
-                                }, 280) //解決sweetalert硬控問題
+                                }, 280) //解決sweetalert硬控的問題
                             }
                             })
                     }
